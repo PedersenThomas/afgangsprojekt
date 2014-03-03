@@ -1,0 +1,9 @@
+Oprette, rette, deactivere, aktivere - Organicationer, Receptioner, kontaktpersoner.
+Oprette, rette, deploy - Dialplan.
+Oprette, rette og fjerne telefon numre. //Deaktivere igen?
+Optge lyd til afspilning i Dialplan.
+Tilføje, rette, fjerne - brugere
+Oprette, rette, fjerne - kalender "entries"
+rette, fjerne - beskeder
+
+Udregne regning.
