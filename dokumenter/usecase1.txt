@@ -1,0 +1,7 @@
+Opret en reception
+
+1) Brugeren logger ind med tilstrækkelige rettigeheder.
+2) Brugeren vælger den rette organization.
+3) Brugeren trykker på opret reception.
+4) Brugeren indtaster information
+5) Brugeren afslutter ved at trykke på gem, hvor ved dataen bliver sendt til serveren og gemt i databasen.
