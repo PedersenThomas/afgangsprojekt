@@ -7,13 +7,13 @@ import 'package:postgresql/postgresql.dart';
 
 class Database {
   Pool pool;
-  String user, password, host, database;
+  String user, password, host, name;
   int port, minimumConnections, maximumConnections;
   
-  Database(String this.user, String this.password, String this.host, int this.port, String this.database, {int this.minimumConnections: 1, int this.maximumConnections: 2});
+  Database(String this.user, String this.password, String this.host, int this.port, String this.name, {int this.minimumConnections: 1, int this.maximumConnections: 10});
   
   Future start() {
-    String connectString = 'postgres://${user}:${password}@${host}:${port}/${database}';
+    String connectString = 'postgres://${user}:${password}@${host}:${port}/${name}';
     
     Pool pool = new Pool(connectString, min: minimumConnections, max: maximumConnections);
     return pool.start().then((_) => _testConnection());

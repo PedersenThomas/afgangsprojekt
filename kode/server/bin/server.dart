@@ -4,21 +4,23 @@ import 'dart:io';
 import 'package:args/args.dart';
 
 import '../lib/router.dart';
+import '../lib/configuration.dart';
 
 void main(List<String> args) {
   ArgParser parser = new ArgParser();
   ArgResults parsedArgs = registerAndParseCommandlineArguments(parser, args);
-  
+    
   if(parsedArgs['help']) {
     print(parser.getUsage());
   }
   
-  setupControllers();
-  int port = 8080;
-  makeServer(port).then((HttpServer server) {
+  Configuration config = new Configuration(parsedArgs)
+    ..parse();
+  setupControllers(config);
+  makeServer(config.httpport).then((HttpServer server) {
     setupRoutes(server);
+    print('Started');
   });
-  
 }
 
 ArgResults registerAndParseCommandlineArguments(ArgParser parser, List<String> arguments) {

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:route/server.dart';
 
+import 'configuration.dart';
 import 'controller/reception.dart';
 import 'database.dart';
 
@@ -14,13 +15,8 @@ void setupRoutes(HttpServer server) {
     ..serve(receptionId).listen(reception.getReception);
 }
 
-void setupControllers() {
-  String user;
-  String password;
-  String host;
-  int port;
-  String database;
-  Database db = new Database(user, password, host, port, database);
+void setupControllers(Configuration config) {
+  Database db = new Database(config.dbuser, config.dbpassword, config.dbhost, config.dbport, config.dbname);
   
   reception = new ReceptionController();
 }
