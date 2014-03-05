@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:route/server.dart';
@@ -12,11 +13,23 @@ ReceptionController reception;
 
 void setupRoutes(HttpServer server) {
   Router router = new Router(server)
-    ..serve(receptionId).listen(reception.getReception);
+    ..serve(receptionId).listen(reception.getReception)
+    ..defaultStream.listen(NOTFOUND);
 }
 
-void setupControllers(Configuration config) {
-  Database db = new Database(config.dbuser, config.dbpassword, config.dbhost, config.dbport, config.dbname);
+void NOTFOUND(HttpRequest request) {
+  print(request.uri);
   
-  reception = new ReceptionController();
+  request.response
+    ..write('NOT FOUND')
+    ..close();
+}
+
+Future setupDatabase(Configuration config) {
+  Database db = new Database(config.dbuser, config.dbpassword, config.dbhost, config.dbport, config.dbname);
+  return db.start().then((_) => db);
+}
+
+void setupControllers(Database db) {
+  reception = new ReceptionController(db);
 }

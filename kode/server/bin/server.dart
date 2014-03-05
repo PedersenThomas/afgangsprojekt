@@ -16,11 +16,15 @@ void main(List<String> args) {
   
   Configuration config = new Configuration(parsedArgs)
     ..parse();
-  setupControllers(config);
-  makeServer(config.httpport).then((HttpServer server) {
-    setupRoutes(server);
-    print('Started');
-  });
+  
+  setupDatabase(config)
+    .then(setupControllers)
+    .then((_) => makeServer(config.httpport))
+    .then((HttpServer server) {
+      setupRoutes(server);
+    
+      print('Started up!');
+    });
 }
 
 ArgResults registerAndParseCommandlineArguments(ArgParser parser, List<String> arguments) {

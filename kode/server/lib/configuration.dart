@@ -13,8 +13,8 @@ class Configuration {
   int        _httpport   = 8080;
   String     _dbuser;
   String     _dbpassword;
-  String     _dbhost     = 'localhost';
-  int        _dbport     = 5432;
+  String     _dbhost;
+  int        _dbport;
   String     _dbname;
   
   Uri    get authUrl        => _authUrl;
@@ -57,7 +57,7 @@ class Configuration {
     }
     
     if(_hasArgument('dbport')) {
-      _dbport = _args['dbport'];
+      _dbport = int.parse(_args['dbport']);
     }
     
     if(_hasArgument('dbuser')) {
@@ -65,7 +65,7 @@ class Configuration {
     }
     
     if(_hasArgument('httpport')) {
-      _httpport = _args['httpport'];
+      _httpport = int.parse(_args['httpport']);
     }
     
   }
@@ -81,7 +81,7 @@ class Configuration {
     Map content = JSON.decode(rawContent);
     
     if(content.containsKey('authurl')) {
-      _authUrl = Uri.parse(content['authUrl']);
+      _authUrl = Uri.parse(content['authurl']);
     }
 
     if(content.containsKey('dbhost')) {
@@ -110,7 +110,35 @@ class Configuration {
   }
   
   void _validate() {
-    //TODO
+    //TODO Lav mere i dybden undersøgelse.
+    
+    if(authUrl == null) {
+      throw('authurl is not specified.');
+    }
+
+    if(dbhost == null) {
+      throw('dbhost is not specified.');
+    }
+
+    if(dbname == null) {
+      throw('dbname is not specified.');
+    }
+
+    if(dbpassword == null) {
+      throw('dbpassword is not specified.');
+    }
+
+    if(dbport == null) {
+      throw('dbport is not specified.');
+    }
+
+    if(dbuser == null) {
+      throw('dbuser is not specified.');
+    }
+
+    if(httpport == null) {
+      throw('httpport is not specified.');
+    }
   }
   
   bool _hasArgument(String key) {
