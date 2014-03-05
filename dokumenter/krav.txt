@@ -7,3 +7,4 @@ Oprette, rette, fjerne - kalender "entries"
 rette, fjerne - beskeder
 
 Udregne regning.
+Der skal logges ind ved brug af det nyværende system.
