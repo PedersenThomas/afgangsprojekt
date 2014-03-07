@@ -6,11 +6,13 @@
   Udskrive XML dialplan til Freeswitch.
   Udregne regninger, og måske sætte det sammen til en "færdig" regning.
 
+
 -- Faktisk --
 Uge 1 
   Fik skrevet krav, og en plan.
   Kom godt igang med serveren. Man kan hente en reception, og lave en ny.
   Jeg har ikke fået lavet noget arbejde på klienten.
+
 
 -- Forvented --
 
@@ -20,12 +22,11 @@ Uge 1
 uge 2 
     Use cases
     Udbyg Database schema så der er understøttelse for Organizationer.
-    DatabaseDiagram.
     //Skal jeg have nogle diagrammer ind over det??? Klasse? Sekvens?
 
 Uge 3, 4
     Server arbejde, Få styr på at hente, oprette og updatere organizationer, receptioner, kontaktpersoner, og telefonnumre. Samt slette telefonnumre
-    Serveren skal have interface for brugere, så man kan oprette, redigere og slette brugere. //Skal der også være et krav her omkring deaktivering???? 
+    Serveren skal have interface for brugere, så man kan oprette, redigere og slette brugere. Vælge hvilke gruppe brugeren skal være en del af. //Skal der også være et krav her omkring deaktivering???? 
     Tests til alle interfaces. //Måske bliver det her for meget.
 
 Uge 5, 6, 7
@@ -35,14 +36,15 @@ Uge 5, 6, 7
     Se en liste over alle kontaktpersoner, hvorman kan vælge en ud, og ændre dens oplysninger.
 
 Uge 7
+    Der skal laves Database Diagram.
+    Database skal udvideres til Dialplans.
+    Serveren skal have interface til at holde styr på Dialplans
 
-Uge 8
+Uge 8, 9
+    Klienten skal updateres så den kan lave dialplans. //Jeg er ikke nogen haj til design, så jeg forventer det kommer til at tage noget tid.
 
-Uge 9
-
-Uge 10
-
-Uge 11
+Uge 10, 11
+    Buffer da jeg ved jeg ikke kommer til at holde planen.
 
 Uge 12, 13, 14
     Rapport skrivning og retningskrivning.
