@@ -1,33 +1,30 @@
-import 'dart:async';
 import 'dart:io';
 
+import 'package:route/pattern.dart';
 import 'package:route/server.dart';
 
 import 'configuration.dart';
 import 'controller/reception.dart';
 import 'database.dart';
+import 'utilities/http.dart';
+import 'utilities/logger.dart';
 
-final Pattern receptionId = new UrlPattern(r'/reception/(\d+)');
+final Pattern anyThing = new UrlPattern(r'/(.*)');
+final Pattern receptionIdUrl = new UrlPattern(r'/reception/(\d+)');
+final Pattern receptionUrl = new UrlPattern(r'/reception(/?)');
+final List<Pattern> Serviceagents = [receptionIdUrl, receptionUrl];
 
 ReceptionController reception;
 
-void setupRoutes(HttpServer server) {
+void setupRoutes(HttpServer server, Configuration config, Logger logger) {
   Router router = new Router(server)
-    ..serve(receptionId).listen(reception.getReception)
+    ..filter(anyThing, (HttpRequest req) => logHit(req, logger))
+    ..filter(matchAny(Serviceagents), (HttpRequest req) => authorized(req, config.authUrl, groupName: 'Serviceagent'))
+    ..serve(receptionIdUrl, method: 'GET').listen(reception.getReception)
+    ..serve(receptionUrl, method: 'GET').listen(reception.getReceptionList)
+    ..serve(receptionUrl, method: 'PUT').listen(reception.createReception)
+    ..serve(receptionIdUrl, method: 'POST').listen(reception.updateReception)
     ..defaultStream.listen(NOTFOUND);
-}
-
-void NOTFOUND(HttpRequest request) {
-  print(request.uri);
-  
-  request.response
-    ..write('NOT FOUND')
-    ..close();
-}
-
-Future setupDatabase(Configuration config) {
-  Database db = new Database(config.dbuser, config.dbpassword, config.dbhost, config.dbport, config.dbname);
-  return db.start().then((_) => db);
 }
 
 void setupControllers(Database db) {

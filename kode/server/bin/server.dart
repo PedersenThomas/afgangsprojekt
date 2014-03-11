@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 
-import '../lib/router.dart';
 import '../lib/configuration.dart';
+import '../lib/database.dart';
+import '../lib/router.dart';
+import '../lib/utilities/logger.dart';
 
-void main(List<String> args) {
+void main(List<String> args) {  
   ArgParser parser = new ArgParser();
   ArgResults parsedArgs = registerAndParseCommandlineArguments(parser, args);
     
@@ -16,14 +18,15 @@ void main(List<String> args) {
   
   Configuration config = new Configuration(parsedArgs)
     ..parse();
+  logger.debug(config);
   
   setupDatabase(config)
-    .then(setupControllers)
+    .then((db) => setupControllers(db))
     .then((_) => makeServer(config.httpport))
     .then((HttpServer server) {
-      setupRoutes(server);
+      setupRoutes(server, config, logger);
     
-      print('Started up!');
+      logger.debug('Server started up!');
     });
 }
 
@@ -42,6 +45,4 @@ ArgResults registerAndParseCommandlineArguments(ArgParser parser, List<String> a
   return parser.parse(arguments);
 }
 
-Future makeServer(int port) {
-  return HttpServer.bind(InternetAddress.ANY_IP_V4, port);
-}
+Future<HttpServer> makeServer(int port) => HttpServer.bind(InternetAddress.ANY_IP_V4, port);

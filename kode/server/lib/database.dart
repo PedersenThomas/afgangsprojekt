@@ -1,11 +1,18 @@
 library Adaheads.server.database;
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:postgresql/postgresql_pool.dart';
 import 'package:postgresql/postgresql.dart';
 
 import 'model.dart';
+import 'configuration.dart';
+
+Future<Database> setupDatabase(Configuration config) {
+  Database db = new Database(config.dbuser, config.dbpassword, config.dbhost, config.dbport, config.dbname);
+  return db.start().then((_) => db);
+}
 
 class Database {
   Pool pool;
@@ -33,7 +40,7 @@ class Database {
 
   Future<Reception> getReception(int id) {
     String sql = '''
-      SELECT id
+      SELECT id, full_name, uri, attributes, extradatauri, enabled
       FROM receptions
       WHERE id = @id
     ''';
@@ -45,9 +52,65 @@ class Database {
         return null;
       } else {
         Row data = rows.first;
-        return new Reception(data.id);
+        return new Reception(data.id, data.full_name, data.uri, JSON.decode(data.attributes), data.extradatauri, data.enabled);
       }
     });
+  }
+  
+  Future<List<Reception>> getReceptionList(int id) {
+    String sql = '''
+      SELECT id, full_name, uri, attributes, extradatauri, enabled
+      FROM receptions
+      WHERE id = @id
+    ''';
+    
+    Map parameters = {'id': id};
+    
+    return query(sql, parameters).then((rows) {
+      List<Reception> receptions = new List<Reception>();
+      if(rows.length != 1) {
+        return null;
+      } else {
+        Row data = rows.first;
+        return new Reception(data.id, data.full_name, data.uri, JSON.decode(data.attributes), data.extradatauri, data.enabled);
+      }
+    });
+  }
+  
+  Future<int> createReception(String fullName, String uri, Map attributes, String extradatauri, bool enabled) {
+    String sql = '''
+        INSERT INTO receptions (full_name, uri, attributes, extradatauri, enabled)
+        VALUES (@full_name, @uri, @attributes, @extradatauri, @enabled)
+        RETURNING id;
+      ''';
+
+      Map parameters =
+        {'full_name'    : fullName,
+         'uri'          : uri,
+         'attributes'   : attributes == null ? '{}' : JSON.encode(attributes),
+         'extradatauri' : extradatauri,
+         'enabled'      : enabled};
+      
+    return query(sql, parameters).then((rows) {
+      return rows.first.id;
+    });
+  }
+  
+  Future<int> updateReception(int id, String fullName, String uri, Map attributes, String extradatauri, bool enabled) {
+    String sql = '''
+        UPDATE receptions
+        SET full_name=@full_name, uri=@uri, attributes=@attributes, extradatauri=@extradatauri, enabled=@enabled
+        WHERE id=@id;
+      ''';
+
+      Map parameters =
+        {'full_name'    : fullName,
+         'uri'          : uri,
+         'attributes'   : attributes == null ? '{}' : JSON.encode(attributes),
+         'extradatauri' : extradatauri,
+         'enabled'      : enabled};
+      
+    return execute(sql, parameters);
   }
 }
 

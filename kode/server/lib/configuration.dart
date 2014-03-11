@@ -141,6 +141,17 @@ class Configuration {
     }
   }
   
+  String toString() => '''
+    AuthUrl: $authUrl
+    HttpPort: $httpport
+    Database:
+      Host: $dbhost
+      Port: $dbport
+      User: $dbuser
+      Pass: ${dbpassword.codeUnits.map((_) => '*').join()}
+      Name: $dbname      
+    ''';
+  
   bool _hasArgument(String key) {
     assert(_args != null);
     return _args.options.contains(key) && _args[key] != null;
