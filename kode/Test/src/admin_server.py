@@ -24,7 +24,8 @@ class ServerBadStatus(Exception):
 class AdminServer:
     class protocol:
         receptionUrl  = "/reception"
-        tokenParam      = "?token="
+        contactUrl    = "/contact"
+        tokenParam    = "?token="
 
     authToken = None
     http      = httplib2.Http(".cache")
@@ -62,6 +63,7 @@ class AdminServer:
 
         return headers, body
 
+######################## RECEPTION
     def getReception(self, receptionId):
         return self.request(self.protocol.receptionUrl + "/" + str(receptionId), "GET")
 
@@ -74,5 +76,26 @@ class AdminServer:
     def deleteReception(self, receptionId):
         return self.request(self.protocol.receptionUrl + "/" + str(receptionId), "DELETE")
 
-    def updateReception(self, receptionId, param):
-        return self.request(self.protocol.receptionUrl + "/" + str(receptionId), "POST", param)
+    def updateReception(self, receptionId, params):
+        return self.request(self.protocol.receptionUrl + "/" + str(receptionId), "POST", params)
+
+######################## CONTACT
+    def getContact(self, contactId):
+        return self.request(self.protocol.contactUrl + "/" + str(contactId), "GET")
+
+    def getContactList(self):
+        return self.request(self.protocol.contactUrl, "GET")
+
+    def createContact(self, params):
+        return self.request(self.protocol.contactUrl, "PUT", params)
+
+    def updateContact(self, contactId, params):
+        return self.request(self.protocol.contactUrl + "/" + str(contactId), "POST", params)
+
+    def deleteContact(self, contactId):
+        return self.request(self.protocol.contactUrl + "/" + str(contactId), "DELETE")
+
+######################## RECEPTION-CONTACT
+    def getReceptionContact(self, receptionId, contactId):
+        return self.request(self.protocol.receptionUrl + "/" + str(receptionId) +
+                            self.protocol.contactUrl + "/" + str(contactId), "GET")

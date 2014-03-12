@@ -1,11 +1,10 @@
 __author__ = 'Thomas'
 
-import httplib2
 import unittest
 import json
 import admin_server
 import utilities
-from jsonschema import ErrorTree, Draft3Validator
+from jsonschema import Draft3Validator
 from jsonschema.exceptions import SchemaError, ValidationError
 import config
 
@@ -24,36 +23,20 @@ class ReceptionTests(unittest.TestCase):
                            'properties':
                                {'receptions':
                                     {'type': 'array',
-                                     'required': False,
+                                     'required': True,
                                      'items': receptionSchema}}}
 
     def test_getFirstReception(self):
         headers, body = self.adminServer.getReception(1)
-        jsonBody = json.loads(body);
-        try:
-            schema = self.receptionSchema
-            validator = Draft3Validator(schema)
-            validator.validate(jsonBody)
-        except ValidationError, e:
-            self.fail('Fetching reception 1 failed. Error "' + str(e) +
-                      '" Response: "' + str(jsonBody) + '"')
-        except SchemaError, e:
-            self.fail('Fetching reception 1 failed. Error "' + str(e) +
-                      '" Schema: "' + str(schema) + '"')
+        jsonBody = json.loads(body)
+        schema = self.receptionSchema
+        utilities.varifySchema(schema, jsonBody)
 
     def test_getReceptionList(self):
         headers, body = self.adminServer.getReceptionList()
         jsonBody = json.loads(body)
-        try:
-            schema = self.receptionListSchema
-            validator = Draft3Validator(schema)
-            validator.validate(jsonBody)
-        except ValidationError, e:
-            self.fail('Fetching reception list validating failed. Error "' + str(e) +
-                      '" Response: "' + str(jsonBody) + '"')
-        except SchemaError, e:
-            self.fail('Reception list schema failed. Error "' + str(e) +
-                      '" Schema: "' + str(schema) + '"')
+        schema = self.receptionListSchema
+        utilities.varifySchema(schema, jsonBody)
 
     def test_createNewReception(self):
         reception = {
@@ -109,7 +92,3 @@ class ReceptionTests(unittest.TestCase):
             self.adminServer.deleteReception(receptionId)
         except Exception, e:
             self.fail('Response: "' + str(jsonBody) + '" Error: ' + str(e))
-
-
-if __name__ == "__main__":
-    print "started"
