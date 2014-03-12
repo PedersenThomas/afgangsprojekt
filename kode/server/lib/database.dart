@@ -57,23 +57,18 @@ class Database {
     });
   }
   
-  Future<List<Reception>> getReceptionList(int id) {
+  Future<List<Reception>> getReceptionList() {
     String sql = '''
       SELECT id, full_name, uri, attributes, extradatauri, enabled
       FROM receptions
-      WHERE id = @id
     ''';
-    
-    Map parameters = {'id': id};
-    
-    return query(sql, parameters).then((rows) {
+
+    return query(sql).then((rows) {
       List<Reception> receptions = new List<Reception>();
-      if(rows.length != 1) {
-        return null;
-      } else {
-        Row data = rows.first;
-        return new Reception(data.id, data.full_name, data.uri, JSON.decode(data.attributes), data.extradatauri, data.enabled);
+      for(var row in rows) {
+        receptions.add(new Reception(row.id, row.full_name, row.uri, JSON.decode(row.attributes), row.extradatauri, row.enabled));
       }
+      return receptions;
     });
   }
   
@@ -108,8 +103,19 @@ class Database {
          'uri'          : uri,
          'attributes'   : attributes == null ? '{}' : JSON.encode(attributes),
          'extradatauri' : extradatauri,
-         'enabled'      : enabled};
+         'enabled'      : enabled,
+         'id'           : id};
       
+    return execute(sql, parameters);
+  }
+
+  Future<int> deleteReception(int id) {
+    String sql = '''
+        DELETE FROM receptions
+        WHERE id=@id;
+      ''';
+
+    Map parameters = {'id': id};
     return execute(sql, parameters);
   }
 }

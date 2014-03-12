@@ -94,7 +94,7 @@ Future Internal_Error(HttpRequest request) {
 }
 
 Future<bool> logHit(HttpRequest request, Logger logger) {
-  logger.debug('${request.connectionInfo} ${request.uri}');
+  logger.debug('${request.connectionInfo.remoteAddress.address} ${request.method} ${request.uri}');
   return new Future.value(true);
 }
 

@@ -17,12 +17,12 @@ class ReceptionController {
   void getReception(HttpRequest request) {
     int receptionId = pathParameter(request.uri, 'reception');
     
-    db.getReception(receptionId).then((Reception r) {
-      if(r == null) {
+    db.getReception(receptionId).then((Reception reception) {
+      if(reception == null) {
         request.response.statusCode = 404;
         return writeAndCloseJson(request, JSON.encode({}));
       } else {
-        return writeAndCloseJson(request, receptionAsJson(r));
+        return writeAndCloseJson(request, JSON.encode(receptionAsJson(reception)));
       }
     }).catchError((error) {
       String body = '$error';
@@ -31,16 +31,11 @@ class ReceptionController {
   }
   
   void getReceptionList(HttpRequest request) {      
-      db.getReceptionList().then((Reception r) {
-        if(r == null) {
-          request.response.statusCode = 404;
-          return writeAndCloseJson(request, JSON.encode({}));
-        } else {
-          return writeAndCloseJson(request, receptionAsJson(r));
-        }
+      db.getReceptionList().then((List<Reception> list) {
+        return writeAndCloseJson(request, JSON.encode({'receptions':listReceptionAsJson(list)}));
       }).catchError((error) {
-        String body = '$error';
-        writeAndCloseJson(request, body);
+        logger.error('$error');
+        Internal_Error(request);
       });
     }
   
@@ -59,6 +54,16 @@ class ReceptionController {
     extractContent(request)
     .then(JSON.decode)
     .then((Map data) => db.updateReception(pathParameter(request.uri, 'reception'), data['full_name'], data['uri'], data['attributes'], data['extradatauri'], data['enabled']))
+    .then((int id) => writeAndCloseJson(request, JSON.encode({'id': id})))
+    .catchError((error) {
+      logger.error('updateReception url: "${request.uri}" gave error "${error}"');
+      request.response.statusCode = 500;
+      writeAndCloseJson(request, JSON.encode({'status': 'Internal Server Error'}));
+    });  
+  }
+  
+  void deleteReception(HttpRequest request) {
+    db.deleteReception(pathParameter(request.uri, 'reception'))
     .then((int id) => writeAndCloseJson(request, JSON.encode({'id': id})))
     .catchError((error) {
       logger.error('updateReception url: "${request.uri}" gave error "${error}"');

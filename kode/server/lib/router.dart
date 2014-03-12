@@ -20,10 +20,11 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
   Router router = new Router(server)
     ..filter(anyThing, (HttpRequest req) => logHit(req, logger))
     ..filter(matchAny(Serviceagents), (HttpRequest req) => authorized(req, config.authUrl, groupName: 'Serviceagent'))
-    ..serve(receptionIdUrl, method: 'GET').listen(reception.getReception)
     ..serve(receptionUrl, method: 'GET').listen(reception.getReceptionList)
     ..serve(receptionUrl, method: 'PUT').listen(reception.createReception)
-    ..serve(receptionIdUrl, method: 'POST').listen(reception.updateReception)
+    ..serve(receptionIdUrl, method: 'GET')   .listen(reception.getReception)
+    ..serve(receptionIdUrl, method: 'POST')  .listen(reception.updateReception)
+    ..serve(receptionIdUrl, method: 'DELETE').listen(reception.deleteReception)
     ..defaultStream.listen(NOTFOUND);
 }
 
