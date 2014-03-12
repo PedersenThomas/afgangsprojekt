@@ -1,0 +1,8 @@
+#Pycharm files
+.idea
+
+#Python files.
+*.pyc
+
+#Test specific
+/src/.cache

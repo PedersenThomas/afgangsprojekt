@@ -37,7 +37,7 @@ class AdminServer:
         self.authToken = authToken
 
     def request (self, path, method="GET", params={}):
-        logging.info(method + " " + path + " " + json.dumps(params))
+        self.log.info(method + " " + path + " " + json.dumps(params))
         try:
             uri_path = self.uri + path + self.protocol.tokenParam + self.authToken
 
@@ -62,8 +62,17 @@ class AdminServer:
 
         return headers, body
 
-    def getReception(self, id):
-        return self.request(self.protocol.receptionUrl + "/" + str(id), "GET")
+    def getReception(self, receptionId):
+        return self.request(self.protocol.receptionUrl + "/" + str(receptionId), "GET")
+
+    def getReceptionList(self):
+        return self.request(self.protocol.receptionUrl, "GET")
 
     def createReception(self, params):
         return self.request(self.protocol.receptionUrl, "PUT", params)
+
+    def deleteReception(self, receptionId):
+        return self.request(self.protocol.receptionUrl + "/" + str(receptionId), "DELETE")
+
+    def updateReception(self, receptionId, param):
+        return self.request(self.protocol.receptionUrl + "/" + str(receptionId), "POST", param)
