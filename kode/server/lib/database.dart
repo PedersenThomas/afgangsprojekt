@@ -51,8 +51,8 @@ class Database {
       if(rows.length != 1) {
         return null;
       } else {
-        Row data = rows.first;
-        return new Reception(data.id, data.full_name, data.uri, JSON.decode(data.attributes), data.extradatauri, data.enabled);
+        Row row = rows.first;
+        return new Reception(row.id, row.full_name, row.uri, JSON.decode(row.attributes), row.extradatauri, row.enabled);
       }
     });
   }
@@ -117,6 +117,214 @@ class Database {
 
     Map parameters = {'id': id};
     return execute(sql, parameters);
+  }
+  
+  /************************************************
+   ****************** Contact *********************
+  */
+  
+  Future<Contact> getContact(int id) {
+    String sql = '''
+      SELECT id, full_name, contact_type, enabled
+      FROM contacts
+      WHERE id = @id
+    ''';
+    
+    Map parameters = {'id': id};
+    
+    return query(sql, parameters).then((rows) {
+      if(rows.length != 1) {
+        return null;
+      } else {
+        Row row = rows.first;
+        return new Contact(row.id, row.full_name, row.contact_type, row.enabled);
+      }
+    });
+  }
+  
+  Future<List<Contact>> getContactList() {
+    String sql = '''
+      SELECT id, full_name, contact_type, enabled
+      FROM contacts
+    ''';
+
+    return query(sql).then((rows) {
+      List<Contact> contacts = new List<Contact>();
+      for(var row in rows) {
+        contacts.add(new Contact(row.id, row.full_name, row.contact_type, row.enabled));
+      }
+      return contacts;
+    });
+  }
+  
+  Future<int> createContact(String fullName, String contact_type, bool enabled) {
+    String sql = '''
+        INSERT INTO contacts (full_name, contact_type, enabled)
+        VALUES (@full_name, @contact_type, @enabled)
+        RETURNING id;
+      ''';
+
+      Map parameters =
+        {'full_name'    : fullName,
+         'contact_type' : contact_type,
+         'enabled'      : enabled};
+      
+    return query(sql, parameters).then((rows) {
+      return rows.first.id;
+    });
+  }
+  
+  Future<int> updateContact(int id, String fullName, String contact_type, bool enabled) {
+    String sql = '''
+        UPDATE contacts
+        SET full_name=@full_name, contact_type=@contact_type, enabled=@enabled
+        WHERE id=@id;
+      ''';
+
+    Map parameters =
+      {'full_name'    : fullName,
+       'contact_type' : contact_type,
+       'enabled'      : enabled,
+       'id'           : id};
+      
+    return execute(sql, parameters);
+  }
+
+  Future<int> deleteContact(int id) {
+    String sql = '''
+        DELETE FROM contacts
+        WHERE id=@id;
+      ''';
+
+    Map parameters = {'id': id};
+    return execute(sql, parameters);
+  }  
+  
+  /************************************************
+   ************ Reception Contacts ****************
+   */
+  
+  Future<ReceptionContact> getReceptionContact(int receptionId, int contactId) {
+    String sql = '''
+      SELECT reception_id, contact_id, wants_messages, distribution_list_id, attributes, enabled
+      FROM reception_contacts
+      WHERE reception_id = @reception_id AND contact_id = @contact_id
+    ''';
+    
+    Map parameters = 
+      {'reception_id': receptionId,
+       'contact_id': contactId};
+    
+    return query(sql, parameters).then((rows) {
+      if(rows.length != 1) {
+        return null;
+      } else {
+        Row row = rows.first;
+        return new ReceptionContact(
+            row.reception_id, 
+            row.contact_id, 
+            row.wants_messages,
+            row.distribution_list_id,
+            row.attributes == null ? {} : JSON.decode(row.attributes),
+            row.enabled);
+      }
+    });
+  }
+  
+  Future<List<ReceptionContact>> getReceptionContactList(int receptionId) {
+    String sql = '''
+      SELECT reception_id, contact_id, wants_messages, distribution_list_id, attributes, enabled
+      FROM reception_contacts
+      WHERE reception_id = @reception_id
+    ''';
+    
+    Map parameters = {'reception_id': receptionId};
+
+    return query(sql, parameters).then((rows) {
+      List<ReceptionContact> receptions = new List<ReceptionContact>();
+      for(var row in rows) {
+        receptions.add(new ReceptionContact(
+            row.reception_id, 
+            row.contact_id, 
+            row.wants_messages,
+            row.distribution_list_id,
+            row.attributes == null ? {} : JSON.decode(row.attributes),
+            row.enabled));
+      }
+      return receptions;
+    });
+  }
+  
+  Future<int> createReceptionContact(int receptionId, int contactId, bool wantMessages, int distributionListId, Map attributes, bool enabled) {
+    String sql = '''
+        INSERT INTO reception_contacts (reception_id, contact_id, wants_messages, distribution_list_id, attributes, enabled)
+        VALUES (@reception_id, @contact_id, @wants_messages, @distribution_list_id, @attributes, @enabled);
+      ''';
+
+      Map parameters =
+        {'reception_id'         : receptionId,
+         'contact_id'           : contactId,
+         'wants_messages'       : wantMessages,
+         'distribution_list_id' : distributionListId,
+         'attributes'           : attributes == null ? '{}' : JSON.encode(attributes),
+         'enabled'              : enabled};
+      
+    return execute(sql, parameters);
+  }
+
+  Future<int> deleteReceptionContact(int receptionId, int contactId) {
+    String sql = '''
+        DELETE FROM reception_contacts
+        WHERE reception_id=@reception_id AND contact_id=@contact_id;
+      ''';
+
+    Map parameters = {'reception_id' : receptionId,
+                      'contact_id'   : contactId};
+    return execute(sql, parameters);
+  }
+  
+  Future<int> updateReceptionContact(int receptionId, int contactId, bool wantMessages, int distributionListId, Map attributes, bool enabled) {
+    String sql = '''
+        UPDATE reception_contacts
+        SET wants_messages=@wants_messages,
+            distribution_list_id=@distribution_list_id,
+            attributes=@attributes,
+            enabled=@enabled
+        WHERE reception_id=@reception_id AND contact_id=@contact_id;
+      ''';
+
+    Map parameters =
+      {'reception_id'         : receptionId,
+       'contact_id'           : contactId,
+       'wants_messages'       : wantMessages,
+       'distribution_list_id' : distributionListId,
+       'attributes'           : attributes == null ? '{}' : JSON.encode(attributes),
+       'enabled'              : enabled};
+      
+    return execute(sql, parameters);
+  }
+  
+  /************************************************
+   *************** Organization *******************
+   */
+  
+  Future<Organization> getOrganization(int id) {
+    String sql = '''
+      SELECT id, full_name
+      FROM organizations
+      WHERE id = @id
+    ''';
+    
+    Map parameters = {'id': id};
+    
+    return query(sql, parameters).then((rows) {
+      if(rows.length != 1) {
+        return null;
+      } else {
+        Row row = rows.first;
+        return new Organization(row.id, row.full_name);
+      }
+    });
   }
 }
 

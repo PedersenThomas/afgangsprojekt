@@ -10,6 +10,13 @@ import 'logger.dart';
 
 final ContentType JSON_MIME_TYPE = new ContentType('application', 'json', charset: 'UTF-8');
 
+class HttpMethod {
+  static const String GET = 'GET';
+  static const String POST = 'POST';
+  static const String PUT = 'PUT';
+  static const String DELETE = 'DELETE';
+}
+
 void addCorsHeaders(HttpResponse res) {
   res.headers
     ..add("Access-Control-Allow-Origin", "*")
@@ -118,7 +125,7 @@ Future Unauthorized(HttpRequest request) {
 }
 
 Future writeAndCloseJson(HttpRequest request, String body) {
-  logger.debug('Url: "${request.uri}" Response "$body"');
+  logger.debug('${request.response.statusCode} ${request.uri} body:"$body"');
   
   addCorsHeaders(request.response);
   request.response.headers.contentType = JSON_MIME_TYPE;

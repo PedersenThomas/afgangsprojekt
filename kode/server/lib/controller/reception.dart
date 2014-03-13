@@ -1,3 +1,5 @@
+library receptionController;
+
 import 'dart:io';
 import 'dart:convert';
 
@@ -10,7 +12,6 @@ import '../view/reception.dart';
 
 class ReceptionController {
   Database db;
-  String authorizedGroup = '';
   
   ReceptionController(Database this.db);
   
@@ -25,19 +26,19 @@ class ReceptionController {
         return writeAndCloseJson(request, JSON.encode(receptionAsJson(reception)));
       }
     }).catchError((error) {
-      String body = '$error';
-      writeAndCloseJson(request, body);
+      logger.error('get reception Error: "$error"');
+      Internal_Error(request);
     });
   }
   
   void getReceptionList(HttpRequest request) {      
-      db.getReceptionList().then((List<Reception> list) {
-        return writeAndCloseJson(request, JSON.encode({'receptions':listReceptionAsJson(list)}));
-      }).catchError((error) {
-        logger.error('$error');
-        Internal_Error(request);
-      });
-    }
+    db.getReceptionList().then((List<Reception> list) {
+      return writeAndCloseJson(request, JSON.encode({'receptions':listReceptionAsJson(list)}));
+    }).catchError((error) {
+      logger.error('get reception list Error: "$error"');
+      Internal_Error(request);
+    });
+  }
   
   void createReception(HttpRequest request) {
     extractContent(request)
@@ -57,8 +58,7 @@ class ReceptionController {
     .then((int id) => writeAndCloseJson(request, JSON.encode({'id': id})))
     .catchError((error) {
       logger.error('updateReception url: "${request.uri}" gave error "${error}"');
-      request.response.statusCode = 500;
-      writeAndCloseJson(request, JSON.encode({'status': 'Internal Server Error'}));
+      Internal_Error(request);
     });  
   }
   
@@ -67,8 +67,7 @@ class ReceptionController {
     .then((int id) => writeAndCloseJson(request, JSON.encode({'id': id})))
     .catchError((error) {
       logger.error('updateReception url: "${request.uri}" gave error "${error}"');
-      request.response.statusCode = 500;
-      writeAndCloseJson(request, JSON.encode({'status': 'Internal Server Error'}));
+      Internal_Error(request);
     });  
   }
 }
