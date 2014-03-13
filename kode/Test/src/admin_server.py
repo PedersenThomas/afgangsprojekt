@@ -6,20 +6,21 @@ import httplib2
 class ServerUnavailable(Exception):
     pass
 
-class Server401(Exception):
-    pass
-
-class Server403(Exception):
-    pass
-
-class Server404(Exception):
-    pass
-
-class Server500(Exception):
-    pass
-
 class ServerBadStatus(Exception):
     pass
+
+class Server401(ServerBadStatus):
+    pass
+
+class Server403(ServerBadStatus):
+    pass
+
+class Server404(ServerBadStatus):
+    pass
+
+class Server500(ServerBadStatus):
+    pass
+
 
 class AdminServer:
     class protocol:
@@ -99,3 +100,19 @@ class AdminServer:
     def getReceptionContact(self, receptionId, contactId):
         return self.request(self.protocol.receptionUrl + "/" + str(receptionId) +
                             self.protocol.contactUrl + "/" + str(contactId), "GET")
+
+    def getReceptionContactList(self, receptionId):
+        return self.request(self.protocol.receptionUrl + "/" + str(receptionId) +
+                            self.protocol.contactUrl, "GET")
+
+    def createReceptionContact(self, receptionId, contactId, params):
+        return self.request(self.protocol.receptionUrl + "/" + str(receptionId) +
+                            self.protocol.contactUrl + "/" + str(contactId), "PUT", params)
+
+    def updateReceptionContact(self, receptionId, contactId, params):
+        return self.request(self.protocol.receptionUrl + "/" + str(receptionId) +
+                            self.protocol.contactUrl + "/" + str(contactId), "POST", params)
+
+    def deleteReceptionContact(self, receptionId, contactId):
+        return self.request(self.protocol.receptionUrl + "/" + str(receptionId) +
+                            self.protocol.contactUrl + "/" + str(contactId), "DELETE")

@@ -38,7 +38,7 @@ class ContactTests(unittest.TestCase):
         schema = self.contactSchema
         utilities.varifySchema(schema, jsonBody)
 
-    def test_getReceptionList(self):
+    def test_getContactList(self):
         headers, body = self.adminServer.getContactList()
         jsonBody = json.loads(body)
         schema = self.contactListSchema
@@ -68,7 +68,7 @@ class ContactTests(unittest.TestCase):
             self.adminServer.deleteContact(contactId)
         except Exception as e:
             self.log.info('Contact: ' + str(contact) + ' Json: ' + str(jsonBody))
-            self.fail('Creating a new reception did not give the expected output. Response: "' +
+            self.fail('Creating a new contact did not give the expected output. Response: "' +
                       str(jsonBody) + '" Error ' + str(e))
 
     def test_updateNewContact(self):
@@ -78,12 +78,12 @@ class ContactTests(unittest.TestCase):
             'enabled': False
         }
         try:
-            #First try make a new reception.
+            #First try make a new contact.
             body = self.adminServer.createContact(contact)[1]
             jsonBody = json.loads(body)
             contactId = jsonBody['id']
 
-            #Get the information the server has saved for that reception.
+            #Get the information the server has saved for that contact.
             body = self.adminServer.getContact(contactId)[1]
             newContact = json.loads(body)
 
@@ -94,10 +94,10 @@ class ContactTests(unittest.TestCase):
             #Do the changes to the object.
             newContact['full_name'] = newName
 
-            #Update the reception.
+            #Update the contact.
             self.adminServer.updateContact(contactId, newContact)
 
-            #Fetch the reception and see if the change has gone through.
+            #Fetch the contact and see if the change has gone through.
             body = self.adminServer.getContact(contactId)[1]
             updatedContact = json.loads(body)
 
@@ -105,6 +105,6 @@ class ContactTests(unittest.TestCase):
             assert updatedContact['full_name'] == newName
 
             #Clean up.
-            self.adminServer.deleteReception(contactId)
+            self.adminServer.deleteContact(contactId)
         except Exception, e:
             self.fail('Response: "' + str(jsonBody) + '" Error: ' + str(e))
