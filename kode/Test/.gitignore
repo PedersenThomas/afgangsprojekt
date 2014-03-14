@@ -5,4 +5,5 @@
 *.pyc
 
 #Test specific
-/src/.cache
+.cache
+results.xml
