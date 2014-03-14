@@ -16,9 +16,10 @@ class ReceptionController {
   ReceptionController(Database this.db);
   
   void getReception(HttpRequest request) {
+    int organizationId = pathParameter(request.uri, 'organization');
     int receptionId = pathParameter(request.uri, 'reception');
     
-    db.getReception(receptionId).then((Reception reception) {
+    db.getReception(organizationId, receptionId).then((Reception reception) {
       if(reception == null) {
         request.response.statusCode = 404;
         return writeAndCloseJson(request, JSON.encode({}));
@@ -31,8 +32,10 @@ class ReceptionController {
     });
   }
   
-  void getReceptionList(HttpRequest request) {      
-    db.getReceptionList().then((List<Reception> list) {
+  void getReceptionList(HttpRequest request) {
+    int organizationId = pathParameter(request.uri, 'organization');
+    
+    db.getReceptionList(organizationId).then((List<Reception> list) {
       return writeAndCloseJson(request, JSON.encode({'receptions':listReceptionAsJson(list)}));
     }).catchError((error) {
       logger.error('get reception list Error: "$error"');
@@ -41,9 +44,11 @@ class ReceptionController {
   }
   
   void createReception(HttpRequest request) {
+    int organizationId = pathParameter(request.uri, 'organization');
+    
     extractContent(request)
     .then(JSON.decode)
-    .then((Map data) => db.createReception(data['full_name'], data['uri'], data['attributes'], data['extradatauri'], data['enabled']))
+    .then((Map data) => db.createReception(organizationId, data['full_name'], data['uri'], data['attributes'], data['extradatauri'], data['enabled']))
     .then((int id) => writeAndCloseJson(request, JSON.encode({'id': id})))
     .catchError((error) {
       logger.error(error);
@@ -52,9 +57,12 @@ class ReceptionController {
   }
   
   void updateReception(HttpRequest request) {
+    int organizationId = pathParameter(request.uri, 'organization');
+    int receptionId = pathParameter(request.uri, 'reception');
+    
     extractContent(request)
     .then(JSON.decode)
-    .then((Map data) => db.updateReception(pathParameter(request.uri, 'reception'), data['full_name'], data['uri'], data['attributes'], data['extradatauri'], data['enabled']))
+    .then((Map data) => db.updateReception(organizationId, receptionId, data['full_name'], data['uri'], data['attributes'], data['extradatauri'], data['enabled']))
     .then((int id) => writeAndCloseJson(request, JSON.encode({'id': id})))
     .catchError((error) {
       logger.error('updateReception url: "${request.uri}" gave error "${error}"');
@@ -63,10 +71,13 @@ class ReceptionController {
   }
   
   void deleteReception(HttpRequest request) {
-    db.deleteReception(pathParameter(request.uri, 'reception'))
+    int organizationId = pathParameter(request.uri, 'organization');
+    int receptionId = pathParameter(request.uri, 'reception');
+    
+    db.deleteReception(organizationId, receptionId)
     .then((int id) => writeAndCloseJson(request, JSON.encode({'id': id})))
     .catchError((error) {
-      logger.error('updateReception url: "${request.uri}" gave error "${error}"');
+      logger.error('deleteReception url: "${request.uri}" gave error "${error}"');
       Internal_Error(request);
     });  
   }

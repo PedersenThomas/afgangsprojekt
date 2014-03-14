@@ -37,85 +37,96 @@ class Database {
   Future<int> execute(String sql, [Map parameters = null]) => pool.connect()
     .then((Connection conn) => conn.execute(sql, parameters)
     .whenComplete(() => conn.close()));
+  
+  /************************************************
+   ***************** Reception ********************
+  */
 
-  Future<Reception> getReception(int id) {
+  Future<Reception> getReception(int organizationId, int receptionId) {
     String sql = '''
-      SELECT id, full_name, uri, attributes, extradatauri, enabled
+      SELECT id, organization_id, full_name, uri, attributes, extradatauri, enabled
       FROM receptions
-      WHERE id = @id
+      WHERE id = @id AND organization_id=@organization_id
     ''';
     
-    Map parameters = {'id': id};
+    Map parameters = 
+      {'id': receptionId,
+       'organization_id': organizationId};
     
     return query(sql, parameters).then((rows) {
       if(rows.length != 1) {
         return null;
       } else {
         Row row = rows.first;
-        return new Reception(row.id, row.full_name, row.uri, JSON.decode(row.attributes), row.extradatauri, row.enabled);
+        return new Reception(row.id, row.organization_id, row.full_name, row.uri, JSON.decode(row.attributes), row.extradatauri, row.enabled);
       }
     });
   }
   
-  Future<List<Reception>> getReceptionList() {
+  Future<List<Reception>> getReceptionList(int organizationId) {
     String sql = '''
-      SELECT id, full_name, uri, attributes, extradatauri, enabled
+      SELECT id, organization_id, full_name, uri, attributes, extradatauri, enabled
       FROM receptions
+      WHERE organization_id=@organization_id
     ''';
+    
+    Map parameters = {'organization_id': organizationId};
 
-    return query(sql).then((rows) {
+    return query(sql, parameters).then((rows) {
       List<Reception> receptions = new List<Reception>();
       for(var row in rows) {
-        receptions.add(new Reception(row.id, row.full_name, row.uri, JSON.decode(row.attributes), row.extradatauri, row.enabled));
+        receptions.add(new Reception(row.id, row.organization_id, row.full_name, row.uri, JSON.decode(row.attributes), row.extradatauri, row.enabled));
       }
       return receptions;
     });
   }
   
-  Future<int> createReception(String fullName, String uri, Map attributes, String extradatauri, bool enabled) {
+  Future<int> createReception(int organizationId, String fullName, String uri, Map attributes, String extradatauri, bool enabled) {
     String sql = '''
-        INSERT INTO receptions (full_name, uri, attributes, extradatauri, enabled)
-        VALUES (@full_name, @uri, @attributes, @extradatauri, @enabled)
-        RETURNING id;
-      ''';
+      INSERT INTO receptions (organization_id, full_name, uri, attributes, extradatauri, enabled)
+      VALUES (@organization_id, @full_name, @uri, @attributes, @extradatauri, @enabled)
+      RETURNING id;
+    ''';
 
-      Map parameters =
-        {'full_name'    : fullName,
-         'uri'          : uri,
-         'attributes'   : attributes == null ? '{}' : JSON.encode(attributes),
-         'extradatauri' : extradatauri,
-         'enabled'      : enabled};
+    Map parameters =
+      {'organization_id': organizationId,
+       'full_name'      : fullName,
+       'uri'            : uri,
+       'attributes'     : attributes == null ? '{}' : JSON.encode(attributes),
+       'extradatauri'   : extradatauri,
+       'enabled'        : enabled};
       
-    return query(sql, parameters).then((rows) {
-      return rows.first.id;
-    });
+    return query(sql, parameters).then((rows) => rows.first.id);
   }
   
-  Future<int> updateReception(int id, String fullName, String uri, Map attributes, String extradatauri, bool enabled) {
+  Future<int> updateReception(int organizationId, int id, String fullName, String uri, Map attributes, String extradatauri, bool enabled) {
     String sql = '''
-        UPDATE receptions
-        SET full_name=@full_name, uri=@uri, attributes=@attributes, extradatauri=@extradatauri, enabled=@enabled
-        WHERE id=@id;
-      ''';
+      UPDATE receptions
+      SET full_name=@full_name, uri=@uri, attributes=@attributes, extradatauri=@extradatauri, enabled=@enabled
+      WHERE id=@id AND organization_id=@organization_id;
+    ''';
 
-      Map parameters =
-        {'full_name'    : fullName,
-         'uri'          : uri,
-         'attributes'   : attributes == null ? '{}' : JSON.encode(attributes),
-         'extradatauri' : extradatauri,
-         'enabled'      : enabled,
-         'id'           : id};
+    Map parameters =
+      {'full_name'      : fullName,
+       'uri'            : uri,
+       'attributes'     : attributes == null ? '{}' : JSON.encode(attributes),
+       'extradatauri'   : extradatauri,
+       'enabled'        : enabled,
+       'id'             : id,
+       'organization_id': organizationId};
       
     return execute(sql, parameters);
   }
 
-  Future<int> deleteReception(int id) {
+  Future<int> deleteReception(int organizationId, int id) {
     String sql = '''
         DELETE FROM receptions
-        WHERE id=@id;
+        WHERE id=@id AND organization_id=@organization_id;
       ''';
 
-    Map parameters = {'id': id};
+    Map parameters = 
+      {'id': id,
+       'organization_id': organizationId};
     return execute(sql, parameters);
   }
   
@@ -123,14 +134,14 @@ class Database {
    ****************** Contact *********************
   */
   
-  Future<Contact> getContact(int id) {
+  Future<Contact> getContact(int contactId) {
     String sql = '''
       SELECT id, full_name, contact_type, enabled
       FROM contacts
       WHERE id = @id
     ''';
     
-    Map parameters = {'id': id};
+    Map parameters = {'id': contactId};
     
     return query(sql, parameters).then((rows) {
       if(rows.length != 1) {
@@ -159,44 +170,42 @@ class Database {
   
   Future<int> createContact(String fullName, String contact_type, bool enabled) {
     String sql = '''
-        INSERT INTO contacts (full_name, contact_type, enabled)
-        VALUES (@full_name, @contact_type, @enabled)
-        RETURNING id;
-      ''';
+      INSERT INTO contacts (full_name, contact_type, enabled)
+      VALUES (@full_name, @contact_type, @enabled)
+      RETURNING id;
+    ''';
 
-      Map parameters =
-        {'full_name'    : fullName,
-         'contact_type' : contact_type,
-         'enabled'      : enabled};
+    Map parameters =
+      {'full_name'    : fullName,
+       'contact_type' : contact_type,
+       'enabled'      : enabled};
       
-    return query(sql, parameters).then((rows) {
-      return rows.first.id;
-    });
+    return query(sql, parameters).then((rows) => rows.first.id);
   }
   
-  Future<int> updateContact(int id, String fullName, String contact_type, bool enabled) {
+  Future<int> updateContact(int contactId, String fullName, String contact_type, bool enabled) {
     String sql = '''
-        UPDATE contacts
-        SET full_name=@full_name, contact_type=@contact_type, enabled=@enabled
-        WHERE id=@id;
-      ''';
+      UPDATE contacts
+      SET full_name=@full_name, contact_type=@contact_type, enabled=@enabled
+      WHERE id=@id;
+    ''';
 
     Map parameters =
       {'full_name'    : fullName,
        'contact_type' : contact_type,
        'enabled'      : enabled,
-       'id'           : id};
+       'id'           : contactId};
       
     return execute(sql, parameters);
   }
 
-  Future<int> deleteContact(int id) {
+  Future<int> deleteContact(int contactId) {
     String sql = '''
         DELETE FROM contacts
         WHERE id=@id;
       ''';
 
-    Map parameters = {'id': id};
+    Map parameters = {'id': contactId};
     return execute(sql, parameters);
   }  
   
@@ -257,26 +266,26 @@ class Database {
   
   Future<int> createReceptionContact(int receptionId, int contactId, bool wantMessages, int distributionListId, Map attributes, bool enabled) {
     String sql = '''
-        INSERT INTO reception_contacts (reception_id, contact_id, wants_messages, distribution_list_id, attributes, enabled)
-        VALUES (@reception_id, @contact_id, @wants_messages, @distribution_list_id, @attributes, @enabled);
-      ''';
+      INSERT INTO reception_contacts (reception_id, contact_id, wants_messages, distribution_list_id, attributes, enabled)
+      VALUES (@reception_id, @contact_id, @wants_messages, @distribution_list_id, @attributes, @enabled);
+    ''';
 
-      Map parameters =
-        {'reception_id'         : receptionId,
-         'contact_id'           : contactId,
-         'wants_messages'       : wantMessages,
-         'distribution_list_id' : distributionListId,
-         'attributes'           : attributes == null ? '{}' : JSON.encode(attributes),
-         'enabled'              : enabled};
-      
+    Map parameters =
+      {'reception_id'         : receptionId,
+       'contact_id'           : contactId,
+       'wants_messages'       : wantMessages,
+       'distribution_list_id' : distributionListId,
+       'attributes'           : attributes == null ? '{}' : JSON.encode(attributes),
+       'enabled'              : enabled};
+    
     return execute(sql, parameters);
   }
 
   Future<int> deleteReceptionContact(int receptionId, int contactId) {
     String sql = '''
-        DELETE FROM reception_contacts
-        WHERE reception_id=@reception_id AND contact_id=@contact_id;
-      ''';
+      DELETE FROM reception_contacts
+      WHERE reception_id=@reception_id AND contact_id=@contact_id;
+    ''';
 
     Map parameters = {'reception_id' : receptionId,
                       'contact_id'   : contactId};
@@ -285,13 +294,13 @@ class Database {
   
   Future<int> updateReceptionContact(int receptionId, int contactId, bool wantMessages, int distributionListId, Map attributes, bool enabled) {
     String sql = '''
-        UPDATE reception_contacts
-        SET wants_messages=@wants_messages,
-            distribution_list_id=@distribution_list_id,
-            attributes=@attributes,
-            enabled=@enabled
-        WHERE reception_id=@reception_id AND contact_id=@contact_id;
-      ''';
+      UPDATE reception_contacts
+      SET wants_messages=@wants_messages,
+          distribution_list_id=@distribution_list_id,
+          attributes=@attributes,
+          enabled=@enabled
+      WHERE reception_id=@reception_id AND contact_id=@contact_id;
+    ''';
 
     Map parameters =
       {'reception_id'         : receptionId,
@@ -308,14 +317,14 @@ class Database {
    *************** Organization *******************
    */
   
-  Future<Organization> getOrganization(int id) {
+  Future<Organization> getOrganization(int organizationId) {
     String sql = '''
       SELECT id, full_name
       FROM organizations
       WHERE id = @id
     ''';
     
-    Map parameters = {'id': id};
+    Map parameters = {'id': organizationId};
     
     return query(sql, parameters).then((rows) {
       if(rows.length != 1) {
@@ -325,6 +334,57 @@ class Database {
         return new Organization(row.id, row.full_name);
       }
     });
+  }
+  
+  Future<List<Organization>> getOrganizationList() {
+    String sql = '''
+      SELECT id, full_name
+      FROM organizations
+    ''';
+
+    return query(sql).then((rows) {
+      List<Organization> organizations = new List<Organization>();
+      for(var row in rows) {
+        organizations.add(new Organization(row.id, row.full_name));
+      }
+      return organizations;
+    });
+  }
+  
+  Future<int> createOrganization(String fullName) {
+    String sql = '''
+      INSERT INTO organizations (full_name)
+      VALUES (@full_name)
+      RETURNING id;
+    ''';
+
+    Map parameters = {'full_name' : fullName};
+      
+    return query(sql, parameters).then((rows) => rows.first.id);
+  }
+  
+  Future<int> updateOrganization(int organizationId, String fullName) {
+    String sql = '''
+      UPDATE organizations
+      SET full_name=@full_name
+      WHERE id=@id;
+    ''';
+
+    Map parameters =
+      {'full_name'    : fullName,
+       'id'           : organizationId};
+      
+    return execute(sql, parameters);
+  }
+
+  Future<int> deleteOrganization(int organizationId) {
+    String sql = '''
+      DELETE FROM organizations
+      WHERE id=@id;
+    ''';
+
+    Map parameters = {'id': organizationId};
+    return execute(sql, parameters);
   }
 }
 

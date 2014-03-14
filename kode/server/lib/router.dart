@@ -15,8 +15,8 @@ import 'utilities/logger.dart';
 final Pattern anyThing = new UrlPattern(r'/(.*)');
 final Pattern organizationIdUrl = new UrlPattern(r'/organization/(\d+)');
 final Pattern organizationUrl = new UrlPattern(r'/organization(/?)');
-final Pattern receptionIdUrl = new UrlPattern(r'/reception/(\d+)');
-final Pattern receptionUrl = new UrlPattern(r'/reception(/?)');
+final Pattern receptionIdUrl = new UrlPattern(r'/organization/(\d+)/reception/(\d+)');
+final Pattern receptionUrl = new UrlPattern(r'/organization/(\d+)/reception(/?)');
 final Pattern contactIdUrl = new UrlPattern(r'/contact/(\d+)');
 final Pattern contactUrl = new UrlPattern(r'/contact(/?)');
 final Pattern receptionContactIdUrl = new UrlPattern(r'/reception/(\d+)/contact/(\d+)');
@@ -45,13 +45,18 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     ..serve(contactIdUrl, method: HttpMethod.POST)  .listen(contact.updateContact)
     ..serve(contactIdUrl, method: HttpMethod.DELETE).listen(contact.deleteContact)
 
-    ..serve(receptionContactUrl, method: HttpMethod.GET).listen(receptionContact.getReceptionContactList)
+    ..serve(receptionContactUrl, method: HttpMethod.GET)  .listen(receptionContact.getReceptionContactList)
     ..serve(receptionContactIdUrl, method: HttpMethod.PUT).listen(receptionContact.createReceptionContact)
     ..serve(receptionContactIdUrl, method: HttpMethod.GET)   .listen(receptionContact.getReceptionContact)
     ..serve(receptionContactIdUrl, method: HttpMethod.POST)  .listen(receptionContact.updateReceptionContact)
     ..serve(receptionContactIdUrl, method: HttpMethod.DELETE).listen(receptionContact.deleteReceptionContact)
     
-    ..serve(organizationIdUrl, method: HttpMethod.GET).listen(organization.getOrganization)
+    ..serve(organizationUrl, method: HttpMethod.GET).listen(organization.getOrganizationList)
+    ..serve(organizationUrl, method: HttpMethod.PUT).listen(organization.createOrganization)
+    ..serve(organizationIdUrl, method: HttpMethod.GET)   .listen(organization.getOrganization)
+    ..serve(organizationIdUrl, method: HttpMethod.POST)  .listen(organization.updateOrganization)
+    ..serve(organizationIdUrl, method: HttpMethod.DELETE).listen(organization.deleteOrganization)
+    
     ..defaultStream.listen(NOTFOUND);
 }
 
