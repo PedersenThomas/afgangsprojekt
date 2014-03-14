@@ -7,16 +7,16 @@ import utilities
 import config
 import logging
 
+
 class ContactTests(unittest.TestCase):
     adminServer = admin_server.AdminServer(uri=config.adminUrl, authToken=config.authToken)
-    log         = None
 
     contactSchema = \
         {'type': 'object',
-         'properties': {'id' :
+         'properties': {'id':
                              {'type': 'integer',
                               'required': True,
-			                  'minimum': 0},
+                              'minimum': 0},
                         'full_name':
                              {'type': 'string',
                               'required': True}}}
@@ -28,7 +28,7 @@ class ContactTests(unittest.TestCase):
                                      'required': True,
                                      'items': contactSchema}}}
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(ContactTests, self).__init__(*args, **kwargs)
         self.log = logging.getLogger(self.__class__.__name__)
 
@@ -36,13 +36,13 @@ class ContactTests(unittest.TestCase):
         headers, body = self.adminServer.getContact(1)
         jsonBody = json.loads(body)
         schema = self.contactSchema
-        utilities.varifySchema(schema, jsonBody)
+        utilities.verifySchema(schema, jsonBody)
 
     def test_getContactList(self):
         headers, body = self.adminServer.getContactList()
         jsonBody = json.loads(body)
         schema = self.contactListSchema
-        utilities.varifySchema(schema, jsonBody)
+        utilities.verifySchema(schema, jsonBody)
 
     def test_createNewContact(self):
         contact = {
@@ -59,7 +59,7 @@ class ContactTests(unittest.TestCase):
             headers, body = self.adminServer.getContact(contactId)
             jsonBody = json.loads(body)
             schema = self.contactSchema
-            utilities.varifySchema(schema, jsonBody)
+            utilities.verifySchema(schema, jsonBody)
 
             assert contact['full_name'] == jsonBody['full_name'], 'full_name in Contact and response is not equal'
             assert contact['contact_type'] == jsonBody['contact_type'], 'contact_type in Contact and response is not equal.'
@@ -77,6 +77,7 @@ class ContactTests(unittest.TestCase):
             'contact_type': 'human',
             'enabled': False
         }
+        jsonBody = {'Status': 'Uninitialized'}
         try:
             #First try make a new contact.
             body = self.adminServer.createContact(contact)[1]

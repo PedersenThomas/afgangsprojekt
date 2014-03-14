@@ -4,20 +4,19 @@ import unittest
 import json
 import admin_server
 import utilities
-from jsonschema import Draft3Validator
-from jsonschema.exceptions import SchemaError, ValidationError
 import config
+
 
 class ReceptionTests(unittest.TestCase):
     adminServer = admin_server.AdminServer(uri=config.adminUrl, authToken=config.authToken)
 
-    receptionSchema = \
-        {'type': 'object',
-         'properties': {'id' :
-                             {'type': 'integer',
-			                  'minimum': 0},
-                         'full_name':
-                             {'type': 'string'}}}
+    receptionSchema = {'type': 'object',
+                       'properties':
+                           {'id':
+                                {'type': 'integer',
+                                 'minimum': 0},
+                            'full_name':
+                                {'type': 'string'}}}
 
     receptionListSchema = {'type': 'object',
                            'properties':
@@ -27,68 +26,76 @@ class ReceptionTests(unittest.TestCase):
                                      'items': receptionSchema}}}
 
     def test_getFirstReception(self):
-        headers, body = self.adminServer.getReception(1)
+        organizationId = 1
+        receptionId = 1
+        headers, body = self.adminServer.getReception(organizationId, receptionId)
         jsonBody = json.loads(body)
         schema = self.receptionSchema
-        utilities.varifySchema(schema, jsonBody)
+        utilities.verifySchema(schema, jsonBody)
 
     def test_getReceptionList(self):
-        headers, body = self.adminServer.getReceptionList()
+        organizationId = 1
+        headers, body = self.adminServer.getReceptionList(organizationId)
         jsonBody = json.loads(body)
         schema = self.receptionListSchema
-        utilities.varifySchema(schema, jsonBody)
+        utilities.verifySchema(schema, jsonBody)
 
     def test_createNewReception(self):
+        organizationId = 1
         reception = {
             'full_name': 'TestMania',
             'uri': utilities.randomLetters(10),
             'attributes': {},
             'enabled': False
         }
-        headers, body = self.adminServer.createReception(reception)
+        headers, body = self.adminServer.createReception(organizationId, reception)
         jsonBody = json.loads(body)
         try:
-            assert jsonBody['id'] > 0
+            receptionId = jsonBody['id']
 
-            self.adminServer.deleteReception(jsonBody['id'])
+            self.adminServer.deleteReception(organizationId, receptionId)
         except Exception, e:
             self.fail('Creating a new reception did not give the expected output. Response: "' +
                       str(jsonBody) + '" Error' + str(e))
 
     def test_updateNewReception(self):
+        organizationId = 1
         reception = {
             'full_name': 'TestMania',
             'uri': utilities.randomLetters(10),
             'attributes': {},
             'enabled': False
         }
+        jsonBody = {'Status': 'Uninitialized'}
         try:
+            FieldName = 'full_name'
+
             #First try make a new reception.
-            body = self.adminServer.createReception(reception)[1]
+            body = self.adminServer.createReception(organizationId, reception)[1]
             jsonBody = json.loads(body)
             receptionId = jsonBody['id']
 
             #Get the information the server has saved for that reception.
-            body = self.adminServer.getReception(receptionId)[1]
+            body = self.adminServer.getReception(organizationId, receptionId)[1]
             reception = json.loads(body)
 
             #Make sure the precondition is right.
-            assert reception['full_name'] == 'TestMania'
+            assert reception[FieldName] == 'TestMania'
 
             #Do the changes to the object.
-            reception['full_name'] = 'TestManiaUpdated'
+            reception[FieldName] = 'TestManiaUpdated'
 
             #Update the reception.
-            self.adminServer.updateReception(receptionId, reception)
+            self.adminServer.updateReception(organizationId, receptionId, reception)
 
             #Fetch the reception and see if the change has gone through.
-            body = self.adminServer.getReception(receptionId)[1]
+            body = self.adminServer.getReception(organizationId, receptionId)[1]
             reception = json.loads(body)
 
             #Make sure the postcondition is right.
-            assert reception['full_name'] == 'TestManiaUpdated'
+            assert reception[FieldName] == 'TestManiaUpdated'
 
             #Clean up.
-            self.adminServer.deleteReception(receptionId)
+            self.adminServer.deleteReception(organizationId, receptionId)
         except Exception, e:
             self.fail('Response: "' + str(jsonBody) + '" Error: ' + str(e))
