@@ -1,5 +1,5 @@
 -- Mål --
-   Jeg skal have et system oppe så, man kan ændre i information for Organizationer, receptioner, kontaktpersoner, telefonnumre, endpoints.
+   Jeg skal have et system oppe så, man kan ændre i informationen for Organizationer, receptioner, kontaktpersoner, telefonnumre, endpoints.
    Man skal kunne sætte dialplans op, så de er klar til at blive skrevet til Freeswitch.
 
 - Bonus
@@ -13,6 +13,20 @@ Uge 1
   Kom godt igang med serveren. Man kan hente en reception, og lave en ny.
   Jeg har ikke fået lavet noget arbejde på klienten.
 
+Uge 2
+  --På planen
+  Kom lidt igang med at skrive Use cases, men fik ikke rigtig skrevet noget på det.
+  Jeg fik lavet en updatering til databasen, som planlagt, men havde ikke gjort mig helt klar hvor meget der skulle være i den tabel, sååå den blev meget løs.
+
+  --Uden for planen
+  Jeg fik skrevet en god del på serveren, så nu kan man hente, updatere, oprette, og slette Organization, Reception, kontaktpersoner, medarbejdere.
+  Jeg fik skrevet et par tests til de før nævnte interfaces.
+
+  --Den næste uge.
+  Fordi jeg nu har fået så godt styr på serveren, er det nu tid til at lave noget på klienten.
+    Jeg fik snakket med Thomas og Trine omkring noget design, sååå det kunne være jeg skulle lave et billede, som viser et mockup.
+    Jeg satser på at implementere det vi snakkede om. så man kan oprette Organizationer, receptioner og kontaktpersoner. Og få linket dem sammen, og have mulighed for at updatere dem.
+  På mandag skal jeg arbejde på en opgave som min vejleder fandt frem, som ikke har nogen direkte betydning for mit projekt.
 
 -- Forvented --
 
