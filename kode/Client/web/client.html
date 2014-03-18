@@ -3,18 +3,92 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Client</title>
-    <link rel="stylesheet" href="client.css">
+    <title>Klient</title>
+    <link rel="stylesheet" href="style/client.css">
+    <link rel="stylesheet" href="style/navigation.css">
+    <link rel="stylesheet" href="style/organization.css">
+    <link rel="stylesheet" href="style/reception.css">
+    <link rel="stylesheet" href="style/contact.css">
   </head>
   <body>
+    <!--
     <h1>Client</h1>
     
     <p>Hello world from Dart!</p>
     
     <div id="sample_container_id">
-      <p id="sample_text_id">Click me!</p>
+      <p id="sample_text_id">Opret din hel egen reception</p>
+      <label for="create-reception-name">Navn</label> <input id="create-reception-name" type="text" placeholder="Navn"/> <br>
+      <label for="create-reception-uri">Uri</label> <input id="create-reception-uri" type="text" placeholder="Uri"/> <br>
+      <label for="create-reception-extradatauri">Ekstra data</label> <input id="create-reception-extradatauri" type="text" placeholder="Url til ekstra data"/> <br>
+      <label for="create-reception-enabled">Aktiv</label> <input id="create-reception-enabled" type="checkbox"/> <br>
+      <button id="btn-create-reception">Opret</button>
     </div>
-
+     -->
+     
+    <nav id="navigation">
+      <ul>
+        <li>
+          <img id="organization-button" alt="Organisation" title="Organisationer" src="image/organization_icon.svg">
+        </li>
+        <li>
+          <img id="reception-button" alt="Reception" title="Receptioner" src="image/reception_icon.svg">
+        </li>
+        <li>
+          <img id="contact-button" alt="Kontaktpersoner" title="Kontaktpersoner" src="image/contact_icon.svg">
+        </li>
+      </ul>
+    </nav>
+    
+    <div id="page-main-screen">
+      <div id="organization-page">
+        <div id="organization-listing">
+          <input id="organization-search-box" type="search" placeholder="Søg...">
+          <ul id="organization-list"></ul>
+        </div>
+        <div id="organization-content">
+          <label for="organization-input-name">Navn</label>
+          <input id="organization-input-name" type="text">
+          <button id="organization-create">Opret</button>
+          <button id="organization-save">Gem</button>
+        </div>
+      </div>
+      
+      <div id="reception-page" class="hidden">
+        <div id="reception-listing">
+          <input id="reception-search-box" type="search" placeholder="Søg...">
+          <ul id="reception-list"></ul>
+        </div>
+        <div id="reception-content">
+          <label for="reception-input-name">Navn</label><input id="reception-input-name">
+          <label for="reception-input-uri">Uri</label><input id="reception-input-uri">          
+          <label for="reception-input-customertype">Customertype</label><input id="reception-input-customertype">
+          <label for="reception-input-greeting">Greeting</label><input id="reception-input-greeting">          
+          <label for="reception-input-other">Other</label><input id="reception-input-other">        
+          <label for="reception-input-product">Produkt</label><input id="reception-input-product"> 
+          <label for="reception-input-enabled">Aktiv</label><input id="reception-input-enabled" type="checkbox">
+          
+          <label>Addresses</label><ul id="reception-list-addresses"></ul>
+          <label>alternatenames</label><ul id="reception-list-alternatenames"></ul>
+          <label>bankinginformation</label><ul id="reception-list-bankinginformation"></ul>
+          <label>crapcallhandling</label><ul id="reception-list-crapcallhandling"></ul>
+          <label>emailaddresses</label><ul id="reception-list-emailaddresses"></ul>
+          <label>handlings</label><ul id="reception-list-handlings"></ul>
+          <label>openinghours</label><ul id="reception-list-openinghours"></ul>
+          <label>registrationnumbers</label><ul id="reception-list-registrationnumbers"></ul>
+          <label>telephonenumbers</label><ul id="reception-list-telephonenumbers"></ul>
+          <label>websites</label><ul id="reception-list-websites"></ul>
+          
+          <button id="reception-create">Opret</button>
+          <button id="reception-save">Gem</button>
+        </div>
+      </div>
+      
+      <div id="contact-page" class="hidden">
+        <button>Gem</button>
+      </div>
+    </div>
+    
     <script type="application/dart" src="client.dart"></script>
     <script src="packages/browser/dart.js"></script>
   </body>
