@@ -1,3 +1,10 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 
 body {
   /*background-color: #F8F8F8;*/
@@ -15,7 +22,9 @@ h1, p {
 /*DART STUFF*/
 
 nav#navigation {
+  
   border: solid 1px red;
+  
   left: 0%;
   top: 0%;
   width: 4%;
@@ -26,6 +35,8 @@ nav#navigation {
 #page-main-screen {
   float:left;
   width: 95%;
+  height: 100vh;
+  overflow: auto;
 }
 
 .hidden {

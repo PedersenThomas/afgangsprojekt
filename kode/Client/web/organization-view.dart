@@ -14,17 +14,23 @@ class OrganizationView {
   InputElement inputName;
   ButtonElement buttonSave;
   ButtonElement buttonCreate;
+  SearchInputElement searchBox;
+  UListElement ulReceptionList;
   
+  List<Organization> organizations = [];
   int currentOrganizationId = 0;
   
   OrganizationView(DivElement this.element) {
-    refreshList();
+    searchBox = element.querySelector('#organization-search-box');
     uiList = querySelector('#organization-list');
     inputName = element.querySelector('#organization-input-name');
     buttonSave = element.querySelector('#organization-save');
     buttonCreate = element.querySelector('#organization-create');
+    ulReceptionList =element.querySelector('#organization-reception-list');
     
     registrateEventHandlers();
+    
+    refreshList();
   }
   
   void registrateEventHandlers() {
@@ -40,15 +46,27 @@ class OrganizationView {
         //TODO visable clue that a new organization is created.
         refreshList();
         activateOrganization(json['id']);
+      }).catchError((error) {
+        print('Tried to create a new Organizaitonbut got: $error');
       });
     });
     
     bus.on(windowChanged).listen((String window) {
       element.classes.toggle('hidden', window != viewName);
     });
+    
+    searchBox.onInput.listen((_) => performSearch());
+  }
+  
+  void performSearch() {
+    String searchText = searchBox.value;
+    List<Organization> filteredList = organizations.where(
+        (Organization org) => org.full_name.toLowerCase().contains(searchText.toLowerCase())).toList();
+    renderOrganizationList(filteredList);
   }
   
   void saveChanges() {
+    //TODO Does this make sense? Remove currentOrganizationId?????
     if(currentOrganizationId > 0) {
       Map organization = {'id': currentOrganizationId,
                           'full_name': inputName.value};
@@ -65,10 +83,18 @@ class OrganizationView {
   void refreshList() {
     getOrganizationList().then((List<Organization> organizations) {
       organizations.sort((a,b) => a.full_name.compareTo(b.full_name));
-      uiList.children
-        ..clear()
-        ..addAll(organizations.map(makeOrganizationNode));
+      //TODO Skal det være her.
+      this.organizations = organizations;
+      renderOrganizationList(organizations);
+    }).catchError((error) {
+      print('Tried to fetch organization but got error: $error');
     });
+  }
+
+  void renderOrganizationList(List<Organization> organizations) {
+    uiList.children
+      ..clear()
+      ..addAll(organizations.map(makeOrganizationNode));
   }
 
   LIElement makeOrganizationNode(Organization organization) {
@@ -86,6 +112,16 @@ class OrganizationView {
       inputName.value = organization.full_name;
     }).catchError((error) {
       print('Tried to activate organization "$organizationId" but gave error: $error');
+    });
+  }
+  
+  void updateReceptionList(int organizationId) {
+    getAnOrganizationsReceptionList(organizationId).then((List<Reception> receptions) {
+      ulReceptionList.children
+        ..clear()
+        ..addAll(receptions.map((r) => new LIElement()..text = 'LINK ${r.full_name}'));
+    }).catchError((error) {
+      print('Tried to fetch the receptionlist Error: $error');
     });
   }
 }

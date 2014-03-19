@@ -9,6 +9,7 @@ class Reception {
   String other;
   String greeting;
   String customertype;
+  String extradatauri;
   bool enabled;
   
   List<String> addresses;

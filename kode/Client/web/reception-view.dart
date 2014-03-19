@@ -8,6 +8,7 @@ import 'lib/request.dart';
 import 'lib/eventbus.dart';
 
 class ReceptionView {
+  String addNewLiClass = 'addnew';
   String viewName = 'reception';
   DivElement element;
   InputElement inputFullName, inputUri, inputProduct, inputGreeting, inputOther, inputCostumerstype;
@@ -15,11 +16,17 @@ class ReceptionView {
   ButtonElement buttonSave, buttonCreate;
   UListElement ulAddresses, ulAlternatenames, ulBankinginformation, ulCrapcallhandling, ulEmailaddresses, 
                ulHandlings, ulOpeninghours, ulRegistrationnumbers, ulTelephonenumbers, ulWebsites;
+  SearchInputElement searchBox;
+  UListElement uiList;
+
+  List<Reception> receptions = [];
   
   int currentReceptionId = 0, currentOrganizationId = 1;
   
   ReceptionView(DivElement this.element) {
-    refreshList();
+    searchBox = element.querySelector('#reception-search-box');
+    uiList = querySelector('#reception-list');
+    
     inputFullName = element.querySelector('#reception-input-name');
     inputUri = element.querySelector('#reception-input-uri');
     inputProduct = element.querySelector('#reception-input-product');
@@ -43,6 +50,9 @@ class ReceptionView {
     buttonCreate = element.querySelector('#reception-create');
     
     registrateEventHandlers();
+    
+    refreshList();
+    activateReception(0, 0);
   }
   
   void registrateEventHandlers() {
@@ -55,7 +65,22 @@ class ReceptionView {
     bus.on(windowChanged).listen((String window) {
       element.classes.toggle('hidden', window != viewName);
     });
+    
+    searchBox.onInput.listen((_) => performSearch());
   }
+  
+  void performSearch() {
+    String searchText = searchBox.value;
+    List<Reception> filteredList = receptions.where(
+        (Reception recep) => recep.full_name.toLowerCase().contains(searchText.toLowerCase())).toList();
+    renderReceptionList(filteredList);
+  }
+  
+  void renderReceptionList(List<Reception> receptions) {
+      uiList.children
+        ..clear()
+        ..addAll(receptions.map(makeReceptionNode));
+    }
 
   void createReceptionClickHandler() {
     Reception newReception = extractValues();    
@@ -106,9 +131,10 @@ class ReceptionView {
       ..websites = getListValues(ulWebsites);
   }
   
-  void refreshList() {    
-    UListElement uiList = querySelector('#reception-list');
+  void refreshList() {
     getReceptionList().then((List<Reception> receptions) {
+      receptions.sort((a, b) => a.full_name.compareTo(b.full_name));
+      this.receptions = receptions; 
       uiList.children
         ..clear()
         ..addAll(receptions.map(makeReceptionNode));
@@ -128,35 +154,114 @@ class ReceptionView {
     currentOrganizationId = organizationId;
     currentReceptionId = receptionId;
     
-    getReception(currentOrganizationId, currentReceptionId).then((Reception response) {
-      inputFullName.value = response.full_name;
-      inputUri.value = response.uri;
-      inputEnabled.checked = response.enabled;
+    if(organizationId > 0 && receptionId > 0) {
+      getReception(currentOrganizationId, currentReceptionId).then((Reception response) {
+        inputFullName.value = response.full_name;
+        inputUri.value = response.uri;
+        inputEnabled.checked = response.enabled;
+        
+        inputCostumerstype.value = response.customertype;
+        inputGreeting.value = response.greeting;
+        inputOther.value = response.other;
+        inputProduct.value = response.product;
+        _fillList(ulAddresses, response.addresses);
+        _fillList(ulAlternatenames, response.alternatenames);
+        _fillList(ulBankinginformation, response.bankinginformation);
+        _fillList(ulCrapcallhandling, response.crapcallhandling);
+        _fillList(ulEmailaddresses, response.emailaddresses);
+        _fillList(ulHandlings, response.handlings);
+        _fillList(ulOpeninghours, response.openinghours);
+        _fillList(ulRegistrationnumbers, response.registrationnumbers);
+        _fillList(ulTelephonenumbers, response.telephonenumbers);
+        _fillList(ulWebsites, response.websites);
+      });
+    } else {
+      inputFullName.value = '';
+      inputUri.value = '';
+      inputEnabled.checked = false;
       
-      inputCostumerstype.value = response.customertype;
-      inputGreeting.value = response.greeting;
-      inputOther.value = response.other;
-      inputProduct.value = response.product;
-      _fillList(ulAddresses, response.addresses);
-      _fillList(ulAlternatenames, response.alternatenames);
-      _fillList(ulBankinginformation, response.bankinginformation);
-      _fillList(ulCrapcallhandling, response.crapcallhandling);
-      _fillList(ulEmailaddresses, response.emailaddresses);
-      _fillList(ulHandlings, response.handlings);
-      _fillList(ulOpeninghours, response.openinghours);
-      _fillList(ulRegistrationnumbers, response.registrationnumbers);
-      _fillList(ulTelephonenumbers, response.telephonenumbers);
-      _fillList(ulWebsites, response.websites);
-    });
+      inputCostumerstype.value = '';
+      inputGreeting.value = '';
+      inputOther.value = '';
+      inputProduct.value = '';
+      _fillList(ulAddresses, []);
+      _fillList(ulAlternatenames, []);
+      _fillList(ulBankinginformation, []);
+      _fillList(ulCrapcallhandling, []);
+      _fillList(ulEmailaddresses, []);
+      _fillList(ulHandlings, []);
+      _fillList(ulOpeninghours, []);
+      _fillList(ulRegistrationnumbers, []);
+      _fillList(ulTelephonenumbers, []);
+      _fillList(ulWebsites, []);
+    }
+  }
+    
+  LIElement simpleListElement(String item) {
+    LIElement li = new LIElement();
+    ButtonElement deleteButton = new ButtonElement()
+      ..text = 'Slet'
+      ..onClick.listen((_) {
+        li.parent.children.remove(li);
+      });
+    SpanElement content = new SpanElement()
+      ..text = item;
+    li.children.addAll([deleteButton, content]);
+    return li;
   }
   
   void _fillList(UListElement element, List<String> items) {
+    List<LIElement> children = new List<LIElement>();
+    for(String item in items) {
+      LIElement li = simpleListElement(item);      
+      children.add(li);
+    }
+    
+    InputElement inputNewItem = new InputElement();
+    inputNewItem
+      ..classes.add(addNewLiClass)
+      ..placeholder = 'Add new...'
+      ..onKeyPress.listen((KeyboardEvent event) {
+        KeyEvent key = new KeyEvent.wrap(event);
+        int ENTER = 13;
+        if(key.keyCode == ENTER) {
+          String item = inputNewItem.value;
+          inputNewItem.value = '';
+          
+          LIElement li = simpleListElement(item);
+          int index = element.children.length -1;
+          element.children.insert(index, li);
+        }
+      });
+    
+    children.add(new LIElement()..children.add(inputNewItem));
+    
     element.children
       ..clear()
-      ..addAll(items != null ? items.map((item) => new LIElement()..text = item) : []);
+      ..addAll(children);
   }
-  
+
   List<String> getListValues(UListElement element) {
-    return element.children.map((li) => li.text).toList();
+    List<String> texts = new List<String>();
+    for(LIElement e in element.children) {
+      if(!e.classes.contains(addNewLiClass)) {
+        SpanElement content = e.children.firstWhere((elem) => elem is SpanElement, orElse: () => null);
+        if (content != null) {
+          texts.add(content.text);
+        }
+      }
+    }
+    return texts;
   }
 }
+
+/*
+  <li>
+    <Button>Slet</Button>   //Kan også godt være et billed.
+    <span>${Value}</span>
+  </li>
+  ...
+  <li class="addnew">
+    <input type="text" onKeyEnter="Add text as new element, wipe clear field.">
+  </li>
+*/
