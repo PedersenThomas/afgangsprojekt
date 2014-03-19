@@ -14,6 +14,11 @@ class ReceptionTests(unittest.TestCase):
                        'properties':
                            {'id':
                                 {'type': 'integer',
+                                 'required': True,
+                                 'minimum': 0},
+                            'organization_id':
+                                {'type': 'integer',
+                                 'required': True,
                                  'minimum': 0},
                             'full_name':
                                 {'type': 'string'}}}
