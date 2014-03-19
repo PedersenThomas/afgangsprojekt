@@ -15,13 +15,14 @@ import 'utilities/logger.dart';
 final Pattern anyThing = new UrlPattern(r'/(.*)');
 final Pattern organizationIdUrl = new UrlPattern(r'/organization/(\d+)');
 final Pattern organizationUrl = new UrlPattern(r'/organization(/?)');
-final Pattern receptionIdUrl = new UrlPattern(r'/organization/(\d+)/reception/(\d+)');
-final Pattern receptionUrl = new UrlPattern(r'/organization/(\d+)/reception(/?)');
+final Pattern organizationReceptionIdUrl = new UrlPattern(r'/organization/(\d+)/reception/(\d+)');
+final Pattern organizationReceptionUrl = new UrlPattern(r'/organization/(\d+)/reception(/?)');
+final Pattern receptionUrl = new UrlPattern(r'/reception(/?)');
 final Pattern contactIdUrl = new UrlPattern(r'/contact/(\d+)');
 final Pattern contactUrl = new UrlPattern(r'/contact(/?)');
 final Pattern receptionContactIdUrl = new UrlPattern(r'/reception/(\d+)/contact/(\d+)');
 final Pattern receptionContactUrl = new UrlPattern(r'/reception/(\d+)/contact(/?)');
-final List<Pattern> Serviceagents = [receptionIdUrl, receptionUrl, organizationIdUrl, organizationUrl, contactIdUrl, contactUrl];
+final List<Pattern> Serviceagents = [organizationReceptionIdUrl, organizationReceptionUrl, organizationIdUrl, organizationUrl, contactIdUrl, contactUrl];
 
 ContactController contact;
 OrganizationController organization;
@@ -31,13 +32,14 @@ ReceptionContactController receptionContact;
 void setupRoutes(HttpServer server, Configuration config, Logger logger) {
   Router router = new Router(server)
     ..filter(anyThing, (HttpRequest req) => logHit(req, logger))
-    ..filter(matchAny(Serviceagents), (HttpRequest req) => authorized(req, config.authUrl, groupName: 'Serviceagent'))
+    ..filter(matchAny(Serviceagents), (HttpRequest req) => authorized(req, config.authUrl, groupName: 'Service agent'))
     
+    ..serve(organizationReceptionUrl, method: HttpMethod.GET).listen(reception.getOrganizationReceptionList)
     ..serve(receptionUrl, method: HttpMethod.GET).listen(reception.getReceptionList)
-    ..serve(receptionUrl, method: HttpMethod.PUT).listen(reception.createReception)
-    ..serve(receptionIdUrl, method: HttpMethod.GET)   .listen(reception.getReception)
-    ..serve(receptionIdUrl, method: HttpMethod.POST)  .listen(reception.updateReception)
-    ..serve(receptionIdUrl, method: HttpMethod.DELETE).listen(reception.deleteReception)
+    ..serve(organizationReceptionUrl, method: HttpMethod.PUT).listen(reception.createReception)
+    ..serve(organizationReceptionIdUrl, method: HttpMethod.GET)   .listen(reception.getReception)
+    ..serve(organizationReceptionIdUrl, method: HttpMethod.POST)  .listen(reception.updateReception)
+    ..serve(organizationReceptionIdUrl, method: HttpMethod.DELETE).listen(reception.deleteReception)
 
     ..serve(contactUrl, method: HttpMethod.GET).listen(contact.getContactList)
     ..serve(contactUrl, method: HttpMethod.PUT).listen(contact.createContact)
@@ -56,6 +58,8 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     ..serve(organizationIdUrl, method: HttpMethod.GET)   .listen(organization.getOrganization)
     ..serve(organizationIdUrl, method: HttpMethod.POST)  .listen(organization.updateOrganization)
     ..serve(organizationIdUrl, method: HttpMethod.DELETE).listen(organization.deleteOrganization)
+    
+    ..serve(anyThing, method: HttpMethod.OPTIONS).listen(PreFlight)
     
     ..defaultStream.listen(NOTFOUND);
 }

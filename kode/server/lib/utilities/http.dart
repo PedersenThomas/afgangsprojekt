@@ -15,12 +15,13 @@ class HttpMethod {
   static const String POST = 'POST';
   static const String PUT = 'PUT';
   static const String DELETE = 'DELETE';
+  static const String OPTIONS = 'OPTIONS';
 }
 
 void addCorsHeaders(HttpResponse res) {
   res.headers
     ..add("Access-Control-Allow-Origin", "*")
-    ..add("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS")
+    ..add("Access-Control-Allow-Methods", "POST,GET,PUT,DELETE,OPTIONS")
     ..add("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 }
 
@@ -105,7 +106,7 @@ Future<bool> logHit(HttpRequest request, Logger logger) {
   return new Future.value(true);
 }
 
-Future NOTFOUND(HttpRequest request) {
+Future NOTFOUND(HttpRequest request) {  
   request.response.statusCode = HttpStatus.NOT_FOUND;
   return writeAndCloseJson(request, JSON.encode({'status': 'Not found'}));
 }
@@ -119,12 +120,18 @@ int pathParameter(Uri uri, String key) {
   }
 }
 
+void PreFlight(HttpRequest request) {
+  print('PREFLIGHT');
+  writeAndCloseJson(request, '');
+}
+
 Future Unauthorized(HttpRequest request) {
   request.response.statusCode = HttpStatus.UNAUTHORIZED;
   return writeAndCloseJson(request, JSON.encode({'status': 'Unauthorized'}));
 }
 
 Future writeAndCloseJson(HttpRequest request, String body) {
+  //TODO Timestamp
   logger.debug('${request.response.statusCode} ${request.uri} body:"$body"');
   
   addCorsHeaders(request.response);
@@ -133,6 +140,21 @@ Future writeAndCloseJson(HttpRequest request, String body) {
   request.response
     ..write(body)
     ..write('\n');
-  
+
   return request.response.close();
 }
+
+void printDebug(HttpRequest request) {
+  print('------------------------- START --------------------------');
+  print(request.method);
+  if(request.method == 'OPTIONS') {
+    extractContent(request).then((String text) {
+      print('-------- BODY: ${text}');
+    });
+  }
+  request.headers.forEach((key, values) {
+    print('$key -> "${values.join(', ')}"');
+  });
+  print('-------------------------- END ---------------------------');
+}
+

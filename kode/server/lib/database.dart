@@ -63,7 +63,23 @@ class Database {
     });
   }
   
-  Future<List<Reception>> getReceptionList(int organizationId) {
+  Future<List<Reception>> getReceptionList() {
+      String sql = '''
+        SELECT id, organization_id, full_name, uri, attributes, extradatauri, enabled
+        FROM receptions
+      ''';
+     
+      return query(sql).then((rows) {
+        
+        List<Reception> receptions = new List<Reception>();
+        for(var row in rows) {
+          receptions.add(new Reception(row.id, row.organization_id, row.full_name, row.uri, JSON.decode(row.attributes), row.extradatauri, row.enabled));
+        }
+        return receptions;
+      });
+    }
+  
+  Future<List<Reception>> getOrganizationReceptionList(int organizationId) {
     String sql = '''
       SELECT id, organization_id, full_name, uri, attributes, extradatauri, enabled
       FROM receptions
@@ -347,6 +363,7 @@ class Database {
       for(var row in rows) {
         organizations.add(new Organization(row.id, row.full_name));
       }
+
       return organizations;
     });
   }
@@ -385,6 +402,53 @@ class Database {
 
     Map parameters = {'id': organizationId};
     return execute(sql, parameters);
+  }
+  
+  /***
+   * STUFF
+   */
+  
+  Future<List<Reception>> getContactReceptions(int contactId) {
+    String sql = '''
+      SELECT r.id, r.organization_id, r.full_name, r.uri, r.attributes, r.extradatauri, r.enabled
+      FROM reception_contacts rc
+        JOIN receptions r on rc.reception_id = r.id
+      WHERE rc.contact_id=@contact_id
+    ''';
+    
+    Map parameters = {'contact_id': contactId};
+
+    return query(sql, parameters).then((rows) {
+      List<Reception> receptions = new List<Reception>();
+      for(var row in rows) {
+        receptions.add(new Reception(row.id, row.organization_id, row.full_name, row.uri, JSON.decode(row.attributes), row.extradatauri, row.enabled));
+      }
+      return receptions;
+    });
+  }
+  
+  Future<List<ReceptionContact>> getContactReceptionContact(int contactId) {
+    String sql = '''
+      SELECT reception_id, contact_id, wants_messages, distribution_list_id, attributes, enabled
+      FROM reception_contacts
+      WHERE contact_id = @contact_id
+    ''';
+    
+    Map parameters = {'contact_id': contactId};
+
+    return query(sql, parameters).then((rows) {
+      List<ReceptionContact> receptions = new List<ReceptionContact>();
+      for(var row in rows) {
+        receptions.add(new ReceptionContact(
+            row.reception_id, 
+            row.contact_id, 
+            row.wants_messages,
+            row.distribution_list_id,
+            row.attributes == null ? {} : JSON.decode(row.attributes),
+            row.enabled));
+      }
+      return receptions;
+    });
   }
 }
 

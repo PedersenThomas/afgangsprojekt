@@ -32,10 +32,19 @@ class ReceptionController {
     });
   }
   
-  void getReceptionList(HttpRequest request) {
+  void getReceptionList(HttpRequest request) {    
+    db.getReceptionList().then((List<Reception> list) {
+      return writeAndCloseJson(request, JSON.encode({'receptions':listReceptionAsJson(list)}));
+    }).catchError((error) {
+      logger.error('get reception list Error: "$error"');
+      Internal_Error(request);
+    });
+  }
+  
+  void getOrganizationReceptionList(HttpRequest request) {
     int organizationId = pathParameter(request.uri, 'organization');
     
-    db.getReceptionList(organizationId).then((List<Reception> list) {
+    db.getOrganizationReceptionList(organizationId).then((List<Reception> list) {
       return writeAndCloseJson(request, JSON.encode({'receptions':listReceptionAsJson(list)}));
     }).catchError((error) {
       logger.error('get reception list Error: "$error"');
