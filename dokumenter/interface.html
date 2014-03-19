@@ -1,0 +1,142 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    table, th, td {border: 1px solid black}
+    th {min-width: 50px}
+    .cent {text-align: center}
+    .pass {background-color: #00FF00}
+
+  </style>
+</head>
+<body>
+  <pre>
+GET er Read-Only, hent oplysningerne.
+POST er til Updateringer eller kommandoer.
+PUT er til at lave nye objekter.
+DELETE er som navn siger, til at slette.
+  </pre>
+  <table>
+    <tr>
+      <th>Path</th>
+      <th>GET ✓</th>
+      <th>POST</th>
+      <th>PUT</th>
+      <th>DELETE</th>
+    </tr>
+
+    <tr>
+      <td>/organization</td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+    </tr>
+
+    <tr>
+      <td>/organization/{id}</td>
+      <td class="cent pass">✓</td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+      <td class="cent">✓</td>
+    </tr>
+    
+    <tr>
+      <td>organization/{id}/reception</td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+    </tr>
+
+    <tr>
+      <td>organization/{id}/reception/{id}</td>
+      <td class="cent pass">✓</td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+      <td class="cent">✓</td>
+    </tr>
+
+    <tr>
+      <td>/reception/{id}/contact</td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+    </tr>
+
+    <tr>
+      <td>/reception/{id}/contact/{id}</td>
+      <td class="cent pass">✓</td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+      <td class="cent">✓</td>
+    </tr>
+
+    <tr>
+      <td>/reception/{id}/contact/{id}/calendar</td>
+      <td class="cent pass"></td>
+      <td class="cent"></td>
+      <td class="cent pass"></td>
+      <td class="cent"></td>
+    </tr>
+
+    <tr>
+      <td>/reception/{id}/contact/{id}/calendar/{id}</td>
+      <td class="cent pass"></td>
+      <td class="cent pass"></td>
+      <td class="cent"></td>
+      <td class="cent pass"></td>
+    </tr>
+
+    <tr>
+      <td>/contact</td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+    </tr>
+
+    <tr>
+      <td>/contact/{id}</td>
+      <td class="cent pass">✓</td>
+      <td class="cent pass">✓</td>
+      <td class="cent"></td>
+      <td class="cent">✓</td>
+    </tr>
+
+    <tr>
+      <td>/phone</td>
+      <td class="cent pass"></td>
+      <td class="cent"></td>
+      <td class="cent pass"></td>
+      <td class="cent"></td>
+    </tr>
+
+    <tr>
+      <td>/phone/{id}</td>
+      <td class="cent pass"></td>
+      <td class="cent pass"></td>
+      <td class="cent"></td>
+      <td class="cent"></td>
+    </tr>
+
+    <tr>
+      <td>/users</td>
+      <td class="cent pass"></td>
+      <td class="cent"></td>
+      <td class="cent pass"></td>
+      <td class="cent"></td>
+    </tr>
+
+    <tr>
+      <td>/users/{id}</td>
+      <td class="cent pass"></td>
+      <td class="cent pass"></td>
+      <td class="cent"></td>
+      <td class="cent"></td>
+    </tr>
+    
+  </table>
+</body>
+</html>
