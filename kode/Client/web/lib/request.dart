@@ -7,6 +7,7 @@ import 'dart:html';
 import 'configuration.dart';
 import 'model.dart';
 
+part 'requests/contact.dart';
 part 'requests/organization.dart';
 part 'requests/reception.dart';
 

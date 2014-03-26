@@ -1,8 +1,36 @@
 #reception-page {
-  border: solid 1px green;
 }
 
 #reception-page ul {
   list-style-type: none;
   margin: 10px;
+}
+
+#reception-search-box {
+  width: 100%;
+}
+
+#reception-list {
+  overflow: auto;
+  height: 920px;
+}
+
+#reception-listing {
+  float:left;
+  width: 20%;
+  height: 100%;
+  border: solid 2px blue;
+}
+
+#reception-content {
+  float:left;
+  width: 60%;
+  height: 100%;
+  border: solid 2px yellow;
+}
+
+#reception-rightbar {
+  float:right;
+  width: 20%;
+  border: solid 2px black;
 }

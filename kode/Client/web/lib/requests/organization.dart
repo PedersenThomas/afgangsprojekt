@@ -27,6 +27,32 @@ Future<List<Organization>> getOrganizationList() {
   return completer.future;
 }
 
+Future<List<Contact>> getOrganizationContactList(int organizationId) {
+  final Completer completer  = new Completer();
+    
+  HttpRequest request;
+  String url = '${config.serverUrl}/organization/$organizationId/contact?token=${config.token}';
+
+  request = new HttpRequest()
+  ..open(HttpMethod.GET, url)
+  ..onLoad.listen((_) {
+    if(request.status == 200) {
+      Map rawData = JSON.decode(request.responseText);
+      List<Map> rawReceptions = rawData['contacts'];
+      completer.complete(rawReceptions.map((r) => new Contact.fromJson(r)).toList());
+    } else {
+      completer.completeError('Bad status code. ${request.status}');
+    }
+  })
+  ..onError.listen((e) {
+    //TODO logging.
+    completer.completeError(e.toString());
+  })
+  ..send();
+
+  return completer.future;
+}
+
 Future<List<Reception>> getAnOrganizationsReceptionList(int organizationId) {
   final Completer completer  = new Completer();
   
@@ -41,7 +67,7 @@ Future<List<Reception>> getAnOrganizationsReceptionList(int organizationId) {
       List<Map> rawReceptions = rawData['receptions'];
       completer.complete(rawReceptions.map((r) => new Reception.fromJson(r)).toList());
     } else {
-      throw new Exception('Bad status code. ${request.status}');
+      completer.completeError('Bad status code. ${request.status}');
     }
   })
   ..onError.listen((e) {
@@ -60,15 +86,15 @@ Future<Organization> getOrganization(int organizationId) {
   String url = '${config.serverUrl}/organization/$organizationId?token=${config.token}';
 
   request = new HttpRequest()
-  ..open(HttpMethod.GET, url)
-  ..onLoad.listen((_) {
-    completer.complete(new Organization.fromJson(JSON.decode(request.responseText)));
-  })
-  ..onError.listen((e) {
-    //TODO logging.
-    completer.completeError(e.toString());
-  })
-  ..send();
+    ..open(HttpMethod.GET, url)
+    ..onLoad.listen((_) {
+      completer.complete(new Organization.fromJson(JSON.decode(request.responseText)));
+    })
+    ..onError.listen((e) {
+      //TODO logging.
+      completer.completeError(e.toString());
+    })
+    ..send();
 
   return completer.future;
 }

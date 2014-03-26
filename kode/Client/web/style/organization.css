@@ -1,7 +1,35 @@
 #organization-page {
-  border: solid 1px red;
 }
 
 #organization-page ul {
   list-style-type: none;
+}
+
+#organization-search-box {
+  width: 100%;
+}
+
+#organization-listing {
+  float:left;
+  width: 20%;
+  height: 100%;
+  border: solid 2px blue;
+  overflow: auto;
+}
+
+#organization-content {
+  float:left;
+  width: 60%;
+  height: 100%;
+  border: solid 2px yellow;
+}
+
+#organization-rightbar {
+  float:right;
+  width: 20%;
+  border: solid 2px black;
+}
+
+#organization-reception-list li, #organization-contact-list li {
+  margin-left: 10px;
 }

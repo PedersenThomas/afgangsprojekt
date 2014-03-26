@@ -26,6 +26,32 @@ Future<List<Reception>> getReceptionList() {
   return completer.future;
 }
 
+Future<List<CustomReceptionContact>> getReceptionContactList(int receptionId) {
+  final Completer completer  = new Completer();
+  
+  HttpRequest request;
+  String url = '${config.serverUrl}/reception/$receptionId/contact?token=${config.token}';
+
+  request = new HttpRequest()
+  ..open(HttpMethod.GET, url)
+  ..onLoad.listen((_) {
+    if(request.status == 200) {
+      Map rawData = JSON.decode(request.responseText);
+      List<Map> rawReceptions = rawData['receptionContacts'];
+      completer.complete(rawReceptions.map((r) => new CustomReceptionContact.fromJson(r)).toList());
+    } else {
+      throw new Exception('Bad status code. ${request.status}');
+    }
+  })
+  ..onError.listen((e) {
+    //TODO logging.
+    completer.completeError(e.toString());
+  })
+  ..send();
+
+  return completer.future;
+}
+
 Future<Reception> getReception(int organization, int receptionId) {
   final Completer completer  = new Completer();
   

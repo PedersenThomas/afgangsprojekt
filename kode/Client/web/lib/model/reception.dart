@@ -32,8 +32,8 @@ class Reception {
     Reception reception = new Reception()
       ..id = json['id']
       ..organization_id = json['organization_id']
-      ..full_name = json['full_name']
-      ..uri = json['uri']
+      ..full_name = stringFromJson(json, 'full_name')
+      ..uri = stringFromJson(json, 'uri')
       ..enabled = json['enabled'];
     
     if(json.containsKey('attributes')) {

@@ -7,35 +7,33 @@
 }
 
 body {
-  /*background-color: #F8F8F8;*/
-  background: linear-gradient(#F8F8F8, #E0E0E0);
+  background-color: #F8F8F8;
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
   font-weight: normal;
   line-height: 1.2em;
   margin: 0;
 }
-
-h1, p {
-  color: #333;
-}
 /*DART STUFF*/
 
+html, body {
+  height: 100%;
+}
+
 nav#navigation {
-  
   border: solid 1px red;
   
   left: 0%;
   top: 0%;
   width: 4%;
-  height: 100vh;
+  height: 100%;
   float:left;
 }
 
 #page-main-screen {
   float:left;
-  width: 95%;
-  height: 100vh;
+  width: 96%;
+  height: 100%;
   overflow: auto;
 }
 

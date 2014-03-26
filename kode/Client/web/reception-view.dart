@@ -17,7 +17,8 @@ class ReceptionView {
   UListElement ulAddresses, ulAlternatenames, ulBankinginformation, ulCrapcallhandling, ulEmailaddresses, 
                ulHandlings, ulOpeninghours, ulRegistrationnumbers, ulTelephonenumbers, ulWebsites;
   SearchInputElement searchBox;
-  UListElement uiList;
+  UListElement uiReceptionList;
+  UListElement ulContactList;
 
   List<Reception> receptions = [];
   
@@ -25,7 +26,8 @@ class ReceptionView {
   
   ReceptionView(DivElement this.element) {
     searchBox = element.querySelector('#reception-search-box');
-    uiList = querySelector('#reception-list');
+    uiReceptionList = element.querySelector('#reception-list');
+    ulContactList = element.querySelector('#reception-contact-list');
     
     inputFullName = element.querySelector('#reception-input-name');
     inputUri = element.querySelector('#reception-input-uri');
@@ -77,7 +79,7 @@ class ReceptionView {
   }
   
   void renderReceptionList(List<Reception> receptions) {
-      uiList.children
+      uiReceptionList.children
         ..clear()
         ..addAll(receptions.map(makeReceptionNode));
     }
@@ -135,7 +137,7 @@ class ReceptionView {
     getReceptionList().then((List<Reception> receptions) {
       receptions.sort((a, b) => a.full_name.compareTo(b.full_name));
       this.receptions = receptions; 
-      uiList.children
+      uiReceptionList.children
         ..clear()
         ..addAll(receptions.map(makeReceptionNode));
     });
@@ -175,6 +177,8 @@ class ReceptionView {
         _fillList(ulTelephonenumbers, response.telephonenumbers);
         _fillList(ulWebsites, response.websites);
       });
+      
+      updateContactList(receptionId);
     } else {
       inputFullName.value = '';
       inputUri.value = '';
@@ -194,6 +198,7 @@ class ReceptionView {
       _fillList(ulRegistrationnumbers, []);
       _fillList(ulTelephonenumbers, []);
       _fillList(ulWebsites, []);
+      updateContactList(receptionId);
     }
   }
     
@@ -253,6 +258,17 @@ class ReceptionView {
     }
     return texts;
   }
+  
+  void updateContactList(int receptionId) {
+    getReceptionContactList(receptionId).then((List<CustomReceptionContact> contacts) {
+      ulContactList.children
+        ..clear()
+        ..addAll(contacts.map((c) => new LIElement()..text = 'LINK ${c.fullName}'));
+    }).catchError((error) {
+      print('Tried to fetch the contactlist from an reception Error: $error');
+    });
+    //
+  }
 }
 
 /*
@@ -265,3 +281,8 @@ class ReceptionView {
     <input type="text" onKeyEnter="Add text as new element, wipe clear field.">
   </li>
 */
+
+/*
+  Når man henter en bestemt person skal man have information for hver enkel reception personen er i, foruden stamdata fra contacts tabellen.
+  I Receptions har man brug for en liste af kontakt personer
+ */

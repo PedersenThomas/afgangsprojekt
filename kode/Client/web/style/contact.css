@@ -1,3 +1,38 @@
 #contact-page {
   border: solid 1px blue;
+  height: 100%;
+}
+
+#contact-page ul {
+  list-style-type: none;
+  margin: 10px;
+}
+
+#contact-search-box {
+  width: 100%;
+}
+
+#contact-list {
+  /*overflow: auto;*/
+}
+
+#contact-listing {
+  float:left;
+  width: 20%;
+  height: 100%;
+  border: solid 2px blue;
+  overflow: auto;
+}
+
+#contact-content {
+  float:left;
+  width: 60%;
+  height: 100%;
+  border: solid 2px yellow;
+}
+
+#contact-rightbar {
+  float:right;
+  width: 20%;
+  border: solid 2px black;
 }

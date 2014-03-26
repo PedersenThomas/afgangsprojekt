@@ -16,17 +16,20 @@ class OrganizationView {
   ButtonElement buttonCreate;
   SearchInputElement searchBox;
   UListElement ulReceptionList;
+  UListElement ulContactList;
   
   List<Organization> organizations = [];
   int currentOrganizationId = 0;
   
   OrganizationView(DivElement this.element) {
+    print('OrganizationView Constructor');
     searchBox = element.querySelector('#organization-search-box');
-    uiList = querySelector('#organization-list');
+    uiList = element.querySelector('#organization-list');
     inputName = element.querySelector('#organization-input-name');
     buttonSave = element.querySelector('#organization-save');
     buttonCreate = element.querySelector('#organization-create');
-    ulReceptionList =element.querySelector('#organization-reception-list');
+    ulReceptionList = element.querySelector('#organization-reception-list');
+    ulContactList = element.querySelector('#organization-contact-list');
     
     registrateEventHandlers();
     
@@ -72,7 +75,7 @@ class OrganizationView {
                           'full_name': inputName.value};
       String newOrganization = JSON.encode(organization);
       updateOrganization(currentOrganizationId, newOrganization).then((_) {
-        //Show a message that tells the user, that the changes went threw.
+        //Show a message that tells the user, that the changes went through.
         refreshList();
       });
     } else {
@@ -81,6 +84,8 @@ class OrganizationView {
   }
   
   void refreshList() {
+    print('Organization refreshList');
+    
     getOrganizationList().then((List<Organization> organizations) {
       organizations.sort((a,b) => a.full_name.compareTo(b.full_name));
       //TODO Skal det være her.
@@ -110,6 +115,8 @@ class OrganizationView {
     getOrganization(organizationId).then((Organization organization) {
       currentOrganizationId = organizationId;
       inputName.value = organization.full_name;
+      updateReceptionList(currentOrganizationId);
+      updateContactList(currentOrganizationId);
     }).catchError((error) {
       print('Tried to activate organization "$organizationId" but gave error: $error');
     });
@@ -122,6 +129,16 @@ class OrganizationView {
         ..addAll(receptions.map((r) => new LIElement()..text = 'LINK ${r.full_name}'));
     }).catchError((error) {
       print('Tried to fetch the receptionlist Error: $error');
+    });
+  }
+  
+  void updateContactList(int organizationId) {
+    getOrganizationContactList(organizationId).then((List<Contact> contacts) {
+      ulContactList.children
+        ..clear()
+        ..addAll(contacts.map((c) => new LIElement()..text = 'LINK ${c.full_name}'));
+    }).catchError((error) {
+      print('Tried to fetch the contactlist from an organization Error: $error');
     });
   }
 }

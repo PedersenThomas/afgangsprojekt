@@ -2,8 +2,11 @@ library model;
 
 import 'dart:convert';
 
-part 'model/reception.dart';
+part 'model/contact.dart';
 part 'model/organization.dart';
+part 'model/reception.dart';
+part 'model/reception_contact.dart';
+part 'model/custom_reception_contact.dart';
 
 String stringFromJson(Map json, String key) {
   if(json.containsKey(key)) {
