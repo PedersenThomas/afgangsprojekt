@@ -74,13 +74,13 @@ class ReceptionContactTests(unittest.TestCase):
             assert receptionContact['wants_messages'] == jsonBody['wants_messages'], 'wants_messages in ReceptionContact and response is not equal'
             assert receptionContact['distribution_list_id'] == jsonBody['distribution_list_id'], 'distribution_list_id in ReceptionContact and response is not equal.'
             assert receptionContact['attributes'] == jsonBody['attributes'], 'attributes in ReceptionContact and response is not equal'
-            assert receptionContact['enabled'] == jsonBody['enabled'], 'enabled in ReceptionContact and response is not equal'
-
-            self.adminServer.deleteReceptionContact(receptionId, contactId)
+            assert receptionContact['enabled'] == jsonBody['reception_enabled'], 'enabled in ReceptionContact and response is not equal. ' + jsonBody
         except Exception as e:
             self.log.info('ReceptionContact: ' + str(receptionContact) + ' Json: ' + str(jsonBody))
             self.fail('Creating a new receptionContact did not give the expected output. Response: "' +
                       str(jsonBody) + '" Error ' + str(e))
+        finally:
+            self.adminServer.deleteReceptionContact(receptionId, contactId)
 
     def test_updateNewReceptionContact(self):
         receptionContact = {
@@ -99,12 +99,8 @@ class ReceptionContactTests(unittest.TestCase):
             body = self.adminServer.createReceptionContact(receptionId, contactId, receptionContact)[1]
             jsonBody = json.loads(body)
 
-            #Get the information the server has saved for that reception.
-            body = self.adminServer.getReceptionContact(receptionId, contactId)[1]
-            newReceptionContact = json.loads(body)
-
-            #Make sure the precondition is right.
-            assert newReceptionContact[FieldToUpdate] == receptionContact[FieldToUpdate]
+            #Make a copy
+            newReceptionContact = receptionContact.copy()
 
             newWantsMessages = False
             #Do the changes to the object.
@@ -119,11 +115,10 @@ class ReceptionContactTests(unittest.TestCase):
 
             #Make sure the postcondition is right.
             assert updatedReceptionContact[FieldToUpdate] == newWantsMessages
-
-            #Clean up.
-            self.adminServer.deleteReceptionContact(receptionId, contactId)
         except admin_server.ServerBadStatus as e:
             self.fail('Error: ' + str(e))
         except Exception as e:
             self.fail('Response: "' + str(jsonBody) + '" Error: ' + str(e))
-
+        finally:
+            #Clean up.
+            self.adminServer.deleteReceptionContact(receptionId, contactId)
