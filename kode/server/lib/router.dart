@@ -22,7 +22,12 @@ final Pattern contactIdUrl = new UrlPattern(r'/contact/(\d+)');
 final Pattern contactUrl = new UrlPattern(r'/contact(/?)');
 final Pattern receptionContactIdUrl = new UrlPattern(r'/reception/(\d+)/contact/(\d+)');
 final Pattern receptionContactUrl = new UrlPattern(r'/reception/(\d+)/contact(/?)');
-final List<Pattern> Serviceagents = [organizationReceptionIdUrl, organizationReceptionUrl, organizationIdUrl, organizationUrl, contactIdUrl, contactUrl];
+
+final Pattern organizationContactUrl = new UrlPattern(r'/organization/(\d+)/contact(/?)');
+
+final List<Pattern> Serviceagents = 
+[organizationReceptionIdUrl, organizationReceptionUrl, organizationContactUrl, organizationIdUrl, organizationUrl, 
+ contactIdUrl, contactUrl, receptionUrl, receptionContactIdUrl, receptionContactUrl];
 
 ContactController contact;
 OrganizationController organization;
@@ -41,6 +46,8 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     ..serve(organizationReceptionIdUrl, method: HttpMethod.POST)  .listen(reception.updateReception)
     ..serve(organizationReceptionIdUrl, method: HttpMethod.DELETE).listen(reception.deleteReception)
 
+    ..serve(organizationContactUrl, method: HttpMethod.GET).listen(organization.getOrganizationContactList)
+    
     ..serve(contactUrl, method: HttpMethod.GET).listen(contact.getContactList)
     ..serve(contactUrl, method: HttpMethod.PUT).listen(contact.createContact)
     ..serve(contactIdUrl, method: HttpMethod.GET)   .listen(contact.getContact)

@@ -132,7 +132,7 @@ Future Unauthorized(HttpRequest request) {
 
 Future writeAndCloseJson(HttpRequest request, String body) {
   //TODO Timestamp
-  logger.debug('${request.response.statusCode} ${request.uri} body:"$body"');
+  logger.debug('${request.response.statusCode} ${request.method} ${request.uri}');
   
   addCorsHeaders(request.response);
   request.response.headers.contentType = JSON_MIME_TYPE;

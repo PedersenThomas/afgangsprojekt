@@ -1,4 +1,4 @@
-part of adaheads.server.model;
+part of adaheads_server_model;
 
 class Contact {
   int id;

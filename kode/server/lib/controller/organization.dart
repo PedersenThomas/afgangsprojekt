@@ -8,7 +8,7 @@ import '../utilities/logger.dart';
 import '../database.dart';
 import '../model.dart';
 import '../view/organization.dart';
-
+import '../view/contact.dart';
 
 class OrganizationController {
   Database db;
@@ -69,5 +69,14 @@ class OrganizationController {
       logger.error('deleteOrganization url: "${request.uri}" gave error "${error}"');
       Internal_Error(request);
     });  
+  }
+  
+  void getOrganizationContactList(HttpRequest request) {
+    db.getOrganizationContactList(pathParameter(request.uri, 'organization')).then((List<Contact> contacts) {
+      return writeAndCloseJson(request, JSON.encode({'contacts':listContactAsJson(contacts)}));
+    }).catchError((error) {
+      logger.error('get contact list Error: "$error"');
+      Internal_Error(request);
+    });
   }
 }

@@ -1,7 +1,7 @@
 part of adaheads_server_model;
 
-class ReceptionContact {
-  int contactId;
+class CompleteReceptionContact {
+  int id;
   String fullName;
   String contactType;
   bool contactEnabled;
@@ -11,8 +11,8 @@ class ReceptionContact {
   Map attributes;
   bool receptionEnabled;
  
-  ReceptionContact (
-      int this.contactId,
+  CompleteReceptionContact (
+      int this.id,
       String this.fullName,
       String this.contactType,
       bool this.contactEnabled,
