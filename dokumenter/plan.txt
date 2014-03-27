@@ -28,8 +28,26 @@ Uge 2
     Jeg satser på at implementere det vi snakkede om. så man kan oprette Organizationer, receptioner og kontaktpersoner. Og få linket dem sammen, og have mulighed for at updatere dem.
   På mandag skal jeg arbejde på en opgave som min vejleder fandt frem, som ikke har nogen direkte betydning for mit projekt.
 
--- Forvented --
+Uge 3
+  -- Planen
+  Intet nyt.
+  
+  --Uden for planen
+  Jeg er begyndt at skrive på klienten, så jeg kan se om mine antagelser omkring hvilke interface der skal være holder stik.
+    Jeg har fået snakket noget mere med Thomas og Trine, og fik updateret interfaced.
+    Man kan nu oprette og updatere Organizationer. foruden at man har en liste over hvilke receptioner og kontakt personer der er tilknyttet den pågældende organization.
+    For en reception kan man ændre på nogle få felter, på resten kan man kun tilføje.
+    Det er ikke muligt at oprette en ny reception.
+    Intet arbejde på kontaktpersoner.
 
+Uge 4 
+  --Planen 
+    En hel del af de interfaces som er beskrevet i planen på server siden, er blevet updateret og der er tilføjet en masse andre.
+
+  --Uden for planen
+    Klienten har fået en stor overhalning.  
+
+-- Forvented --
 Uge 1 
     Krav, Plan
 
