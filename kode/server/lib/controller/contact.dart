@@ -8,7 +8,7 @@ import '../utilities/logger.dart';
 import '../database.dart';
 import '../model.dart';
 import '../view/contact.dart';
-
+import '../view/reception_contact_reduced_reception.dart';
 
 class ContactController {
   Database db;
@@ -69,5 +69,15 @@ class ContactController {
       logger.error('updateContact url: "${request.uri}" gave error "${error}"');
       Internal_Error(request);
     });  
+  }
+  
+  void getReceptionList(HttpRequest request) {
+    int contactId = pathParameter(request.uri, 'contact');
+    db.getAContactsReceptionContactList(contactId).then((List<ReceptionContact_ReducedReception> data) {
+      writeAndCloseJson(request, JSON.encode({'contacts':listReceptionContact_ReducedReceptionAsJson(data)}));
+    }).catchError((error) {
+      logger.error('contractController.getReceptionList url: "${request.uri}" gave error "${error}"');
+      Internal_Error(request);
+    });
   }
 }

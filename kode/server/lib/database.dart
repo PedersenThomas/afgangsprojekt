@@ -229,7 +229,7 @@ class Database {
    ************ Reception Contacts ****************
    */
   
-  Future<ReceptionContact> getReceptionContact(int receptionId, int contactId) {
+  Future<CompleteReceptionContact> getReceptionContact(int receptionId, int contactId) {
     String sql = '''
       SELECT c.id, 
              c.full_name, 
@@ -254,7 +254,7 @@ class Database {
         return null;
       } else {
         Row row = rows.first;
-        return new ReceptionContact(
+        return new CompleteReceptionContact(
             row.id,
             row.full_name,
             row.contact_type,
@@ -268,7 +268,7 @@ class Database {
     });
   }
   
-  Future<List<ReceptionContact>> getReceptionContactList(int receptionId) {
+  Future<List<CompleteReceptionContact>> getReceptionContactList(int receptionId) {
     String sql = '''
       SELECT c.id, 
              c.full_name, 
@@ -287,9 +287,9 @@ class Database {
     Map parameters = {'reception_id': receptionId};
 
     return query(sql, parameters).then((rows) {
-      List<ReceptionContact> receptions = new List<ReceptionContact>();
+      List<CompleteReceptionContact> receptions = new List<CompleteReceptionContact>();
       for(var row in rows) {
-        receptions.add(new ReceptionContact(
+        receptions.add(new CompleteReceptionContact(
             row.id,
             row.full_name,
             row.contact_type,
@@ -351,6 +351,45 @@ class Database {
        'enabled'              : enabled};
       
     return execute(sql, parameters);
+  }
+  
+  Future<List<ReceptionContact_ReducedReception>> getAContactsReceptionContactList(int contactId) {
+    String sql = '''
+      SELECT rc.contact_id,
+             rc.wants_messages,
+             rc.distribution_list_id,
+             rc.attributes,
+             rc.enabled as contactenabled,
+              r.organization_id,
+              r.id as reception_id,
+              r.full_name as receptionname,
+              r.uri as receptionuri,
+              r.enabled as receptionenabled,
+              r.organization_id
+      FROM reception_contacts rc
+        JOIN receptions r on rc.reception_id = r.id
+      WHERE rc.contact_id = @contact_id
+    ''';
+    
+    Map parameters = {'contact_id': contactId};
+    
+    return query(sql, parameters).then((rows) {
+      List<ReceptionContact_ReducedReception> contacts = new List<ReceptionContact_ReducedReception>();
+      for(var row in rows) {
+        contacts.add(new ReceptionContact_ReducedReception(
+          row.contact_id,
+          row.wants_messages,
+          row.distribution_list_id,
+          row.attributes == null ? {} : JSON.decode(row.attributes),
+          row.contactenabled,
+          row.reception_id,
+          row.receptionname,
+          row.receptionuri,
+          row.receptionenabled,
+          row.organization_id));
+      }
+      return contacts;
+    });
   }
   
   /************************************************

@@ -2,9 +2,9 @@ library adaheads.server.view.receptionContact;
 
 import '../model.dart';
 
-Map receptionContactAsJson(ReceptionContact contact) => contact == null ? {} : 
+Map receptionContactAsJson(CompleteReceptionContact contact) => contact == null ? {} : 
     {'reception_id': contact.receptionId,
-     'contact_id': contact.contactId,
+     'contact_id': contact.id,
      'full_name': contact.fullName,
      'contact_type': contact.contactType,
      'contact_enabled': contact.contactEnabled,
@@ -13,4 +13,4 @@ Map receptionContactAsJson(ReceptionContact contact) => contact == null ? {} :
      'attributes': contact.attributes,
      'reception_enabled': contact.receptionEnabled};
      
-List listReceptionContactAsJson(List<ReceptionContact> contacts) => contacts.map(receptionContactAsJson).toList();
+List listReceptionContactAsJson(List<CompleteReceptionContact> contacts) => contacts.map(receptionContactAsJson).toList();

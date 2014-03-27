@@ -7,7 +7,7 @@ import '../utilities/http.dart';
 import '../utilities/logger.dart';
 import '../database.dart';
 import '../model.dart';
-import '../view/reception_contact.dart';
+import '../view/complete_reception_contact.dart';
 
 class ReceptionContactController {
   Database db;
@@ -18,7 +18,7 @@ class ReceptionContactController {
     int receptionId = pathParameter(request.uri, 'reception');
     int contactId = pathParameter(request.uri, 'contact');
     
-    db.getReceptionContact(receptionId, contactId).then((ReceptionContact contact) {
+    db.getReceptionContact(receptionId, contactId).then((CompleteReceptionContact contact) {
       if(contact == null) {
         request.response.statusCode = 404;
         return writeAndCloseJson(request, JSON.encode({}));
@@ -34,7 +34,7 @@ class ReceptionContactController {
   void getReceptionContactList(HttpRequest request) {
     int receptionId = pathParameter(request.uri, 'reception');
     
-    db.getReceptionContactList(receptionId).then((List<ReceptionContact> list) {
+    db.getReceptionContactList(receptionId).then((List<CompleteReceptionContact> list) {
       return writeAndCloseJson(request, JSON.encode({'receptionContacts':listReceptionContactAsJson(list)}));
     }).catchError((error) {
       logger.error('get reception contact list Error: "$error"');
