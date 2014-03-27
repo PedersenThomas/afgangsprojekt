@@ -2,7 +2,6 @@ part of model;
 
 class ReceptionContact {
   int contactId;
-  String contactType;
   bool contactEnabled;
   int receptionId;
   bool wantsMessages;
@@ -20,7 +19,7 @@ class ReceptionContact {
       'handling': priorityListToJson(handling),
       'telephonenumbers': priorityListToJson(emailaddresses),
       'workhours': priorityListToJson(workhours),
-      'tags': priorityListToJson(tags)
+      'tags': tags
     };
   }
   
@@ -42,7 +41,6 @@ class ReceptionContact {
   factory ReceptionContact.fromJson(Map json) {
     ReceptionContact object = new ReceptionContact();
     object.contactId = json['contact_id'];
-    object.contactType = json['contact_type'];
     object.contactEnabled = json['contact_enabled'];
     object.receptionId = json['reception_id'];
     object.wantsMessages = json['wants_messages'];
@@ -57,7 +55,7 @@ class ReceptionContact {
         ..handling = priorityListFromJson(attributes, 'handling')
         ..telephonenumbers = priorityListFromJson(attributes, 'telephonenumbers')
         ..workhours = priorityListFromJson(attributes, 'workhours')
-        ..tags = priorityListFromJson(attributes, 'tags')
+        ..tags = attributes['tags']
         
         ..department = stringFromJson(attributes, 'department')
         ..info = stringFromJson(attributes, 'info')
@@ -72,10 +70,10 @@ class ReceptionContact {
   String toJson() {    
     Map data = {
       'contact_id': contactId,
-      'contact_type': contactType,
       'reception_id': receptionId,
       'wants_messages': wantsMessages,
       'distribution_list_id': distributionListId,
+      'enabled': contactEnabled, 
       'attributes': attributes
     };
     

@@ -7,6 +7,7 @@ part 'model/organization.dart';
 part 'model/reception.dart';
 part 'model/reception_contact.dart';
 part 'model/custom_reception_contact.dart';
+part 'model/reception_contact_reduced_reception.dart';
 
 String stringFromJson(Map json, String key) {
   if(json.containsKey(key)) {

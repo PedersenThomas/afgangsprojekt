@@ -1,11 +1,15 @@
 library reception_view;
 
+import 'dart:async';
 import 'dart:html';
 import 'dart:convert';
+
+import 'package:html5_dnd/html5_dnd.dart';
 
 import 'lib/model.dart';
 import 'lib/request.dart';
 import 'lib/eventbus.dart';
+import 'lib/view_utilities.dart';
 
 class ReceptionView {
   String addNewLiClass = 'addnew';
@@ -53,7 +57,10 @@ class ReceptionView {
     
     registrateEventHandlers();
     
-    refreshList();
+    refreshList().then((_) {
+      performSearch();
+    });
+    
     activateReception(0, 0);
   }
   
@@ -90,8 +97,12 @@ class ReceptionView {
     createReception(currentOrganizationId, newReception.toJson()).then((String response) {
       Map json = JSON.decode(response);
       //TODO visable clue that a new organization is created.
-      refreshList();
-      activateReception(currentOrganizationId, json['id']);
+      return refreshList().then((_) {
+        performSearch();
+        activateReception(currentOrganizationId, json['id']);
+      });
+    }).catchError((error) {
+      print('Somethin bad happend, more precises "${error}", when i tried to create a new reception based on organization "${currentOrganizationId}" with data "${newReception.toJson()}"');
     });
   }
   
@@ -101,7 +112,9 @@ class ReceptionView {
       
       updateReception(currentOrganizationId, currentReceptionId, updatedReception.toJson()).then((_) {
         //Show a message that tells the user, that the changes went threw.
-        refreshList();
+        refreshList().then((_) {
+          performSearch();
+        });        
       });
     } else {
       print('Reception out of range: $currentReceptionId');
@@ -133,19 +146,16 @@ class ReceptionView {
       ..websites = getListValues(ulWebsites);
   }
   
-  void refreshList() {
-    getReceptionList().then((List<Reception> receptions) {
+  Future refreshList() {
+    return getReceptionList().then((List<Reception> receptions) {
       receptions.sort((a, b) => a.full_name.compareTo(b.full_name));
-      this.receptions = receptions; 
-      uiReceptionList.children
-        ..clear()
-        ..addAll(receptions.map(makeReceptionNode));
+      this.receptions = receptions;
     });
   }
   
   LIElement makeReceptionNode(Reception reception) {
     return new LIElement()
-      ..value = reception.id
+      ..value = reception.id //TODO Er den brugt?
       ..text = '${reception.id} - ${reception.full_name}'
       ..onClick.listen((_) {
         activateReception(reception.organization_id, reception.id);
@@ -166,16 +176,16 @@ class ReceptionView {
         inputGreeting.value = response.greeting;
         inputOther.value = response.other;
         inputProduct.value = response.product;
-        _fillList(ulAddresses, response.addresses);
-        _fillList(ulAlternatenames, response.alternatenames);
-        _fillList(ulBankinginformation, response.bankinginformation);
-        _fillList(ulCrapcallhandling, response.crapcallhandling);
-        _fillList(ulEmailaddresses, response.emailaddresses);
-        _fillList(ulHandlings, response.handlings);
-        _fillList(ulOpeninghours, response.openinghours);
-        _fillList(ulRegistrationnumbers, response.registrationnumbers);
-        _fillList(ulTelephonenumbers, response.telephonenumbers);
-        _fillList(ulWebsites, response.websites);
+        fillList(ulAddresses, response.addresses);
+        fillList(ulAlternatenames, response.alternatenames);
+        fillList(ulBankinginformation, response.bankinginformation);
+        fillList(ulCrapcallhandling, response.crapcallhandling);
+        fillList(ulEmailaddresses, response.emailaddresses);
+        fillList(ulHandlings, response.handlings);
+        fillList(ulOpeninghours, response.openinghours);
+        fillList(ulRegistrationnumbers, response.registrationnumbers);
+        fillList(ulTelephonenumbers, response.telephonenumbers);
+        fillList(ulWebsites, response.websites);
       });
       
       updateContactList(receptionId);
@@ -188,76 +198,88 @@ class ReceptionView {
       inputGreeting.value = '';
       inputOther.value = '';
       inputProduct.value = '';
-      _fillList(ulAddresses, []);
-      _fillList(ulAlternatenames, []);
-      _fillList(ulBankinginformation, []);
-      _fillList(ulCrapcallhandling, []);
-      _fillList(ulEmailaddresses, []);
-      _fillList(ulHandlings, []);
-      _fillList(ulOpeninghours, []);
-      _fillList(ulRegistrationnumbers, []);
-      _fillList(ulTelephonenumbers, []);
-      _fillList(ulWebsites, []);
+      fillList(ulAddresses, []);
+      fillList(ulAlternatenames, []);
+      fillList(ulBankinginformation, []);
+      fillList(ulCrapcallhandling, []);
+      fillList(ulEmailaddresses, []);
+      fillList(ulHandlings, []);
+      fillList(ulOpeninghours, []);
+      fillList(ulRegistrationnumbers, []);
+      fillList(ulTelephonenumbers, []);
+      fillList(ulWebsites, []);
       updateContactList(receptionId);
     }
   }
     
-  LIElement simpleListElement(String item) {
-    LIElement li = new LIElement();
-    ButtonElement deleteButton = new ButtonElement()
-      ..text = 'Slet'
-      ..onClick.listen((_) {
-        li.parent.children.remove(li);
-      });
-    SpanElement content = new SpanElement()
-      ..text = item;
-    li.children.addAll([deleteButton, content]);
-    return li;
-  }
+//  LIElement simpleListElement(String item) {
+//    LIElement li = new LIElement();
+//    ButtonElement deleteButton = new ButtonElement()
+//      ..text = 'Slet'
+//      ..onClick.listen((_) {
+//        li.parent.children.remove(li);
+//      });
+//    SpanElement content = new SpanElement()
+//      ..text = item;
+//    
+//    li..children.addAll([deleteButton, content]);
+//    
+//    return li;
+//  }
   
-  void _fillList(UListElement element, List<String> items) {
-    List<LIElement> children = new List<LIElement>();
-    for(String item in items) {
-      LIElement li = simpleListElement(item);      
-      children.add(li);
-    }
-    
-    InputElement inputNewItem = new InputElement();
-    inputNewItem
-      ..classes.add(addNewLiClass)
-      ..placeholder = 'Add new...'
-      ..onKeyPress.listen((KeyboardEvent event) {
-        KeyEvent key = new KeyEvent.wrap(event);
-        int ENTER = 13;
-        if(key.keyCode == ENTER) {
-          String item = inputNewItem.value;
-          inputNewItem.value = '';
-          
-          LIElement li = simpleListElement(item);
-          int index = element.children.length -1;
-          element.children.insert(index, li);
-        }
-      });
-    
-    children.add(new LIElement()..children.add(inputNewItem));
-    
-    element.children
-      ..clear()
-      ..addAll(children);
-  }
+//  void _fillList(UListElement element, List<String> items) {
+//    List<LIElement> children = new List<LIElement>();
+//    for(String item in items) {
+//      LIElement li = simpleListElement(item);      
+//      children.add(li);
+//    }
+//    
+//    SortableGroup sortGroup = new SortableGroup()
+//      ..installAll(children)
+//      ..onSortUpdate.listen((SortableEvent event) {
+//        // do something when user sorted the elements...
+//      });
+//
+//    // Only accept elements from this section.
+//    sortGroup.accept.add(sortGroup);
+//    
+//    InputElement inputNewItem = new InputElement();
+//    inputNewItem
+//      ..classes.add(addNewLiClass)
+//      ..placeholder = 'Add new...'
+//      ..onKeyPress.listen((KeyboardEvent event) {
+//        KeyEvent key = new KeyEvent.wrap(event);
+//        int ENTER = 13;
+//        if(key.keyCode == ENTER) {
+//          String item = inputNewItem.value;
+//          inputNewItem.value = '';
+//          
+//          LIElement li = simpleListElement(item);
+//          int index = element.children.length -1;
+//          sortGroup.install(li);
+//          element.children.insert(index, li);
+//        }
+//      });
+//    
+//    children.add(new LIElement()..children.add(inputNewItem));
+//    
+//    element.children
+//      ..clear()
+//      ..addAll(children);
+//  }
 
-  List<String> getListValues(UListElement element) {
-    List<String> texts = new List<String>();
-    for(LIElement e in element.children) {
-      if(!e.classes.contains(addNewLiClass)) {
-        SpanElement content = e.children.firstWhere((elem) => elem is SpanElement, orElse: () => null);
-        if (content != null) {
-          texts.add(content.text);
-        }
-      }
-    }
-    return texts;
-  }
+//  List<String> getListValues(UListElement element) {
+//    List<String> texts = new List<String>();
+//    for(LIElement e in element.children) {
+//      if(!e.classes.contains(addNewLiClass)) {
+//        SpanElement content = e.children.firstWhere((elem) => elem is SpanElement, orElse: () => null);
+//        if (content != null) {
+//          texts.add(content.text);
+//        }
+//      }
+//    }
+//    return texts;
+//  }
   
   void updateContactList(int receptionId) {
     getReceptionContactList(receptionId).then((List<CustomReceptionContact> contacts) {
@@ -267,7 +289,6 @@ class ReceptionView {
     }).catchError((error) {
       print('Tried to fetch the contactlist from an reception Error: $error');
     });
-    //
   }
 }
 

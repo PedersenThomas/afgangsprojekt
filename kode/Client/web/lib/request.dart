@@ -10,6 +10,7 @@ import 'model.dart';
 part 'requests/contact.dart';
 part 'requests/organization.dart';
 part 'requests/reception.dart';
+part 'requests/reception_contact.dart';
 
 class HttpMethod {
   static const String GET = 'GET';

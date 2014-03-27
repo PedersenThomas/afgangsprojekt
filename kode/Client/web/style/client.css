@@ -40,3 +40,10 @@ nav#navigation {
 .hidden {
   display: none;
 }
+
+.dnd-placeholder {
+  border: 1px dashed #CCC;
+  background: none;
+}
+
+
