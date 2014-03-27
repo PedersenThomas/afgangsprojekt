@@ -14,6 +14,7 @@ class ContactView {
   UListElement ulContactList;
   UListElement ulReceptionContacts;
   List<Contact> contactList = new List<Contact>();
+  SearchInputElement searchBox;
   
   InputElement inputName;
   InputElement inputType;
@@ -34,6 +35,7 @@ class ContactView {
 
     buttonSave = element.querySelector('#contact-save');
     buttonCreate = element.querySelector('#contact-create');
+    searchBox = element.querySelector('#contact-search-box');
     
     registrateEventHandlers();
     
@@ -47,6 +49,8 @@ class ContactView {
     
     buttonSave.onClick.listen((_) => saveChanges());
     buttonCreate.onClick.listen((_) => createContact());
+
+    searchBox.onInput.listen((_) => performSearch());
   }
   
   void refreshList() {
@@ -63,9 +67,11 @@ class ContactView {
   }
   
   void performSearch() {
+    String searchTerm = searchBox.value;
     ulContactList.children
       ..clear()
-      ..addAll(contactList.map((c) => new LIElement()..text = c.full_name
+      ..addAll(contactList.where((e) => e.full_name.toLowerCase().contains(searchTerm.toLowerCase()))
+                          .map((c) => new LIElement()..text = c.full_name
                                                      ..onClick.listen((_) => activateContact(c.id))));
   }
   
@@ -128,15 +134,11 @@ class ContactView {
         
         request.updateReceptionContact(RC.receptionId, RC.contactId, RC.toJson())
         .catchError((error) {
-          
+          print('Tried to update a Reception Contact, but failed with "$error"');
         });
-        //Extract Value of ul lists.
       });
     
-    div.children.add(save);
-    //Reception Contact Felter
-    //Save
-    
+    div.children.add(save);    
     
     LIElement li = new LIElement();
     li.children.add(div);
