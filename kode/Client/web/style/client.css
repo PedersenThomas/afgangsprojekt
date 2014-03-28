@@ -46,4 +46,6 @@ nav#navigation {
   background: none;
 }
 
-
+.clickable {
+  cursor: pointer;
+}

@@ -49,8 +49,11 @@ class ContactView {
   }
   
   void registrateEventHandlers() {      
-    bus.on(windowChanged).listen((String window) {
-      element.classes.toggle('hidden', window != viewName);
+    bus.on(windowChanged).listen((Map event) {
+      element.classes.toggle('hidden', event['window'] != viewName);
+      if(event.containsKey('contact_id')) {
+        activateContact(event['contact_id']);
+      }
     });
     
     buttonSave.onClick.listen((_) => saveChanges());
@@ -77,8 +80,15 @@ class ContactView {
     ulContactList.children
       ..clear()
       ..addAll(contactList.where((e) => e.full_name.toLowerCase().contains(searchTerm.toLowerCase()))
-                          .map((c) => new LIElement()..text = c.full_name
-                                                     ..onClick.listen((_) => activateContact(c.id))));
+                          .map(makeContactNode));
+  }
+
+  LIElement makeContactNode(Contact contact) {
+    LIElement li = new LIElement()
+      ..classes.add('clickable')
+      ..text = contact.full_name
+      ..onClick.listen((_) => activateContact(contact.id));
+    return li;
   }
   
   void activateContact(int id) {
@@ -98,7 +108,7 @@ class ContactView {
           
           ulReceptionList.children
             ..clear()
-            ..addAll(contacts.map((contact) => new LIElement()..text = contact.receptionName));
+            ..addAll(contacts.map(makeReceptionNode));
         }
       });
     }).catchError((error) {
@@ -233,5 +243,19 @@ class ContactView {
     }).catchError((error) {
       print('Tried to make a new contact but failed with error "${error}" from body: "${newContact.toJson()}"');
     });
+  }
+  
+  LIElement makeReceptionNode(ReceptionContact_ReducedReception reception) {
+    LIElement li = new LIElement();
+    li
+      ..classes.add('clickable')
+      ..text = '${reception.receptionName}'
+      ..onClick.listen((_) {
+        Map event = {'window': 'reception',
+                     'organization_id': reception.organizationId,
+                     'reception_id': reception.receptionId};
+        bus.fire(windowChanged, event);
+      });
+    return li;
   }
 }

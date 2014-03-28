@@ -71,8 +71,11 @@ class ReceptionView {
     
     buttonCreate.onClick.listen((_) => createReceptionClickHandler());
 
-    bus.on(windowChanged).listen((String window) {
-      element.classes.toggle('hidden', window != viewName);
+    bus.on(windowChanged).listen((Map event) {
+      element.classes.toggle('hidden', event['window'] != viewName);
+      if(event.containsKey('organization_id') && event.containsKey('reception_id')) {
+        activateReception(event['organization_id'], event['reception_id']);
+      }
     });
     
     searchBox.onInput.listen((_) => performSearch());
@@ -155,6 +158,7 @@ class ReceptionView {
   
   LIElement makeReceptionNode(Reception reception) {
     return new LIElement()
+      ..classes.add('clickable')
       ..value = reception.id //TODO Er den brugt?
       ..text = '${reception.id} - ${reception.full_name}'
       ..onClick.listen((_) {
@@ -211,99 +215,27 @@ class ReceptionView {
       updateContactList(receptionId);
     }
   }
-    
-//  LIElement simpleListElement(String item) {
-//    LIElement li = new LIElement();
-//    ButtonElement deleteButton = new ButtonElement()
-//      ..text = 'Slet'
-//      ..onClick.listen((_) {
-//        li.parent.children.remove(li);
-//      });
-//    SpanElement content = new SpanElement()
-//      ..text = item;
-//    
-//    li..children.addAll([deleteButton, content]);
-//    
-//    return li;
-//  }
-  
-//  void _fillList(UListElement element, List<String> items) {
-//    List<LIElement> children = new List<LIElement>();
-//    for(String item in items) {
-//      LIElement li = simpleListElement(item);      
-//      children.add(li);
-//    }
-//    
-//    SortableGroup sortGroup = new SortableGroup()
-//      ..installAll(children)
-//      ..onSortUpdate.listen((SortableEvent event) {
-//        // do something when user sorted the elements...
-//      });
-//
-//    // Only accept elements from this section.
-//    sortGroup.accept.add(sortGroup);
-//    
-//    InputElement inputNewItem = new InputElement();
-//    inputNewItem
-//      ..classes.add(addNewLiClass)
-//      ..placeholder = 'Add new...'
-//      ..onKeyPress.listen((KeyboardEvent event) {
-//        KeyEvent key = new KeyEvent.wrap(event);
-//        int ENTER = 13;
-//        if(key.keyCode == ENTER) {
-//          String item = inputNewItem.value;
-//          inputNewItem.value = '';
-//          
-//          LIElement li = simpleListElement(item);
-//          int index = element.children.length -1;
-//          sortGroup.install(li);
-//          element.children.insert(index, li);
-//        }
-//      });
-//    
-//    children.add(new LIElement()..children.add(inputNewItem));
-//    
-//    element.children
-//      ..clear()
-//      ..addAll(children);
-//  }
-
-//  List<String> getListValues(UListElement element) {
-//    List<String> texts = new List<String>();
-//    for(LIElement e in element.children) {
-//      if(!e.classes.contains(addNewLiClass)) {
-//        SpanElement content = e.children.firstWhere((elem) => elem is SpanElement, orElse: () => null);
-//        if (content != null) {
-//          texts.add(content.text);
-//        }
-//      }
-//    }
-//    return texts;
-//  }
   
   void updateContactList(int receptionId) {
     getReceptionContactList(receptionId).then((List<CustomReceptionContact> contacts) {
       ulContactList.children
         ..clear()
-        ..addAll(contacts.map((c) => new LIElement()..text = 'LINK ${c.fullName}'));
+        ..addAll(contacts.map(makeContactNode));
     }).catchError((error) {
       print('Tried to fetch the contactlist from an reception Error: $error');
     });
   }
+  
+  LIElement makeContactNode(CustomReceptionContact contact) {
+    LIElement li = new LIElement();
+    li
+      ..classes.add('clickable')
+      ..text = '${contact.fullName}'
+      ..onClick.listen((_) {
+        Map event = {'window': 'contact',
+                     'contact_id': contact.contactId};
+        bus.fire(windowChanged, event);
+      });
+    return li;
+  }
 }
-
-/*
-  <li>
-    <Button>Slet</Button>   //Kan også godt være et billed.
-    <span>${Value}</span>
-  </li>
-  ...
-  <li class="addnew">
-    <input type="text" onKeyEnter="Add text as new element, wipe clear field.">
-  </li>
-*/
-
-/*
-  Når man henter en bestemt person skal man have information for hver enkel reception personen er i, foruden stamdata fra contacts tabellen.
-  I Receptions har man brug for en liste af kontakt personer
- */

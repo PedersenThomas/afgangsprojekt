@@ -54,8 +54,8 @@ class OrganizationView {
       });
     });
     
-    bus.on(windowChanged).listen((String window) {
-      element.classes.toggle('hidden', window != viewName);
+    bus.on(windowChanged).listen((Map event) {
+      element.classes.toggle('hidden', event['window'] != viewName);
     });
     
     searchBox.onInput.listen((_) => performSearch());
@@ -104,6 +104,7 @@ class OrganizationView {
 
   LIElement makeOrganizationNode(Organization organization) {
     return new LIElement()
+      ..classes.add('clickable')
       ..value = organization.id
       ..text = '${organization.id} - ${organization.full_name}'
       ..onClick.listen((_) {
@@ -126,19 +127,46 @@ class OrganizationView {
     getAnOrganizationsReceptionList(organizationId).then((List<Reception> receptions) {
       ulReceptionList.children
         ..clear()
-        ..addAll(receptions.map((r) => new LIElement()..text = 'LINK ${r.full_name}'));
+        ..addAll(receptions.map(makeReceptionNode));
     }).catchError((error) {
       print('Tried to fetch the receptionlist Error: $error');
     });
+  }
+
+  LIElement makeReceptionNode(Reception reception) {
+    LIElement li = new LIElement();
+    li
+      ..classes.add('clickable')
+      ..text = '${reception.full_name}'
+      ..onClick.listen((_) {
+        Map event = {'window': 'reception',
+                     'organization_id': reception.organization_id,
+                     'reception_id': reception.id};
+        bus.fire(windowChanged, event);
+      });
+    return li;
   }
   
   void updateContactList(int organizationId) {
     getOrganizationContactList(organizationId).then((List<Contact> contacts) {
       ulContactList.children
         ..clear()
-        ..addAll(contacts.map((c) => new LIElement()..text = 'LINK ${c.full_name}'));
+        ..addAll(contacts.map(makeContactNode));
     }).catchError((error) {
       print('Tried to fetch the contactlist from an organization Error: $error');
     });
+  }
+  
+  LIElement makeContactNode(Contact contact) {
+    LIElement li = new LIElement();
+    li
+      ..classes.add('clickable')
+      ..text = '${contact.full_name}'
+      ..onClick.listen((_) {
+        Map event = {'window': 'contact',
+                     'contact_id': contact.id};
+        bus.fire(windowChanged, event);
+      });
+    return li;
   }
 }
