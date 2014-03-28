@@ -6,6 +6,11 @@ import 'package:html5_dnd/html5_dnd.dart';
 
 String addNewLiClass = 'addnew';
 
+class _Key{
+  static const int ESCAPE = 27;
+  static const int ENTER = 13;
+}
+
 void fillList(UListElement element, List<String> items) {
   List<LIElement> children = new List<LIElement>();
   if(items != null) {
@@ -30,8 +35,7 @@ void fillList(UListElement element, List<String> items) {
     ..placeholder = 'Add new...'
     ..onKeyPress.listen((KeyboardEvent event) {
       KeyEvent key = new KeyEvent.wrap(event);
-      int ENTER = 13;
-      if(key.keyCode == ENTER) {
+      if(key.keyCode == _Key.ENTER) {
         String item = inputNewItem.value;
         inputNewItem.value = '';
         
@@ -61,6 +65,30 @@ LIElement simpleListElement(String item) {
   
   li..children.addAll([deleteButton, content]);
   
+  bool activeEdit = false;
+  li.onClick.listen((_) {
+    if(!activeEdit) {
+      activeEdit = true;
+      String oldDisplay = content.style.display;
+      content.style.display = 'none';
+      InputElement editBox = new InputElement(type: 'text');
+      li.children.add(editBox);
+      editBox
+        ..focus()
+        ..value = content.text
+        ..onKeyDown.listen((KeyboardEvent event) {
+          KeyEvent key = new KeyEvent.wrap(event);
+          if(key.keyCode == _Key.ENTER || key.keyCode == _Key.ESCAPE) {
+            if(key.keyCode == _Key.ENTER) {
+              content.text = editBox.value;
+            }
+            content.style.display = oldDisplay;
+            li.children.remove(editBox);
+            activeEdit = false;
+          }
+        });
+    }
+  });
   return li;
 }
 

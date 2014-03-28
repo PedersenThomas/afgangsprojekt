@@ -13,11 +13,12 @@ class ContactView {
   DivElement element;
   UListElement ulContactList;
   UListElement ulReceptionContacts;
+  UListElement ulReceptionList;
   List<Contact> contactList = new List<Contact>();
   SearchInputElement searchBox;
   
   InputElement inputName;
-  InputElement inputType;
+  SelectElement inputType;
   CheckboxInputElement inputEnabled;
   
   ButtonElement buttonSave, buttonCreate;
@@ -29,9 +30,10 @@ class ContactView {
     ulContactList = element.querySelector('#contact-list');
     
     inputName = element.querySelector('#contact-input-name');
-    inputType = element.querySelector('#contact-input-type');
+    inputType = element.querySelector('#contact-select-type');
     inputEnabled = element.querySelector('#contact-input-enabled');
     ulReceptionContacts = element.querySelector('#reception-contact');
+    ulReceptionList = element.querySelector('#contact-reception-list');
 
     buttonSave = element.querySelector('#contact-save');
     buttonCreate = element.querySelector('#contact-create');
@@ -40,6 +42,10 @@ class ContactView {
     registrateEventHandlers();
     
     refreshList();
+    
+    request.getContacttypeList().then((List<String> typesList) {
+      inputType.children.addAll(typesList.map((type) => new OptionElement(data: type, value: type)));
+    });
   }
   
   void registrateEventHandlers() {      
@@ -78,7 +84,7 @@ class ContactView {
   void activateContact(int id) {
     request.getContact(id).then((Contact contact) {
       inputName.value = contact.full_name;
-      inputType.value = contact.type;
+      inputType.options.forEach((option) => option.selected = option.value == contact.type);
       inputEnabled.checked = contact.enabled;
       contactId = contact.id;
       
@@ -89,6 +95,10 @@ class ContactView {
           list.children
             ..clear()
             ..addAll(contacts.map(receptionContactBox));
+          
+          ulReceptionList.children
+            ..clear()
+            ..addAll(contacts.map((contact) => new LIElement()..text = contact.receptionName));
         }
       });
     }).catchError((error) {
@@ -98,7 +108,7 @@ class ContactView {
   
   LIElement receptionContactBox(ReceptionContact_ReducedReception contact) {
     DivElement div = new DivElement()
-      ..style.border = '1px solid grey';
+      ..classes.add('contact-reception');
     SpanElement header = new SpanElement()
       ..text = contact.receptionName;
     div.children.add(header);
@@ -106,14 +116,21 @@ class ContactView {
     //wants_message
     //enabled
     //attributes.
+    InputElement wantMessage = makeCheckBox(div, 'Vil have beskeder', contact.wantsMessages);
+    InputElement enabled = makeCheckBox(div, 'Aktiv', contact.wantsMessages);
+    
+    InputElement department = makeTextBox(div, 'Afdelling', contact.department);
+    InputElement info = makeTextBox(div, 'Andet', contact.info);
+    InputElement position = makeTextBox(div, 'Stilling', contact.position);
+    InputElement relations = makeTextBox(div, 'Relationer', contact.relations);
+    InputElement responsibility = makeTextBox(div, 'Ansvar', contact.responsibility);
+    
     UListElement backupList = makeListBox(div, 'Backup', contact.backup);
     UListElement emailList = makeListBox(div, 'E-mail', contact.emailaddresses);
-    UListElement handlingList = makeListBox(div, 'E-mail', contact.handling);
-    UListElement telephoneNumbersList = makeListBox(div, 'E-mail', contact.telephonenumbers);
-    UListElement workhoursList = makeListBox(div, 'E-mail', contact.workhours);
-    UListElement tagsList = makeListBox(div, 'E-mail', contact.tags);
-    
-    
+    UListElement handlingList = makeListBox(div, 'Håndtering', contact.handling);
+    UListElement telephoneNumbersList = makeListBox(div, 'Telefonnumre', contact.telephonenumbers);
+    UListElement workhoursList = makeListBox(div, 'Arbejdstid', contact.workhours);
+    UListElement tagsList = makeListBox(div, 'Stikord', contact.tags);
 
     ButtonElement save = new ButtonElement()
       ..text = 'Gem'
@@ -122,15 +139,21 @@ class ContactView {
           ..contactId = contact.contactId
           ..receptionId = contact.receptionId
           ..distributionListId = contact.distributionListId
-          ..contactEnabled = contact.contactEnabled
-          ..wantsMessages = contact.wantsMessages
+          ..contactEnabled = enabled.checked
+          ..wantsMessages = wantMessage.checked
          
           ..backup = getListValues(backupList)
           ..emailaddresses = getListValues(emailList)
           ..handling = getListValues(handlingList)
           ..telephonenumbers = getListValues(telephoneNumbersList)
           ..workhours = getListValues(workhoursList)
-          ..tags = getListValues(tagsList);
+          ..tags = getListValues(tagsList)
+          
+          ..department = department.value
+          ..info = info.value
+          ..position = position.value
+          ..relations = relations.value
+          ..responsibility = responsibility.value;
         
         request.updateReceptionContact(RC.receptionId, RC.contactId, RC.toJson())
         .catchError((error) {
@@ -186,7 +209,7 @@ class ContactView {
       Contact updatedContact = new Contact()
         ..id = contactId
         ..full_name = inputName.value
-        ..type = inputType.value
+        ..type = inputType.selectedOptions.first != null ? inputType.selectedOptions.first.value : inputType.options.first.value
         ..enabled = inputEnabled.checked;
       
       request.updateContact(contactId, updatedContact.toJson()).then((_) {
@@ -201,7 +224,7 @@ class ContactView {
   void createContact() {
     Contact newContact = new Contact()
       ..full_name = inputName.value
-      ..type = inputType.value
+      ..type = inputType.selectedOptions.first != null ? inputType.selectedOptions.first.value : inputType.options.first.value
       ..enabled = inputEnabled.checked;
     
     request.createContact(newContact.toJson()).then((_) {

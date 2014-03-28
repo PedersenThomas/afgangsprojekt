@@ -36,3 +36,12 @@
   width: 20%;
   border: solid 2px black;
 }
+
+#contact-base-info {
+  border: 1px solid black;
+}
+
+.contact-reception {
+  border: 2px solid grey;
+  margin-bottom: 5px;
+}
