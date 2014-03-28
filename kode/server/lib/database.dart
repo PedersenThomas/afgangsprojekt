@@ -225,6 +225,15 @@ class Database {
     return execute(sql, parameters);
   }  
   
+  Future<List<String>> getContactTypeList() {
+    String sql = '''
+      SELECT value
+      FROM contact_types;
+    ''';
+
+    return query(sql).then((List Rows) => Rows.map((row) => row.value).toList());
+  }
+  
   /************************************************
    ************ Reception Contacts ****************
    */

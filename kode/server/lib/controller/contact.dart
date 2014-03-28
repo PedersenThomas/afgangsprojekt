@@ -80,4 +80,13 @@ class ContactController {
       Internal_Error(request);
     });
   }
+  
+  void getContactTypeList(HttpRequest request) {
+     db.getContactTypeList().then((List<String> data) {
+       writeAndCloseJson(request, JSON.encode({'contacttypes':data}));
+     }).catchError((error) {
+       logger.error('contractController.getReceptionList url: "${request.uri}" gave error "${error}"');
+       Internal_Error(request);
+     });
+   }
 }
