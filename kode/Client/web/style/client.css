@@ -49,3 +49,7 @@ nav#navigation {
 .clickable {
   cursor: pointer;
 }
+
+.zebra li:nth-of-type(even) {
+  background-color: #eee;
+}
