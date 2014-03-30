@@ -42,26 +42,32 @@ Uge 3
 
 Uge 4 
   --Planen 
+    Jeg er ikke blevet færdig med at lave serveren som jeg oprendeligt havde planlagt, fordi Kim kom med det fantastisk råd at gøre det mere agil. hvilket jeg ikke troede nødvendigt, da jeg syntes jeg havde styr på hvad serveren skulle kunne... Boy was I wrong.
     En hel del af de interfaces som er beskrevet i planen på server siden, er blevet updateret og der er tilføjet en masse andre.
 
   --Uden for planen
-    Klienten har fået en stor overhalning.  
+    Klienten har fået en stor overhalning. Jeg har fået rettet indsat searchcomponent, så man kan søge i organisationer inde fra receptionerne.
+      Man kan Oprette, rette, og fjerne receptioner.
+      Man kan rette kontakter.
+
+   --Note
+     Jeg håbede på at være færdig med organizationer, receptioner og kontakter i uge 4, men det har vist sig at jeg kommer til at bruge mere tid. Jeg skal være færdig med det i uge 5, eller så løber al tidsplan.
 
 -- Forvented --
-Uge 1 
+Uge 1 (2014-03-03 - 2014-03-09)
     Krav, Plan
 
-uge 2 
+uge 2 (2014-03-10 - 2014-03-16)
     Use cases
     Udbyg Database schema så der er understøttelse for Organizationer.
     //Skal jeg have nogle diagrammer ind over det??? Klasse? Sekvens?
 
-Uge 3, 4
+Uge 3, 4 (2014-03-17 - 2014-03-30)
     Server arbejde, Få styr på at hente, oprette og updatere organizationer, receptioner, kontaktpersoner, og telefonnumre. Samt slette telefonnumre
     Serveren skal have interface for brugere, så man kan oprette, redigere og slette brugere. Vælge hvilke gruppe brugeren skal være en del af. //Skal der også være et krav her omkring deaktivering???? 
     Tests til alle interfaces. //Måske bliver det her for meget.
 
-Uge 5, 6, 7
+Uge 5, 6, 7 (2014-03-03 - 2014-03-09)
     Klient arbejde, Implementere så man kan se en liste over Organizationer. Have mulig for at oprette en ny Organization samt updatere.
     Se en liste over receptioner, hvor efter man skal kunne vælge en ud, og kunne redigere dens oplysninger, og hvor vidt den er aktik eller deaktiveret.
        Man skal også kunne se hvilke kontaktpersoner som er en del af den valgte reception. Når man vælger en ud skal man kunne ændre personens oplysninger, samt mulighed for at aktivere/deaktivere personen.
