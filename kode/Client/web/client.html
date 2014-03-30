@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="style/organization.css">
     <link rel="stylesheet" href="style/reception.css">
     <link rel="stylesheet" href="style/contact.css">
+    <link rel="stylesheet" href="style/searchcomponent.css">
   </head>
   <body>     
     <nav id="navigation">
@@ -51,11 +52,13 @@
       
       <div id="reception-page" class="hidden">
         <div id="reception-listing">
+          <button id="reception-new">Ny Reception</button>
           <input id="reception-search-box" type="search" placeholder="Søg...">
           <ul id="reception-list" class="zebra"></ul>
         </div>
         <div id="reception-content">
           <label for="reception-input-name">Navn</label><input id="reception-input-name">
+          <label>Organisation</label><div id="reception-organization-selector"></div>
           <label for="reception-input-uri">Uri</label><input id="reception-input-uri">          
           <label for="reception-input-customertype">Customertype</label><input id="reception-input-customertype">
           <label for="reception-input-greeting">Greeting</label><input id="reception-input-greeting">          
@@ -74,8 +77,8 @@
           <label>telephonenumbers</label><ul id="reception-list-telephonenumbers"></ul>
           <label>websites</label><ul id="reception-list-websites"></ul>
           
-          <button id="reception-create">Opret</button>
           <button id="reception-save">Gem</button>
+          <button id="reception-delete">Slet</button>
         </div>
         <div id="reception-rightbar">
           <span>Kontakter</span>

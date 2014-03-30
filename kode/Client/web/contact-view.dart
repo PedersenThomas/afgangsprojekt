@@ -62,9 +62,7 @@ class ContactView {
     searchBox.onInput.listen((_) => performSearch());
   }
   
-  void refreshList() {
-    print('Contact refreshList');
-        
+  void refreshList() {        
     request.getEveryContact().then((List<Contact> contacts) {
       contacts.sort((a,b) => a.full_name.compareTo(b.full_name));
       //TODO Skal det være her.

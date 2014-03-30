@@ -22,6 +22,10 @@
   border: solid 2px blue;
 }
 
+#reception-organization-selector {
+  width: 400px;
+}
+
 #reception-content {
   float:left;
   width: 60%;

@@ -10,6 +10,7 @@ import 'lib/model.dart';
 import 'lib/request.dart';
 import 'lib/eventbus.dart';
 import 'lib/view_utilities.dart';
+import 'lib/searchcomponent.dart';
 
 class ReceptionView {
   String addNewLiClass = 'addnew';
@@ -17,16 +18,18 @@ class ReceptionView {
   DivElement element;
   InputElement inputFullName, inputUri, inputProduct, inputGreeting, inputOther, inputCostumerstype;
   CheckboxInputElement inputEnabled;
-  ButtonElement buttonSave, buttonCreate;
+  ButtonElement buttonSave, buttonCreate, buttonDelete;
   UListElement ulAddresses, ulAlternatenames, ulBankinginformation, ulCrapcallhandling, ulEmailaddresses, 
                ulHandlings, ulOpeninghours, ulRegistrationnumbers, ulTelephonenumbers, ulWebsites;
   SearchInputElement searchBox;
   UListElement uiReceptionList;
   UListElement ulContactList;
-
+  DivElement organizationOuterSelector;
+  
   List<Reception> receptions = [];
   
-  int currentReceptionId = 0, currentOrganizationId = 1;
+  SearchComponent<Organization> SC;
+  int currentReceptionId, currentOrganizationId;
   
   ReceptionView(DivElement this.element) {
     searchBox = element.querySelector('#reception-search-box');
@@ -53,15 +56,33 @@ class ReceptionView {
     ulWebsites = element.querySelector('#reception-list-websites');
     
     buttonSave = element.querySelector('#reception-save');
-    buttonCreate = element.querySelector('#reception-create');
+    buttonCreate = element.querySelector('#reception-new');
+    buttonDelete = element.querySelector('#reception-delete');
+    
+    organizationOuterSelector = element.querySelector('#reception-organization-selector');
+    
+    SC = new SearchComponent<Organization>(organizationOuterSelector, 'reception-organization-searchbox')
+      ..listElementToString = organizationToSearchboxString
+      ..searchFilter = organizationSearchHandler;
+    
+    getOrganizationList().then((List<Organization> list) {
+      list.sort((a, b) => a.full_name.compareTo(b.full_name));
+      SC.updateSourceList(list);
+    });
     
     registrateEventHandlers();
     
-    refreshList().then((_) {
-      performSearch();
-    });
+    refreshList();
     
-    activateReception(0, 0);
+    //activateReception(0, 0);
+  }
+  
+  String organizationToSearchboxString(Organization organization, String searchterm) {
+    return '${organization.full_name}';
+  }
+  
+  bool organizationSearchHandler(Organization element, String searchTerm) {
+    return element.full_name.toLowerCase().contains(searchTerm.toLowerCase());
   }
   
   void registrateEventHandlers() {
@@ -71,6 +92,8 @@ class ReceptionView {
     
     buttonCreate.onClick.listen((_) => createReceptionClickHandler());
 
+    buttonDelete.onClick.listen((_) => deleteCurrentReception());
+    
     bus.on(windowChanged).listen((Map event) {
       element.classes.toggle('hidden', event['window'] != viewName);
       if(event.containsKey('organization_id') && event.containsKey('reception_id')) {
@@ -89,24 +112,50 @@ class ReceptionView {
   }
   
   void renderReceptionList(List<Reception> receptions) {
-      uiReceptionList.children
-        ..clear()
-        ..addAll(receptions.map(makeReceptionNode));
-    }
+    uiReceptionList.children
+      ..clear()
+      ..addAll(receptions.map(makeReceptionNode));
+  }
 
   void createReceptionClickHandler() {
-    Reception newReception = extractValues();    
+    currentReceptionId = 0;
+    currentOrganizationId = 0;
     
-    createReception(currentOrganizationId, newReception.toJson()).then((String response) {
-      Map json = JSON.decode(response);
-      //TODO visable clue that a new organization is created.
-      return refreshList().then((_) {
-        performSearch();
-        activateReception(currentOrganizationId, json['id']);
+    //Clear all fields.
+    clearContent();
+  }
+
+  void clearContent() {
+    inputFullName.value = '';
+    inputUri.value = '';
+    inputEnabled.checked = true;
+    inputCostumerstype.value = '';
+    inputGreeting.value = '';
+    inputOther.value = '';
+    inputProduct.value = '';
+    fillList(ulAddresses, []);
+    fillList(ulAlternatenames, []);
+    fillList(ulBankinginformation, []);
+    fillList(ulCrapcallhandling, []);
+    fillList(ulEmailaddresses, []);
+    fillList(ulHandlings, []);
+    fillList(ulOpeninghours, []);
+    fillList(ulRegistrationnumbers, []);
+    fillList(ulTelephonenumbers, []);
+    fillList(ulWebsites, []);
+  }
+  
+  void deleteCurrentReception() {
+    if(currentOrganizationId > 0 && currentReceptionId > 0) {
+      deleteReception(currentOrganizationId, currentReceptionId).then((_) {
+        currentReceptionId = 0;
+        currentOrganizationId = 0;
+        clearContent();
+        refreshList();
+      }).catchError((error) {
+        print('Failed to delete reception orgId: "${currentOrganizationId}" recId: "${currentReceptionId}" got "${error}"');
       });
-    }).catchError((error) {
-      print('Somethin bad happend, more precises "${error}", when i tried to create a new reception based on organization "${currentOrganizationId}" with data "${newReception.toJson()}"');
-    });
+    }
   }
   
   void saveChanges() {
@@ -115,18 +164,27 @@ class ReceptionView {
       
       updateReception(currentOrganizationId, currentReceptionId, updatedReception.toJson()).then((_) {
         //Show a message that tells the user, that the changes went threw.
-        refreshList().then((_) {
-          performSearch();
-        });        
+        refreshList();        
       });
-    } else {
-      print('Reception out of range: $currentReceptionId');
+    } else if(currentReceptionId == 0 && currentOrganizationId == 0) {
+      Reception newReception = extractValues();
+      if(SC.currentElement != null) {
+        int organizationId = SC.currentElement.id;
+        createReception(organizationId, newReception.toJson()).then((Map data) {
+          if(data != null && data.containsKey('id')) {
+            return refreshList().then((_) {
+              return activateReception(organizationId, data['id']);
+            });
+          }
+        }).catchError((error) {
+          print('Tried to create a new reception but got "$error"');
+        });
+      }
     }
   }
   
   Reception extractValues() {
     return new Reception()
-      ..id = currentReceptionId
       ..organization_id = currentOrganizationId
       ..full_name = inputFullName.value
       ..uri = inputUri.value
@@ -153,6 +211,9 @@ class ReceptionView {
     return getReceptionList().then((List<Reception> receptions) {
       receptions.sort((a, b) => a.full_name.compareTo(b.full_name));
       this.receptions = receptions;
+      performSearch();
+    }).catchError((error) {
+      print('Failed to refreshing the list of receptions in reception window.');
     });
   }
   
@@ -169,6 +230,10 @@ class ReceptionView {
   void activateReception(int organizationId, int receptionId) {
     currentOrganizationId = organizationId;
     currentReceptionId = receptionId;
+    
+    SC.selectElement(null, (Organization listItem, _) {
+      return listItem.id == organizationId;
+    });
     
     if(organizationId > 0 && receptionId > 0) {
       getReception(currentOrganizationId, currentReceptionId).then((Reception response) {
