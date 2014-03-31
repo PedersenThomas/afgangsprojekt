@@ -21,6 +21,8 @@ class OrganizationView {
   List<Organization> organizations = [];
   int currentOrganizationId = 0;
   
+  bool createNew = false;
+  
   OrganizationView(DivElement this.element) {
     print('OrganizationView Constructor');
     searchBox = element.querySelector('#organization-search-box');
@@ -42,16 +44,9 @@ class OrganizationView {
     });
     
     buttonCreate.onClick.listen((_) {
-      Map organization = {'full_name': inputName.value};
-      String newOrganization = JSON.encode(organization);
-      createOrganization(newOrganization).then((String response) {
-        Map json = JSON.decode(response);
-        //TODO visable clue that a new organization is created.
-        refreshList();
-        activateOrganization(json['id']);
-      }).catchError((error) {
-        print('Tried to create a new Organizaitonbut got: $error');
-      });
+      currentOrganizationId = 0;
+      clearContent();
+      createNew = true;
     });
     
     bus.on(windowChanged).listen((Map event) {
@@ -59,6 +54,10 @@ class OrganizationView {
     });
     
     searchBox.onInput.listen((_) => performSearch());
+  }
+
+  void clearContent() {
+    inputName.value = '';
   }
   
   void performSearch() {
@@ -78,8 +77,17 @@ class OrganizationView {
         //Show a message that tells the user, that the changes went through.
         refreshList();
       });
-    } else {
-      print('Organization out of range: $currentOrganizationId');
+    } else if(createNew) {
+      Map organization = {'full_name': inputName.value};
+      String newOrganization = JSON.encode(organization);
+      createOrganization(newOrganization).then((String response) {
+        Map json = JSON.decode(response);
+        //TODO visable clue that a new organization is created.
+        refreshList();
+        activateOrganization(json['id']);
+      }).catchError((error) {
+        print('Tried to create a new Organizaitonbut got: $error');
+      });
     }
   }
   
@@ -115,6 +123,7 @@ class OrganizationView {
   void activateOrganization(int organizationId) {
     getOrganization(organizationId).then((Organization organization) {
       currentOrganizationId = organizationId;
+      createNew = false;
       inputName.value = organization.full_name;
       updateReceptionList(currentOrganizationId);
       updateContactList(currentOrganizationId);

@@ -17,6 +17,10 @@
   overflow: auto;
 }
 
+#organization-create {
+  width: 100%;
+}
+
 #organization-content {
   float:left;
   width: 60%;
