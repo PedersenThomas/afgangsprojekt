@@ -19,6 +19,7 @@ class ContactView {
   UListElement ulContactList;
   UListElement ulReceptionContacts;
   UListElement ulReceptionList;
+  UListElement ulOrganizationList;
   List<Contact> contactList = new List<Contact>();
   SearchInputElement searchBox;
 
@@ -43,7 +44,8 @@ class ContactView {
     inputEnabled = element.querySelector('#contact-input-enabled');
     ulReceptionContacts = element.querySelector('#reception-contacts');
     ulReceptionList = element.querySelector('#contact-reception-list');
-
+    ulOrganizationList = element.querySelector('#contact-organization-list');
+    
     buttonSave = element.querySelector('#contact-save');
     buttonCreate = element.querySelector('#contact-create');
     buttonDelete = element.querySelector('#contact-delete');
@@ -140,6 +142,13 @@ class ContactView {
           ulReceptionList.children
               ..clear()
               ..addAll(contacts.map(makeReceptionNode));
+          
+          request.getContactsOrganizationList(id).then((List<Organization> organizations) {
+            organizations.sort((a, b) => a.full_name.compareTo(b.full_name));
+            ulOrganizationList.children
+              ..clear()
+              ..addAll(organizations.map(makeOrganizationNode));
+          });
           
           request.getReceptionList().then((List<Reception> receptions) {
             SC.updateSourceList(receptions);
@@ -405,6 +414,20 @@ class ContactView {
           'window': 'reception',
           'organization_id': reception.organizationId,
           'reception_id': reception.receptionId
+        };
+        bus.fire(windowChanged, event);
+      });
+    return li;
+  }
+  
+  LIElement makeOrganizationNode(Organization organization) {
+    LIElement li = new LIElement()
+      ..classes.add('clickable')
+      ..text = '${organization.full_name}'
+      ..onClick.listen((_) {
+        Map event = {
+          'window': 'organization',
+          'organization_id': organization.id,
         };
         bus.fire(windowChanged, event);
       });
