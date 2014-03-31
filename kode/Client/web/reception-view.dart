@@ -56,7 +56,7 @@ class ReceptionView {
     ulWebsites = element.querySelector('#reception-list-websites');
     
     buttonSave = element.querySelector('#reception-save');
-    buttonCreate = element.querySelector('#reception-new');
+    buttonCreate = element.querySelector('#reception-create');
     buttonDelete = element.querySelector('#reception-delete');
     
     organizationOuterSelector = element.querySelector('#reception-organization-selector');

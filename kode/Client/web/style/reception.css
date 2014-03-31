@@ -26,6 +26,10 @@
   width: 400px;
 }
 
+#reception-create {
+  width: 100%;
+}
+
 #reception-content {
   float:left;
   width: 60%;
