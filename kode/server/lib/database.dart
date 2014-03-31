@@ -401,6 +401,26 @@ class Database {
     });
   }
   
+  Future<List<Organization>> getAContactsOrganizationList(int contactId) {
+      String sql = '''
+        SELECT DISTINCT o.id, o.full_name
+        FROM reception_contacts rc
+        JOIN receptions r on rc.reception_id = r.id
+        JOIN organizations o on r.organization_id = o.id
+        WHERE rc.contact_id = @contact_id
+      ''';
+      
+      Map parameters = {'contact_id': contactId};
+      
+      return query(sql, parameters).then((rows) {
+        List<Organization> organizations = new List<Organization>();
+        for(var row in rows) {
+          organizations.add(new Organization(row.id, row.full_name));
+        }
+        return organizations;
+      });
+    }
+  
   /************************************************
    *************** Organization *******************
    */

@@ -8,6 +8,7 @@ import '../utilities/logger.dart';
 import '../database.dart';
 import '../model.dart';
 import '../view/contact.dart';
+import '../view/organization.dart';
 import '../view/reception_contact_reduced_reception.dart';
 
 class ContactController {
@@ -82,11 +83,21 @@ class ContactController {
   }
   
   void getContactTypeList(HttpRequest request) {
-     db.getContactTypeList().then((List<String> data) {
-       writeAndCloseJson(request, JSON.encode({'contacttypes':data}));
-     }).catchError((error) {
-       logger.error('contractController.getReceptionList url: "${request.uri}" gave error "${error}"');
-       Internal_Error(request);
-     });
-   }
+    db.getContactTypeList().then((List<String> data) {
+      writeAndCloseJson(request, JSON.encode({'contacttypes':data}));
+    }).catchError((error) {
+      logger.error('contractController.getReceptionList url: "${request.uri}" gave error "${error}"');
+      Internal_Error(request);
+    });
+  }
+  
+  void getAContactsOrganizationList(HttpRequest request) {
+    int contactId = pathParameter(request.uri, 'contact');
+    db.getAContactsOrganizationList(contactId).then((List<Organization> organizations) {
+      writeAndCloseJson(request, JSON.encode({'organizations':listOrganizatonAsJson(organizations)}));
+    }).catchError((error) {
+      logger.error('contractController.getAContactsOrganizationList url: "${request.uri}" gave error "${error}"');
+      Internal_Error(request);
+    });
+  }
 }
