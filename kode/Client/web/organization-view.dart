@@ -12,26 +12,28 @@ class OrganizationView {
   DivElement element;
   UListElement uiList;
   InputElement inputName;
-  ButtonElement buttonSave;
-  ButtonElement buttonCreate;
+  ButtonElement buttonCreate, buttonSave, buttonDelete;
   SearchInputElement searchBox;
   UListElement ulReceptionList;
   UListElement ulContactList;
   
   List<Organization> organizations = [];
-  int currentOrganizationId = 0;
+  int selectedOrganizationId = 0;
   
   bool createNew = false;
   
   OrganizationView(DivElement this.element) {
-    print('OrganizationView Constructor');
     searchBox = element.querySelector('#organization-search-box');
     uiList = element.querySelector('#organization-list');
     inputName = element.querySelector('#organization-input-name');
     buttonSave = element.querySelector('#organization-save');
     buttonCreate = element.querySelector('#organization-create');
+    buttonDelete = element.querySelector('#organization-delete');
     ulReceptionList = element.querySelector('#organization-reception-list');
     ulContactList = element.querySelector('#organization-contact-list');
+
+    buttonSave.disabled = true;
+    buttonDelete.disabled = true;
     
     registrateEventHandlers();
     
@@ -44,9 +46,21 @@ class OrganizationView {
     });
     
     buttonCreate.onClick.listen((_) {
-      currentOrganizationId = 0;
-      clearContent();
-      createNew = true;
+      createOrganizationHandler();
+    });
+    
+    buttonDelete.onClick.listen((_) {
+      if(!createNew && selectedOrganizationId > 0) {
+        deleteOrganization(selectedOrganizationId).then((_) {
+          refreshList();
+          clearContent();
+          buttonSave.disabled = true;
+          buttonDelete.disabled = true;
+          selectedOrganizationId = 0;
+        }).catchError((error) {
+          print('Failed to delete organization "${selectedOrganizationId}", got "${error}"');
+        });
+      }
     });
     
     bus.on(windowChanged).listen((Map event) {
@@ -54,6 +68,17 @@ class OrganizationView {
     });
     
     searchBox.onInput.listen((_) => performSearch());
+  }
+
+  void createOrganizationHandler() {
+    selectedOrganizationId = 0;
+    buttonSave.text = 'Opret';
+    buttonSave.disabled = false;
+    buttonDelete.disabled = true;
+    ulContactList.children.clear();
+    ulReceptionList.children.clear();
+    clearContent();
+    createNew = true;
   }
 
   void clearContent() {
@@ -69,22 +94,21 @@ class OrganizationView {
   
   void saveChanges() {
     //TODO Does this make sense? Remove currentOrganizationId?????
-    if(currentOrganizationId > 0) {
-      Map organization = {'id': currentOrganizationId,
+    if(selectedOrganizationId > 0) {
+      Map organization = {'id': selectedOrganizationId,
                           'full_name': inputName.value};
       String newOrganization = JSON.encode(organization);
-      updateOrganization(currentOrganizationId, newOrganization).then((_) {
+      updateOrganization(selectedOrganizationId, newOrganization).then((_) {
         //Show a message that tells the user, that the changes went through.
         refreshList();
       });
     } else if(createNew) {
       Map organization = {'full_name': inputName.value};
       String newOrganization = JSON.encode(organization);
-      createOrganization(newOrganization).then((String response) {
-        Map json = JSON.decode(response);
+      createOrganization(newOrganization).then((Map response) {
         //TODO visable clue that a new organization is created.
         refreshList();
-        activateOrganization(json['id']);
+        activateOrganization(response['id']);
       }).catchError((error) {
         print('Tried to create a new Organizaitonbut got: $error');
       });
@@ -122,11 +146,14 @@ class OrganizationView {
   
   void activateOrganization(int organizationId) {
     getOrganization(organizationId).then((Organization organization) {
-      currentOrganizationId = organizationId;
+      selectedOrganizationId = organizationId;
       createNew = false;
+      buttonSave.disabled = false;
+      buttonSave.text = 'Gem';
+      buttonDelete.disabled = false;
       inputName.value = organization.full_name;
-      updateReceptionList(currentOrganizationId);
-      updateContactList(currentOrganizationId);
+      updateReceptionList(selectedOrganizationId);
+      updateContactList(selectedOrganizationId);
     }).catchError((error) {
       print('Tried to activate organization "$organizationId" but gave error: $error');
     });

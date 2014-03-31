@@ -99,7 +99,7 @@ Future<Organization> getOrganization(int organizationId) {
   return completer.future;
 }
 
-Future createOrganization(String data) {
+Future<Map> createOrganization(String data) {
   final Completer completer  = new Completer();
   
   HttpRequest request;
@@ -108,7 +108,7 @@ Future createOrganization(String data) {
   request = new HttpRequest()
     ..open(HttpMethod.PUT, url)
     ..onLoad.listen((_) {
-      completer.complete(request.responseText);
+      completer.complete(JSON.decode(request.responseText));
     })
     ..onError.listen((error) {
       //TODO logging.
@@ -119,7 +119,7 @@ Future createOrganization(String data) {
   return completer.future;
 }
 
-Future updateOrganization(int organizationId, String body) {
+Future<Map> updateOrganization(int organizationId, String body) {
   final Completer completer  = new Completer();
   
   HttpRequest request;
@@ -128,13 +128,33 @@ Future updateOrganization(int organizationId, String body) {
   request = new HttpRequest()
     ..open(HttpMethod.POST, url)
     ..onLoad.listen((_) {
-      completer.complete(request.responseText);
+      completer.complete(JSON.decode(request.responseText));
     })
     ..onError.listen((error) {
       //TODO logging.
       completer.completeError(error.toString());
     })
     ..send(body);
+
+  return completer.future;
+}
+
+Future<Map> deleteOrganization(int organizationId) {
+  final Completer completer  = new Completer();
+    
+  HttpRequest request;
+  String url = '${config.serverUrl}/organization/$organizationId?token=${config.token}';
+
+  request = new HttpRequest()
+    ..open(HttpMethod.DELETE, url)
+    ..onLoad.listen((_) {
+      completer.complete(JSON.decode(request.responseText));
+    })
+    ..onError.listen((error) {
+      //TODO logging.
+      completer.completeError(error.toString());
+    })
+    ..send();
 
   return completer.future;
 }

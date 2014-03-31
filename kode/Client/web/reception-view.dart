@@ -29,7 +29,7 @@ class ReceptionView {
   List<Reception> receptions = [];
   
   SearchComponent<Organization> SC;
-  int currentReceptionId, currentOrganizationId;
+  int selectedReceptionId, currentOrganizationId;
   
   ReceptionView(DivElement this.element) {
     searchBox = element.querySelector('#reception-search-box');
@@ -70,19 +70,20 @@ class ReceptionView {
       SC.updateSourceList(list);
     });
     
+    buttonSave.disabled = true;
+    buttonDelete.disabled = true;
+    
     registrateEventHandlers();
     
     refreshList();
-    
-    //activateReception(0, 0);
   }
   
   String organizationToSearchboxString(Organization organization, String searchterm) {
     return '${organization.full_name}';
   }
   
-  bool organizationSearchHandler(Organization element, String searchTerm) {
-    return element.full_name.toLowerCase().contains(searchTerm.toLowerCase());
+  bool organizationSearchHandler(Organization organization, String searchTerm) {
+    return organization.full_name.toLowerCase().contains(searchTerm.toLowerCase());
   }
   
   void registrateEventHandlers() {
@@ -118,11 +119,16 @@ class ReceptionView {
   }
 
   void createReceptionClickHandler() {
-    currentReceptionId = 0;
+    selectedReceptionId = 0;
     currentOrganizationId = 0;
+    
+    buttonDelete.disabled = true;
+    buttonSave.disabled = false;
+    buttonSave.text = 'Opret';
     
     //Clear all fields.
     clearContent();
+    ulContactList.children.clear();
   }
 
   void clearContent() {
@@ -146,27 +152,27 @@ class ReceptionView {
   }
   
   void deleteCurrentReception() {
-    if(currentOrganizationId > 0 && currentReceptionId > 0) {
-      deleteReception(currentOrganizationId, currentReceptionId).then((_) {
-        currentReceptionId = 0;
+    if(currentOrganizationId > 0 && selectedReceptionId > 0) {
+      deleteReception(currentOrganizationId, selectedReceptionId).then((_) {
+        selectedReceptionId = 0;
         currentOrganizationId = 0;
         clearContent();
         refreshList();
       }).catchError((error) {
-        print('Failed to delete reception orgId: "${currentOrganizationId}" recId: "${currentReceptionId}" got "${error}"');
+        print('Failed to delete reception orgId: "${currentOrganizationId}" recId: "${selectedReceptionId}" got "${error}"');
       });
     }
   }
   
   void saveChanges() {
-    if(currentReceptionId > 0) {        
+    if(selectedReceptionId > 0) {        
       Reception updatedReception = extractValues();
       
-      updateReception(currentOrganizationId, currentReceptionId, updatedReception.toJson()).then((_) {
+      updateReception(currentOrganizationId, selectedReceptionId, updatedReception.toJson()).then((_) {
         //Show a message that tells the user, that the changes went threw.
         refreshList();        
       });
-    } else if(currentReceptionId == 0 && currentOrganizationId == 0) {
+    } else if(selectedReceptionId == 0 && currentOrganizationId == 0) {
       Reception newReception = extractValues();
       if(SC.currentElement != null) {
         int organizationId = SC.currentElement.id;
@@ -229,14 +235,18 @@ class ReceptionView {
   
   void activateReception(int organizationId, int receptionId) {
     currentOrganizationId = organizationId;
-    currentReceptionId = receptionId;
+    selectedReceptionId = receptionId;
+    
+    buttonDelete.disabled = false;
+    buttonSave.disabled = false;
+    buttonSave.text = 'Gem';
     
     SC.selectElement(null, (Organization listItem, _) {
       return listItem.id == organizationId;
     });
     
     if(organizationId > 0 && receptionId > 0) {
-      getReception(currentOrganizationId, currentReceptionId).then((Reception response) {
+      getReception(currentOrganizationId, selectedReceptionId).then((Reception response) {
         inputFullName.value = response.full_name;
         inputUri.value = response.uri;
         inputEnabled.checked = response.enabled;

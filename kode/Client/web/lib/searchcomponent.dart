@@ -21,7 +21,7 @@ typedef void callback();
 
 class SearchComponent<T> {
                DivElement      _container;
-               T               currentElement;
+               T               _currentElement;
                List<T>         _dataList = new List<T>();
                DivElement      _element;
                bool            _hasFocus = false;
@@ -34,6 +34,8 @@ class SearchComponent<T> {
                SpanElement     _selectedElementText;
                bool            _withDropDown = false;
 
+               T get currentElement => _currentElement;
+               
   callback _whenClearSelection = () {};
 
   /**
@@ -140,20 +142,21 @@ class SearchComponent<T> {
     if(_selectedElementChanged != null) {
       _selectedElementChanged(dataElement);
     }
-    currentElement = dataElement;
+    _currentElement = dataElement;
   }
 
-  void Aclear() {
+  void clear() {
     closeDropDown();
     setSearchText('');
     _selectedElementText.text = _searchPlaceholder;
+    _currentElement = null;
     performSearch('');
   }
 
   void clearSelection() {
     _selectedElementText.text = _searchPlaceholder;
     _whenClearSelection();
-    currentElement = null;
+    _currentElement = null;
   }
 
   void closeDropDown() {
@@ -304,7 +307,9 @@ class SearchComponent<T> {
       _highlightElement(_list[index]);
       closeDropDown();
       setSearchText('');
-      _selectedElementText.text = _listElementToString(_dataList[index], null);
+      T item = _dataList[index];
+      _selectedElementText.text = _listElementToString(item, null);
+      _currentElement = item;
     }
   }
 

@@ -70,7 +70,7 @@ Future updateContact(int contactId, String body) {
   return completer.future;
 }
 
-Future createContact(String data) {
+Future<Map> createContact(String data) {
   final Completer completer  = new Completer();
   
   HttpRequest request;
@@ -79,7 +79,7 @@ Future createContact(String data) {
   request = new HttpRequest()
     ..open(HttpMethod.PUT, url)
     ..onLoad.listen((_) {
-      completer.complete(request.responseText);
+      completer.complete(JSON.decode(request.responseText));
     })
     ..onError.listen((error) {
       //TODO logging.
@@ -141,3 +141,24 @@ Future<List<String>> getContacttypeList() {
 
     return completer.future;
 }
+
+Future deleteContact(int contactId) {
+  final Completer completer  = new Completer();
+    
+  HttpRequest request;
+  String url = '${config.serverUrl}/contact/$contactId?token=${config.token}';
+
+  request = new HttpRequest()
+    ..open(HttpMethod.DELETE, url)
+    ..onLoad.listen((_) {
+      completer.complete(JSON.decode(request.responseText));
+    })
+    ..onError.listen((error) {
+      //TODO logging.
+      completer.completeError(error.toString());
+    })
+    ..send();
+
+  return completer.future;
+}
+

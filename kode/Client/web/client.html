@@ -89,6 +89,7 @@
       
       <div id="contact-page" class="hidden">
         <div id="contact-listing">
+          <button id="contact-create">Ny kontakt</button>
           <input id="contact-search-box" type="search" placeholder="Søg...">
           <ul id="contact-list" class="zebra"></ul>
         </div>
@@ -97,8 +98,10 @@
             <label for="contact-input-name">Navn</label><input id="contact-input-name">
             <label for="contact-input-type">Type</label><select id="contact-select-type"></select>
             <label for="contact-input-enabled">Aktiv</label><input id="contact-input-enabled" type="checkbox">
-            <button id="contact-create">Opret</button>
+            <label>Reception</label><div id="contact-reception-selector"></div>
+            <button id="contact-add">Tilføj</button>
             <button id="contact-save">Gem</button>
+            <button id="contact-delete">Slet</button>
           </section>
           <ul id="reception-contacts"></ul>
         </div>

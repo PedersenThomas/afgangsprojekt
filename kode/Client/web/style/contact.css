@@ -5,7 +5,7 @@
 
 #contact-page ul {
   list-style-type: none;
-  margin: 10px;
+  margin: 5px;
 }
 
 #contact-search-box {
@@ -24,11 +24,19 @@
   overflow: auto;
 }
 
+#contact-create {
+  width: 100%;
+}
+
 #contact-content {
   float:left;
   width: 60%;
   height: 100%;
   border: solid 2px yellow;
+}
+
+#contact-reception-selector {
+  width: 400px;
 }
 
 #contact-rightbar {
@@ -44,4 +52,5 @@
 .contact-reception {
   border: 2px solid grey;
   margin-bottom: 5px;
+  box-shadow: 0 0 5px #888;
 }

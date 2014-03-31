@@ -11,7 +11,7 @@ class _Key{
   static const int ENTER = 13;
 }
 
-void fillList(UListElement element, List<String> items) {
+void fillList(UListElement element, List<String> items, {Function onChange}) {
   List<LIElement> children = new List<LIElement>();
   if(items != null) {
     for(String item in items) {
@@ -19,20 +19,22 @@ void fillList(UListElement element, List<String> items) {
         children.add(li);
       } 
   }
-
+  
   SortableGroup sortGroup = new SortableGroup()
-    ..installAll(children)
-    ..onSortUpdate.listen((SortableEvent event) {
-      // do something when user sorted the elements...
-    });
+    ..installAll(children);
 
+
+  if(onChange != null) {
+    sortGroup.onSortUpdate.listen((SortableEvent event) => onChange());
+  } 
+  
   // Only accept elements from this section.
   sortGroup.accept.add(sortGroup);
   
   InputElement inputNewItem = new InputElement();
   inputNewItem
     ..classes.add(addNewLiClass)
-    ..placeholder = 'Add new...'
+    ..placeholder = 'Tilføj ny...'
     ..onKeyPress.listen((KeyboardEvent event) {
       KeyEvent key = new KeyEvent.wrap(event);
       if(key.keyCode == _Key.ENTER) {
@@ -43,6 +45,10 @@ void fillList(UListElement element, List<String> items) {
         int index = element.children.length -1;
         sortGroup.install(li);
         element.children.insert(index, li);
+        
+        if(onChange != null) {
+          onChange();
+        } 
       }
     });
   
@@ -53,12 +59,16 @@ void fillList(UListElement element, List<String> items) {
     ..addAll(children);
 }
 
-LIElement simpleListElement(String item) {
+LIElement simpleListElement(String item, {Function onChange}) {
   LIElement li = new LIElement();
   ButtonElement deleteButton = new ButtonElement()
     ..text = 'Slet'
     ..onClick.listen((_) {
       li.parent.children.remove(li);
+      
+      if(onChange != null) {
+        onChange();
+      } 
     });
   SpanElement content = new SpanElement()
     ..text = item;
@@ -81,6 +91,10 @@ LIElement simpleListElement(String item) {
           if(key.keyCode == _Key.ENTER || key.keyCode == _Key.ESCAPE) {
             if(key.keyCode == _Key.ENTER) {
               content.text = editBox.value;
+              
+              if(onChange != null) {
+                onChange();
+              } 
             }
             content.style.display = oldDisplay;
             li.children.remove(editBox);
