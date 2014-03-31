@@ -14,7 +14,7 @@ Future<List<Reception>> getReceptionList() {
       List<Map> rawReceptions = rawData['receptions'];
       completer.complete(rawReceptions.map((r) => new Reception.fromJson(r)).toList());
     } else {
-      throw new Exception('Bad status code. ${request.status}');
+      completer.completeError('Bad status code. ${request.status}');
     }
   })
   ..onError.listen((e) {

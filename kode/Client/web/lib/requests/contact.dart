@@ -161,4 +161,3 @@ Future deleteContact(int contactId) {
 
   return completer.future;
 }
-

@@ -39,3 +39,23 @@ Future<Map> createReceptionContact(int receptionId, int contactId, String data) 
 
   return completer.future;
 }
+
+Future deleteReceptionContact(int receptionId, int contactId) {
+  final Completer completer  = new Completer();
+    
+  HttpRequest request;
+  String url = '${config.serverUrl}/reception/$receptionId/contact/$contactId?token=${config.token}';
+
+  request = new HttpRequest()
+    ..open(HttpMethod.DELETE, url)
+    ..onLoad.listen((_) {
+      completer.complete(JSON.decode(request.responseText));
+    })
+    ..onError.listen((error) {
+      //TODO logging.
+      completer.completeError(error.toString());
+    })
+    ..send();
+
+  return completer.future;
+}

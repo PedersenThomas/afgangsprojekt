@@ -109,7 +109,7 @@ class ContactView {
   LIElement makeContactNode(Contact contact) {
     LIElement li = new LIElement()
         ..classes.add('clickable')
-        ..text = contact.full_name
+        ..text = '${contact.id} ${contact.full_name}'
         ..onClick.listen((_) => activateContact(contact.id));
     return li;
   }
@@ -158,7 +158,6 @@ class ContactView {
   }
   
   Future receptionContactCreate(ReceptionContact RC) {
-    print('Create');
     return request.createReceptionContact(RC.receptionId, RC.contactId, RC.toJson()).catchError((error) {
       print('Tried to update a Reception Contact, but failed with "$error"');
     });
@@ -171,9 +170,26 @@ class ContactView {
    */
   LIElement receptionContactBox(ReceptionContact_ReducedReception contact, HandleReceptionContact receptionContactHandler, [bool alwaysAddToSaveList = false]) {
     DivElement div = new DivElement()..classes.add('contact-reception');
-    SpanElement header = new SpanElement()..text = contact.receptionName;
+    LIElement li = new LIElement();
+    SpanElement header = new SpanElement()
+      ..text = contact.receptionName
+      ..classes.add('reception-contact-header');
     div.children.add(header);
+     
+    ButtonElement delete = new ButtonElement()
+       ..text = 'fjern'
+       ..onClick.listen((_) {
+         saveList[contact.receptionId] = () {
+           return request.deleteReceptionContact(contact.receptionId, contact.contactId)
+               .catchError((error) {
+             print('deleteReceptionContact error: "error"');
+           });
+         };
+         li.parent.children.remove(li);
+       });
 
+       div.children.add(delete);
+    
     InputElement wantMessage, enabled, department, info, position, relations,
         responsibility;
     UListElement backupList, emailList, handlingList, telephoneNumbersList,
@@ -204,10 +220,6 @@ class ContactView {
               ..responsibility = responsibility.value;
 
           receptionContactHandler(RC);
-          
-//          request.updateReceptionContact(RC.receptionId, RC.contactId, RC.toJson()).catchError((error) {
-//            print('Tried to update a Reception Contact, but failed with "$error"');
-//          });
           });
         };
       }
@@ -234,7 +246,6 @@ class ContactView {
       onChange();
     }
 
-    LIElement li = new LIElement();
     li.children.add(div);
     return li;
   }
@@ -283,7 +294,6 @@ class ContactView {
     }
 
     container.children.addAll([label, inputCheckbox]);
-
     return inputCheckbox;
   }
 
