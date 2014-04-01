@@ -52,6 +52,7 @@ class OrganizationView {
     buttonDelete.onClick.listen((_) {
       if(!createNew && selectedOrganizationId > 0) {
         deleteOrganization(selectedOrganizationId).then((_) {
+          bus.fire(invalidate, {'list': 'organization'});
           refreshList();
           clearContent();
           buttonSave.disabled = true;
@@ -106,6 +107,7 @@ class OrganizationView {
       Map organization = {'full_name': inputName.value};
       String newOrganization = JSON.encode(organization);
       createOrganization(newOrganization).then((Map response) {
+        bus.fire(invalidate, {'list': 'organization'});
         //TODO visable clue that a new organization is created.
         refreshList();
         activateOrganization(response['id']);
