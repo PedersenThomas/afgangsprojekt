@@ -56,7 +56,9 @@ class ContactView {
     SC = new SearchComponent<Reception>(receptionOuterSelector, 'contact-reception-searchbox')
       ..listElementToString = receptionToSearchboxString
       ..searchFilter = receptionSearchHandler;
-        
+    
+    fillSearchComponent();
+    
     registrateEventHandlers();
 
     refreshList();
@@ -79,6 +81,14 @@ class ContactView {
       element.classes.toggle('hidden', event['window'] != viewName);
       if (event.containsKey('contact_id')) {
         activateContact(event['contact_id']);
+      }
+    });
+    
+    bus.on(invalidate).listen((Map event) {
+      if(event.containsKey('list')) {
+        if(event['list'] == 'reception') {
+          fillSearchComponent();
+        }
       }
     });
 
@@ -149,14 +159,16 @@ class ContactView {
               ..clear()
               ..addAll(organizations.map(makeOrganizationNode));
           });
-          
-          request.getReceptionList().then((List<Reception> receptions) {
-            SC.updateSourceList(receptions);
-          });
         }
       });
     }).catchError((error) {
       print('Tried to activate contact "${id}" but gave "${error}"');
+    });
+  }
+
+  void fillSearchComponent() {
+    request.getReceptionList().then((List<Reception> receptions) {
+      SC.updateSourceList(receptions);
     });
   }
   

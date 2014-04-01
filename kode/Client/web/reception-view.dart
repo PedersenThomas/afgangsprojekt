@@ -65,10 +65,7 @@ class ReceptionView {
       ..listElementToString = organizationToSearchboxString
       ..searchFilter = organizationSearchHandler;
     
-    getOrganizationList().then((List<Organization> list) {
-      list.sort((a, b) => a.full_name.compareTo(b.full_name));
-      SC.updateSourceList(list);
-    });
+    fillSearchComponent();
     
     buttonSave.disabled = true;
     buttonDelete.disabled = true;
@@ -76,6 +73,13 @@ class ReceptionView {
     registrateEventHandlers();
     
     refreshList();
+  }
+  
+  void fillSearchComponent() {
+    getOrganizationList().then((List<Organization> list) {
+      list.sort((a, b) => a.full_name.compareTo(b.full_name));
+      SC.updateSourceList(list);
+    });
   }
   
   String organizationToSearchboxString(Organization organization, String searchterm) {
@@ -99,6 +103,14 @@ class ReceptionView {
       element.classes.toggle('hidden', event['window'] != viewName);
       if(event.containsKey('organization_id') && event.containsKey('reception_id')) {
         activateReception(event['organization_id'], event['reception_id']);
+      }
+    });
+    
+    bus.on(invalidate).listen((Map event) {
+      if(event.containsKey('list')) {
+        if(event['list'] == 'organization') {
+          fillSearchComponent();
+        }
       }
     });
     
@@ -154,6 +166,7 @@ class ReceptionView {
   void deleteCurrentReception() {
     if(currentOrganizationId > 0 && selectedReceptionId > 0) {
       deleteReception(currentOrganizationId, selectedReceptionId).then((_) {
+        bus.fire(invalidate, {'list': 'reception'});
         selectedReceptionId = 0;
         currentOrganizationId = 0;
         clearContent();
@@ -177,6 +190,7 @@ class ReceptionView {
       if(SC.currentElement != null) {
         int organizationId = SC.currentElement.id;
         createReception(organizationId, newReception.toJson()).then((Map data) {
+          bus.fire(invalidate, {'list': 'reception'});
           if(data != null && data.containsKey('id')) {
             return refreshList().then((_) {
               return activateReception(organizationId, data['id']);
