@@ -11,53 +11,53 @@ import '../view/complete_reception_contact.dart';
 
 class ReceptionContactController {
   Database db;
-  
+
   ReceptionContactController(Database this.db);
-  
+
   void getReceptionContact(HttpRequest request) {
     int receptionId = pathParameter(request.uri, 'reception');
     int contactId = pathParameter(request.uri, 'contact');
-    
+
     db.getReceptionContact(receptionId, contactId).then((CompleteReceptionContact contact) {
       if(contact == null) {
         request.response.statusCode = 404;
         return writeAndCloseJson(request, JSON.encode({}));
       } else {
-        return writeAndCloseJson(request, JSON.encode(receptionContactAsJson(contact)));
+        return writeAndCloseJson(request, receptionContactAsJson(contact));
       }
     }).catchError((error) {
       logger.error('get reception contact Error: "$error"');
       Internal_Error(request);
     });
   }
-  
+
   void getReceptionContactList(HttpRequest request) {
     int receptionId = pathParameter(request.uri, 'reception');
-    
+
     db.getReceptionContactList(receptionId).then((List<CompleteReceptionContact> list) {
-      return writeAndCloseJson(request, JSON.encode({'receptionContacts':listReceptionContactAsJson(list)}));
+      return writeAndCloseJson(request, listReceptionContactAsJson(list));
     }).catchError((error) {
       logger.error('get reception contact list Error: "$error"');
       Internal_Error(request);
     });
   }
-  
+
   void createReceptionContact(HttpRequest request) {
     extractContent(request)
     .then(JSON.decode)
-    .then((Map data) { 
+    .then((Map data) {
       int receptionId = pathParameter(request.uri, 'reception');
       int contactId = pathParameter(request.uri, 'contact');
-      
+
       return db.createReceptionContact(receptionId, contactId, data['wants_messages'], data['distribution_list_id'], data['attributes'], data['enabled']);
     })
-    .then((int id) => writeAndCloseJson(request, JSON.encode({'id': id})))
+    .then((int rowsAffected) => writeAndCloseJson(request, JSON.encode({})))
     .catchError((error) {
       logger.error(error);
       Internal_Error(request);
     });
   }
-  
+
   void updateReceptionContact(HttpRequest request) {
     extractContent(request)
     .then(JSON.decode)
@@ -66,21 +66,21 @@ class ReceptionContactController {
       int contactId = pathParameter(request.uri, 'contact');
       return db.updateReceptionContact(receptionId, contactId, data['wants_messages'], data['distribution_list_id'], data['attributes'], data['enabled']);
     })
-    .then((int id) => writeAndCloseJson(request, JSON.encode({'id': id})))
+    .then((int rowsAffected) => writeAndCloseJson(request, JSON.encode({})))
     .catchError((error) {
       logger.error('updateReception url: "${request.uri}" gave error "${error}"');
       Internal_Error(request);
-    });  
+    });
   }
-  
+
   void deleteReceptionContact(HttpRequest request) {
     int receptionId = pathParameter(request.uri, 'reception');
     int contactId = pathParameter(request.uri, 'contact');
     db.deleteReceptionContact(receptionId, contactId)
-    .then((int id) => writeAndCloseJson(request, JSON.encode({'id': id})))
+    .then((int rowsAffected) => writeAndCloseJson(request, JSON.encode({})))
     .catchError((error) {
       logger.error('updateReception url: "${request.uri}" gave error "${error}"');
       Internal_Error(request);
-    });  
+    });
   }
 }
