@@ -125,15 +125,26 @@
           <ul id="contact-list" class="zebra"></ul>
         </div>
         <div id="contact-content">
-          <section id="contact-base-info"> <!-- Contact Content -->
-            <label for="contact-input-name">Navn</label><input id="contact-input-name">
-            <label for="contact-input-type">Type</label><select id="contact-select-type"></select>
-            <label for="contact-input-enabled">Aktiv</label><input id="contact-input-enabled" type="checkbox">
-            <label>Reception</label><div id="contact-reception-selector"></div>
-            <button id="contact-add">Tilføj</button>
+          <div id="contact-base-info"> <!-- Contact Content -->
+            <table class="content-table">
+              <tr>
+                <td><label for="contact-input-name">Navn</label><input id="contact-input-name"></td>
+                <td rowspan="3">
+                  <label>Reception</label>
+                  <div id="contact-reception-selector"></div>
+                  <button id="contact-add">Tilføj</button>
+                </td>
+              </tr>
+              <tr>
+                <td><label for="contact-input-enabled">Aktiv</label><input id="contact-input-enabled" type="checkbox"></td>
+              </tr>
+              <tr>
+                <td><label for="contact-input-type">Type</label><select id="contact-select-type"></select></td>
+              </tr>
+            </table>
             <button id="contact-save">Gem</button>
             <button id="contact-delete">Slet</button>
-          </section>
+          </div>
           <ul id="reception-contacts"></ul>
         </div>
         <div id="contact-rightbar">

@@ -61,18 +61,6 @@
   overflow: auto;
 }
 
-.content-table {
-  width: 100%;
-}
-
-.content-table > tbody > tr > td {
-  width: 50%;
-}
-
-.content-table > tbody > tr > td > label {
-  font-weight: bolder;
-}
-
 #reception-organization-selector {
   width: 400px;
 }

@@ -51,3 +51,21 @@ nav#navigation {
 .zebra li:nth-of-type(even) {
   background-color: #eee;
 }
+
+.content-table {
+  width: 100%;
+}
+
+.content-table > tbody > tr > td {
+  width: 50%;
+  vertical-align: top;
+  padding-bottom: 10px;
+}
+
+.content-table > tbody > tr > td > label {
+  font-weight: bolder;
+}
+
+.content-list > li {
+  padding: 2px 0;
+}

@@ -246,21 +246,57 @@ class ContactView {
       }
     };
     
-    wantMessage = makeCheckBox(div, 'Vil have beskeder', contact.wantsMessages, onChange: onChange);
-    enabled = makeCheckBox(div, 'Aktiv', contact.wantsMessages, onChange: onChange);
+    TableElement table = new TableElement()
+      ..classes.add('content-table');
+    div.children.add(table);
+    
+    TableSectionElement tableBody = new Element.tag('tbody');
+    table.children.add(tableBody);
+    
+    TableRowElement row;
+    TableCellElement leftCell, rightCell;
+    
 
-    department = makeTextBox(div, 'Afdelling', contact.department, onChange: onChange);
-    info = makeTextBox(div, 'Andet', contact.info, onChange: onChange);
-    position = makeTextBox(div, 'Stilling', contact.position, onChange: onChange);
-    relations = makeTextBox(div, 'Relationer', contact.relations, onChange: onChange);
-    responsibility = makeTextBox(div, 'Ansvar', contact.responsibility, onChange: onChange);
+    row = makeTableRowInsertInTable(tableBody);
+    leftCell = makeTableCellInsertInRow(row);
+    rightCell = makeTableCellInsertInRow(row);
+    wantMessage = makeCheckBox(leftCell, 'Vil have beskeder', contact.wantsMessages, onChange: onChange);
+    enabled = makeCheckBox(rightCell, 'Aktiv', contact.wantsMessages, onChange: onChange);
 
-    backupList = makeListBox(div, 'Backup', contact.backup, onChange: onChange);
-    emailList = makeListBox(div, 'E-mail', contact.emailaddresses, onChange: onChange);
-    handlingList = makeListBox(div, 'Håndtering', contact.handling, onChange: onChange);
-    telephoneNumbersList = makeListBox(div, 'Telefonnumre', contact.telephonenumbers, onChange: onChange);
-    workhoursList = makeListBox(div, 'Arbejdstid', contact.workhours, onChange: onChange);
-    tagsList = makeListBox(div, 'Stikord', contact.tags, onChange: onChange);
+    row = makeTableRowInsertInTable(tableBody);
+    leftCell = makeTableCellInsertInRow(row);
+    rightCell = makeTableCellInsertInRow(row);
+    department = makeTextBox(leftCell, 'Afdelling', contact.department, onChange: onChange);
+    info = makeTextBox(rightCell, 'Andet', contact.info, onChange: onChange);
+    
+
+    row = makeTableRowInsertInTable(tableBody);
+    leftCell = makeTableCellInsertInRow(row);
+    rightCell = makeTableCellInsertInRow(row);
+    position = makeTextBox(leftCell, 'Stilling', contact.position, onChange: onChange);
+    relations = makeTextBox(rightCell, 'Relationer', contact.relations, onChange: onChange);
+    
+    row = makeTableRowInsertInTable(tableBody);
+    leftCell = makeTableCellInsertInRow(row);
+    responsibility = makeTextBox(leftCell, 'Ansvar', contact.responsibility, onChange: onChange);
+
+    row = makeTableRowInsertInTable(tableBody);
+    leftCell = makeTableCellInsertInRow(row);
+    rightCell = makeTableCellInsertInRow(row);
+    backupList = makeListBox(leftCell, 'Backup', contact.backup, onChange: onChange);
+    emailList = makeListBox(rightCell, 'E-mail', contact.emailaddresses, onChange: onChange);
+    
+    row = makeTableRowInsertInTable(tableBody);
+    leftCell = makeTableCellInsertInRow(row);
+    rightCell = makeTableCellInsertInRow(row);
+    handlingList = makeListBox(leftCell, 'Håndtering', contact.handling, onChange: onChange);
+    telephoneNumbersList = makeListBox(rightCell, 'Telefonnumre', contact.telephonenumbers, onChange: onChange);
+    
+    row = makeTableRowInsertInTable(tableBody);
+    leftCell = makeTableCellInsertInRow(row);
+    rightCell = makeTableCellInsertInRow(row);
+    workhoursList = makeListBox(leftCell, 'Arbejdstid', contact.workhours, onChange: onChange);
+    tagsList = makeListBox(rightCell, 'Stikord', contact.tags, onChange: onChange);
 
     //In case of creating. You always want it in saveList.
     if(alwaysAddToSaveList) {
@@ -271,9 +307,22 @@ class ContactView {
     return li;
   }
 
+  TableCellElement makeTableCellInsertInRow(TableRowElement row) {
+    TableCellElement td = new TableCellElement();
+    row.children.add(td);
+    return td;
+  }
+
+  TableRowElement makeTableRowInsertInTable(Element table) {
+    TableRowElement row = new TableRowElement();
+    table.children.add(row);
+    return row;
+  }
+
   UListElement makeListBox(Element container, String labelText, List<String> dataList, {Function onChange}) {
     LabelElement label = new LabelElement();
-    UListElement ul = new UListElement();
+    UListElement ul = new UListElement()
+      ..classes.add('content-list');
 
     label.text = labelText;
     fillList(ul, dataList, onChange: onChange);
