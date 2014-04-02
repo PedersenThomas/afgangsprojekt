@@ -15,13 +15,13 @@
     <nav id="navigation">
       <ul>
         <li>
-          <img id="organization-button" alt="Organisation" title="Organisationer" src="image/organization_icon.svg">
+          <img id="organization-button" alt="Organisation" title="Organisationer" src="image/organization_icon.svg" draggable="false">
         </li>
         <li>
-          <img id="reception-button" alt="Reception" title="Receptioner" src="image/reception_icon_disable.svg">
+          <img id="reception-button" alt="Reception" title="Receptioner" src="image/reception_icon_disable.svg" draggable="false">
         </li>
         <li>
-          <img id="contact-button" alt="Kontaktpersoner" title="Kontaktpersoner" src="image/contact_icon_disable.svg">
+          <img id="contact-button" alt="Kontaktpersoner" title="Kontaktpersoner" src="image/contact_icon_disable.svg" draggable="false">
         </li>
       </ul>
     </nav>
@@ -58,25 +58,54 @@
           <ul id="reception-list" class="zebra"></ul>
         </div>
         <div id="reception-content">
-          <label for="reception-input-name">Navn</label><input id="reception-input-name">
-          <label>Organisation</label><div id="reception-organization-selector"></div>
-          <label for="reception-input-uri">Uri</label><input id="reception-input-uri">          
-          <label for="reception-input-customertype">Customertype</label><input id="reception-input-customertype">
-          <label for="reception-input-greeting">Greeting</label><input id="reception-input-greeting">          
-          <label for="reception-input-other">Other</label><input id="reception-input-other">        
-          <label for="reception-input-product">Produkt</label><input id="reception-input-product"> 
-          <label for="reception-input-enabled">Aktiv</label><input id="reception-input-enabled" type="checkbox">
-          
-          <label>Addresses</label><ul id="reception-list-addresses"></ul>
-          <label>alternatenames</label><ul id="reception-list-alternatenames"></ul>
-          <label>bankinginformation</label><ul id="reception-list-bankinginformation" ></ul>
-          <label>crapcallhandling</label><ul id="reception-list-crapcallhandling"></ul>
-          <label>emailaddresses</label><ul id="reception-list-emailaddresses"></ul>
-          <label>handlings</label><ul id="reception-list-handlings"></ul>
-          <label>openinghours</label><ul id="reception-list-openinghours"></ul>
-          <label>registrationnumbers</label><ul id="reception-list-registrationnumbers"></ul>
-          <label>telephonenumbers</label><ul id="reception-list-telephonenumbers"></ul>
-          <label>websites</label><ul id="reception-list-websites"></ul>
+          <table class="content-table">
+            <tr>
+              <td>
+                <label for="reception-input-name">Navn</label><input id="reception-input-name">
+              </td>
+              <td><label>Organisation</label><div id="reception-organization-selector"></div></td>
+            </tr>
+            
+            <tr>
+              <td><label for="reception-input-uri">Uri</label><input id="reception-input-uri">  </td>
+              <td><label for="reception-input-customertype">Kundetype</label><input id="reception-input-customertype"></td>
+            </tr>
+            
+            <tr>
+              <td><label for="reception-input-greeting">Velkomst besked</label><input id="reception-input-greeting"></td>
+              <td><label for="reception-input-other">Andet</label><input id="reception-input-other"></td>
+            </tr>
+            
+            <tr>
+              <td><label for="reception-input-product">Produktbeskrivelse</label><input id="reception-input-product"></td>
+              <td><label for="reception-input-enabled">Aktiv</label><input id="reception-input-enabled" type="checkbox">2</td>
+            </tr>
+            
+            <tr>
+              <td><label>Adresser</label><ul id="reception-list-addresses"></ul></td>
+              <td><label>Alternative firmanavne</label><ul id="reception-list-alternatenames"></ul></td>
+            </tr>
+            
+            <tr>
+              <td><label>Bankoplysninger</label><ul id="reception-list-bankinginformation" ></ul></td>
+              <td><label>Sælgere / Analyser</label><ul id="reception-list-crapcallhandling"></ul></td>
+            </tr>
+            
+            <tr>
+              <td><label>E-mailadresser</label><ul id="reception-list-emailaddresses"></ul></td>
+              <td><label>Håndtering</label><ul id="reception-list-handlings"></ul></td>
+            </tr>
+            
+            <tr>
+              <td><label>Adresser</label><ul id="reception-list-openinghours"></ul></td>
+              <td><label>CVR</label><ul id="reception-list-registrationnumbers"></ul></td>
+            </tr>
+            
+            <tr>
+              <td><label>Hovednumre</label><ul id="reception-list-telephonenumbers"></ul></td>
+              <td><label>Web-sider</label><ul id="reception-list-websites"></ul></td>
+            </tr>
+          </table>
           
           <button id="reception-save">Gem</button>
           <button id="reception-delete">Slet</button>
