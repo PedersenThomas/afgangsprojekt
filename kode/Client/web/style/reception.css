@@ -84,3 +84,7 @@
 #reception-contact-list li {
   margin-left: 10px;
 }
+
+#reception-save, #reception-delete {
+  width: 50px;
+}
