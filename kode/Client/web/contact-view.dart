@@ -29,11 +29,11 @@ class ContactView {
 
   ButtonElement buttonSave, buttonCreate, buttonDelete, buttonJoinReception;
   DivElement receptionOuterSelector;
-  
+
   SearchComponent<Reception> SC;
   int selectedContactId;
   bool createNew = false;
-  
+
   Map<int, LazyFuture> saveList = new Map<int, LazyFuture>();
 
   ContactView(DivElement this.element) {
@@ -45,20 +45,20 @@ class ContactView {
     ulReceptionContacts = element.querySelector('#reception-contacts');
     ulReceptionList = element.querySelector('#contact-reception-list');
     ulOrganizationList = element.querySelector('#contact-organization-list');
-    
+
     buttonSave = element.querySelector('#contact-save');
     buttonCreate = element.querySelector('#contact-create');
     buttonDelete = element.querySelector('#contact-delete');
     buttonJoinReception = element.querySelector('#contact-add');
     searchBox = element.querySelector('#contact-search-box');
     receptionOuterSelector = element.querySelector('#contact-reception-selector');
-    
+
     SC = new SearchComponent<Reception>(receptionOuterSelector, 'contact-reception-searchbox')
       ..listElementToString = receptionToSearchboxString
       ..searchFilter = receptionSearchHandler;
-    
+
     fillSearchComponent();
-    
+
     registrateEventHandlers();
 
     refreshList();
@@ -67,11 +67,11 @@ class ContactView {
       inputType.children.addAll(typesList.map((type) => new OptionElement(data: type, value: type)));
     });
   }
-  
+
   String receptionToSearchboxString(Reception reception, String searchterm) {
     return '${reception.full_name}';
   }
-  
+
   bool receptionSearchHandler(Reception reception, String searchTerm) {
     return reception.full_name.toLowerCase().contains(searchTerm.toLowerCase());
   }
@@ -83,13 +83,13 @@ class ContactView {
         activateContact(event['contact_id']);
       }
     });
-    
-    bus.on(invalidate).listen((Map event) {
-      if(event.containsKey('list')) {
-        if(event['list'] == 'reception') {
-          fillSearchComponent();
-        }
-      }
+
+    bus.on(Invalidate.receptionAdded).listen((_) {
+      fillSearchComponent();
+    });
+
+    bus.on(Invalidate.receptionRemoved).listen((_) {
+      fillSearchComponent();
     });
 
     buttonSave.onClick.listen((_) => saveChanges());
@@ -133,7 +133,7 @@ class ContactView {
       buttonDelete.disabled = false;
       buttonJoinReception.disabled = false;
       createNew = false;
-      
+
       inputName.value = contact.full_name;
       inputType.options.forEach((option) => option.selected = option.value ==
           contact.type);
@@ -152,7 +152,8 @@ class ContactView {
           ulReceptionList.children
               ..clear()
               ..addAll(contacts.map(makeReceptionNode));
-          
+
+          //Rightbar
           request.getContactsOrganizationList(id).then((List<Organization> organizations) {
             organizations.sort((a, b) => a.full_name.compareTo(b.full_name));
             ulOrganizationList.children
@@ -171,15 +172,24 @@ class ContactView {
       SC.updateSourceList(receptions);
     });
   }
-  
+
   Future receptionContactUpdate(ReceptionContact RC) {
     return request.updateReceptionContact(RC.receptionId, RC.contactId, RC.toJson()).catchError((error) {
       print('Tried to update a Reception Contact, but failed with "$error"');
     });
   }
-  
+
   Future receptionContactCreate(ReceptionContact RC) {
-    return request.createReceptionContact(RC.receptionId, RC.contactId, RC.toJson()).catchError((error) {
+    return request.createReceptionContact(RC.receptionId, RC.contactId, RC.toJson())
+        .then((_) {
+          Map event = {"receptionId": RC.receptionId,
+                       "contactId": RC.contactId };
+          bus.fire(Invalidate.receptionContactAdded, event);
+
+          //TODO Remove.
+          print('Activating receptionContact: $event');
+        })
+    .catchError((error) {
       print('Tried to update a Reception Contact, but failed with "$error"');
     });
   }
@@ -196,12 +206,17 @@ class ContactView {
       ..text = contact.receptionName
       ..classes.add('reception-contact-header');
     div.children.add(header);
-     
+
     ButtonElement delete = new ButtonElement()
        ..text = 'fjern'
        ..onClick.listen((_) {
          saveList[contact.receptionId] = () {
            return request.deleteReceptionContact(contact.receptionId, contact.contactId)
+               .then((_) {
+                 Map event = {"receptionId": contact.receptionId,
+                              "contactId": contact.contactId };
+                 bus.fire(Invalidate.receptionContactRemoved, event);
+               })
                .catchError((error) {
              print('deleteReceptionContact error: "error"');
            });
@@ -210,7 +225,7 @@ class ContactView {
        });
 
        div.children.add(delete);
-    
+
     InputElement wantMessage, enabled, department, info, position, relations,
         responsibility;
     UListElement backupList, emailList, handlingList, telephoneNumbersList,
@@ -219,7 +234,6 @@ class ContactView {
     Function onChange = () {
       if (!saveList.containsKey(contact.receptionId)) {
         saveList[contact.receptionId] = () {
-          return new Future(() {
           ReceptionContact RC = new ReceptionContact()
               ..contactId = contact.contactId
               ..receptionId = contact.receptionId
@@ -240,22 +254,21 @@ class ContactView {
               ..relations = relations.value
               ..responsibility = responsibility.value;
 
-          receptionContactHandler(RC);
-          });
+          return receptionContactHandler(RC);
         };
       }
     };
-    
+
     TableElement table = new TableElement()
       ..classes.add('content-table');
     div.children.add(table);
-    
+
     TableSectionElement tableBody = new Element.tag('tbody');
     table.children.add(tableBody);
-    
+
     TableRowElement row;
     TableCellElement leftCell, rightCell;
-    
+
 
     row = makeTableRowInsertInTable(tableBody);
     leftCell = makeTableCellInsertInRow(row);
@@ -268,14 +281,14 @@ class ContactView {
     rightCell = makeTableCellInsertInRow(row);
     department = makeTextBox(leftCell, 'Afdelling', contact.department, onChange: onChange);
     info = makeTextBox(rightCell, 'Andet', contact.info, onChange: onChange);
-    
+
 
     row = makeTableRowInsertInTable(tableBody);
     leftCell = makeTableCellInsertInRow(row);
     rightCell = makeTableCellInsertInRow(row);
     position = makeTextBox(leftCell, 'Stilling', contact.position, onChange: onChange);
     relations = makeTextBox(rightCell, 'Relationer', contact.relations, onChange: onChange);
-    
+
     row = makeTableRowInsertInTable(tableBody);
     leftCell = makeTableCellInsertInRow(row);
     responsibility = makeTextBox(leftCell, 'Ansvar', contact.responsibility, onChange: onChange);
@@ -285,13 +298,13 @@ class ContactView {
     rightCell = makeTableCellInsertInRow(row);
     backupList = makeListBox(leftCell, 'Backup', contact.backup, onChange: onChange);
     emailList = makeListBox(rightCell, 'E-mail', contact.emailaddresses, onChange: onChange);
-    
+
     row = makeTableRowInsertInTable(tableBody);
     leftCell = makeTableCellInsertInRow(row);
     rightCell = makeTableCellInsertInRow(row);
     handlingList = makeListBox(leftCell, 'Håndtering', contact.handling, onChange: onChange);
     telephoneNumbersList = makeListBox(rightCell, 'Telefonnumre', contact.telephonenumbers, onChange: onChange);
-    
+
     row = makeTableRowInsertInTable(tableBody);
     leftCell = makeTableCellInsertInRow(row);
     rightCell = makeTableCellInsertInRow(row);
@@ -338,13 +351,13 @@ class ContactView {
 
     label.text = labelText;
     inputText.value = data;
-    
+
     if(onChange != null) {
       inputText.onChange.listen((_) {
         onChange();
       });
     }
-    
+
     container.children.addAll([label, inputText]);
 
     return inputText;
@@ -384,16 +397,19 @@ class ContactView {
       }).catchError((error) {
         print('Tried to update a contact but failed with error "${error}" from body: "${updatedContact.toJson()}"');
       }));
-            
+
       work.addAll(saveList.values.map((f) => f()));
-      
+
       //When all updates are applied. Reload the contact.
       Future.wait(work).then((_) {
+        //TODO Remove.
+        print('Activating Contact.');
+
         return activateContact(contactId);
       }).catchError((error) {
         print('Contact was appling update for ${contactId} when "$error"');
       });
-      
+
     } else if (createNew) {
       Contact newContact = new Contact()
         ..full_name = inputName.value
@@ -403,6 +419,7 @@ class ContactView {
 
     request.createContact(newContact.toJson()).then((Map response) {
       //TODO Success Show message?
+      bus.fire(Invalidate.contactAdded, null);
       refreshList();
       activateContact(response['id']);
     }).catchError((error) {
@@ -417,7 +434,7 @@ class ContactView {
     inputEnabled.checked = true;
     ulReceptionContacts.children.clear();
   }
-  
+
   void createContact() {
     selectedContactId = 0;
     buttonSave.text = 'Opret';
@@ -428,39 +445,39 @@ class ContactView {
     clearContent();
     createNew = true;
   }
-  
+
   void addReceptionToContact() {
     if(SC.currentElement != null && selectedContactId > 0) {
       //TODO
       print('Add!');
-      
+
       Reception reception = SC.currentElement;
-      
+
       ReceptionContact_ReducedReception template = new ReceptionContact_ReducedReception()
         ..organizationId = reception.organization_id
-      
+
         ..receptionId = reception.id
         ..receptionName = reception.full_name
         ..receptionUri = reception.uri
         ..receptionEnabled = reception.enabled
-        
+
         ..contactId = selectedContactId
         ..wantsMessages = true
         ..contactEnabled = true
-        
+
         ..department = ''
         ..info = ''
         ..position = ''
         ..relations = ''
         ..responsibility = ''
-        
+
         ..backup = []
         ..emailaddresses = []
         ..handling = []
         ..telephonenumbers = []
         ..workhours = []
         ..tags = [];
-      
+
       ulReceptionContacts.children
         ..add(receptionContactBox(template, receptionContactCreate, true));
     }
@@ -480,7 +497,7 @@ class ContactView {
       });
     return li;
   }
-  
+
   LIElement makeOrganizationNode(Organization organization) {
     LIElement li = new LIElement()
       ..classes.add('clickable')
@@ -494,10 +511,11 @@ class ContactView {
       });
     return li;
   }
-  
+
   void deleteSelectedContact() {
     if(!createNew && selectedContactId > 0) {
       request.deleteContact(selectedContactId).then((_) {
+        bus.fire(Invalidate.contactRemoved, selectedContactId);
         refreshList();
         clearContent();
         buttonSave.disabled = true;
