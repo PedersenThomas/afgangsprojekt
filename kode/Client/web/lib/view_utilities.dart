@@ -49,6 +49,8 @@ void fillList(UListElement element, List<String> items, {Function onChange}) {
         if(onChange != null) {
           onChange();
         } 
+      } else if(key.keyCode == _Key.ESCAPE) {
+        inputNewItem.value = '';
       }
     });
   
