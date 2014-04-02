@@ -121,7 +121,7 @@ class ContactView {
   LIElement makeContactNode(Contact contact) {
     LIElement li = new LIElement()
         ..classes.add('clickable')
-        ..text = '${contact.id} ${contact.full_name}'
+        ..text = '${contact.full_name}'
         ..onClick.listen((_) => activateContact(contact.id));
     return li;
   }
