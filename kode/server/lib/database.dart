@@ -71,8 +71,7 @@ class Database {
 
   Future<model.Contact> getContact(int contactId) => _getContact(pool, contactId);
 
-  Future<List<model.Contact>> getContactList() =>
-      _getContactList(pool);
+  Future<List<model.Contact>> getContactList() => _getContactList(pool);
 
   Future<List<String>> getContactTypeList() => _getContactTypeList(pool);
 

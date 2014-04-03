@@ -16,6 +16,36 @@ class ContactController {
 
   ContactController(Database this.db);
 
+  void createContact(HttpRequest request) {
+    extractContent(request)
+    .then(JSON.decode)
+    .then((Map data) => db.createContact(data['full_name'], data['contact_type'], data['enabled']))
+    .then((int id) => writeAndCloseJson(request, contactIdAsJson(id)))
+    .catchError((error) {
+      logger.error(error);
+      Internal_Error(request);
+    });
+  }
+
+  void deleteContact(HttpRequest request) {
+    db.deleteContact(pathParameter(request.uri, 'contact'))
+    .then((int rowsAffected) => writeAndCloseJson(request, JSON.encode({})))
+    .catchError((error) {
+      logger.error('deleteContact url: "${request.uri}" gave error "${error}"');
+      Internal_Error(request);
+    });
+  }
+
+  void getAContactsOrganizationList(HttpRequest request) {
+    int contactId = pathParameter(request.uri, 'contact');
+    db.getAContactsOrganizationList(contactId).then((List<Organization> organizations) {
+      writeAndCloseJson(request, listOrganizatonAsJson(organizations));
+    }).catchError((error) {
+      logger.error('contractController.getAContactsOrganizationList url: "${request.uri}" gave error "${error}"');
+      Internal_Error(request);
+    });
+  }
+
   void getContact(HttpRequest request) {
     int contactId = pathParameter(request.uri, 'contact');
 
@@ -41,33 +71,11 @@ class ContactController {
     });
   }
 
-  void createContact(HttpRequest request) {
-    extractContent(request)
-    .then(JSON.decode)
-    .then((Map data) => db.createContact(data['full_name'], data['contact_type'], data['enabled']))
-    .then((int id) => writeAndCloseJson(request, contactIdAsJson(id)))
-    .catchError((error) {
-      logger.error(error);
-      Internal_Error(request);
-    });
-  }
-
-  void updateContact(HttpRequest request) {
-    extractContent(request)
-    .then(JSON.decode)
-    .then((Map data) => db.updateContact(pathParameter(request.uri, 'contact'), data['full_name'], data['contact_type'], data['enabled']))
-    .then((int id) => writeAndCloseJson(request, contactIdAsJson(id)))
-    .catchError((error) {
-      logger.error('updateContact url: "${request.uri}" gave error "${error}"');
-      Internal_Error(request);
-    });
-  }
-
-  void deleteContact(HttpRequest request) {
-    db.deleteContact(pathParameter(request.uri, 'contact'))
-    .then((int id) => writeAndCloseJson(request, contactIdAsJson(id)))
-    .catchError((error) {
-      logger.error('updateContact url: "${request.uri}" gave error "${error}"');
+  void getContactTypeList(HttpRequest request) {
+    db.getContactTypeList().then((List<String> data) {
+      writeAndCloseJson(request, contactTypesAsJson(data));
+    }).catchError((error) {
+      logger.error('contractController.getReceptionList url: "${request.uri}" gave error "${error}"');
       Internal_Error(request);
     });
   }
@@ -82,21 +90,13 @@ class ContactController {
     });
   }
 
-  void getContactTypeList(HttpRequest request) {
-    db.getContactTypeList().then((List<String> data) {
-      writeAndCloseJson(request, contactTypesAsJson(data));
-    }).catchError((error) {
-      logger.error('contractController.getReceptionList url: "${request.uri}" gave error "${error}"');
-      Internal_Error(request);
-    });
-  }
-
-  void getAContactsOrganizationList(HttpRequest request) {
-    int contactId = pathParameter(request.uri, 'contact');
-    db.getAContactsOrganizationList(contactId).then((List<Organization> organizations) {
-      writeAndCloseJson(request, listOrganizatonAsJson(organizations));
-    }).catchError((error) {
-      logger.error('contractController.getAContactsOrganizationList url: "${request.uri}" gave error "${error}"');
+  void updateContact(HttpRequest request) {
+    extractContent(request)
+    .then(JSON.decode)
+    .then((Map data) => db.updateContact(pathParameter(request.uri, 'contact'), data['full_name'], data['contact_type'], data['enabled']))
+    .then((int id) => writeAndCloseJson(request, contactIdAsJson(id)))
+    .catchError((error) {
+      logger.error('updateContact url: "${request.uri}" gave error "${error}"');
       Internal_Error(request);
     });
   }
