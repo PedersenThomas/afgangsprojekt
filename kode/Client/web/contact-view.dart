@@ -25,6 +25,7 @@ class ContactView {
 
   InputElement inputName;
   SelectElement inputType;
+  SpanElement spanContactId;
   CheckboxInputElement inputEnabled;
 
   ButtonElement buttonSave, buttonCreate, buttonDelete, buttonJoinReception;
@@ -42,6 +43,7 @@ class ContactView {
     inputName = element.querySelector('#contact-input-name');
     inputType = element.querySelector('#contact-select-type');
     inputEnabled = element.querySelector('#contact-input-enabled');
+    spanContactId = element.querySelector('#contact-span-id');
     ulReceptionContacts = element.querySelector('#reception-contacts');
     ulReceptionList = element.querySelector('#contact-reception-list');
     ulOrganizationList = element.querySelector('#contact-organization-list');
@@ -138,6 +140,7 @@ class ContactView {
       inputType.options.forEach((option) => option.selected = option.value ==
           contact.type);
       inputEnabled.checked = contact.enabled;
+      spanContactId.text = '${contact.id}';
       selectedContactId = contact.id;
 
       return request.getAContactsEveryReception(id).then((List<ReceptionContact_ReducedReception> contacts) {

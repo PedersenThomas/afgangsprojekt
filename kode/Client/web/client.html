@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="style/contact.css">
     <link rel="stylesheet" href="style/searchcomponent.css">
   </head>
-  <body>     
+  <body>
     <nav id="navigation">
       <ul>
         <li>
@@ -25,7 +25,7 @@
         </li>
       </ul>
     </nav>
-    
+
     <div id="page-main-screen">
       <div id="organization-page">
         <div id="organization-listing">
@@ -40,7 +40,7 @@
           <button id="organization-delete">Slet</button>
         </div>
         <div id="organization-rightbar">
-          <div> <div> 
+          <div> <div>
             <span>Receptioner</span>
             <ul id="organization-reception-list" class="zebra"></ul>
           </div> </div>
@@ -50,7 +50,7 @@
           </div> </div>
         </div>
       </div>
-      
+
       <div id="reception-page" class="hidden">
         <div id="reception-listing">
           <button id="reception-create">Ny Reception</button>
@@ -65,48 +65,48 @@
               </td>
               <td><label>Organisation</label><div id="reception-organization-selector"></div></td>
             </tr>
-            
+
             <tr>
               <td><label for="reception-input-uri">Uri</label><input id="reception-input-uri">  </td>
               <td><label for="reception-input-customertype">Kundetype</label><input id="reception-input-customertype"></td>
             </tr>
-            
+
             <tr>
               <td><label for="reception-input-greeting">Velkomst besked</label><input id="reception-input-greeting"></td>
               <td><label for="reception-input-other">Andet</label><input id="reception-input-other"></td>
             </tr>
-            
+
             <tr>
               <td><label for="reception-input-product">Produktbeskrivelse</label><input id="reception-input-product"></td>
               <td><label for="reception-input-enabled">Aktiv</label><input id="reception-input-enabled" type="checkbox"></td>
             </tr>
-            
+
             <tr>
               <td><label>Adresser</label><ul id="reception-list-addresses"></ul></td>
               <td><label>Alternative firmanavne</label><ul id="reception-list-alternatenames"></ul></td>
             </tr>
-            
+
             <tr>
               <td><label>Bankoplysninger</label><ul id="reception-list-bankinginformation" ></ul></td>
               <td><label>Sælgere / Analyser</label><ul id="reception-list-crapcallhandling"></ul></td>
             </tr>
-            
+
             <tr>
               <td><label>E-mailadresser</label><ul id="reception-list-emailaddresses"></ul></td>
               <td><label>Håndtering</label><ul id="reception-list-handlings"></ul></td>
             </tr>
-            
+
             <tr>
               <td><label>Adresser</label><ul id="reception-list-openinghours"></ul></td>
               <td><label>CVR</label><ul id="reception-list-registrationnumbers"></ul></td>
             </tr>
-            
+
             <tr>
               <td><label>Hovednumre</label><ul id="reception-list-telephonenumbers"></ul></td>
               <td><label>Web-sider</label><ul id="reception-list-websites"></ul></td>
             </tr>
           </table>
-          
+
           <button id="reception-save">Gem</button>
           <button id="reception-delete">Slet</button>
         </div>
@@ -117,7 +117,7 @@
           </div>
         </div>
       </div>
-      
+
       <div id="contact-page" class="hidden">
         <div id="contact-listing">
           <button id="contact-create">Ny Kontakt</button>
@@ -129,7 +129,7 @@
             <table class="content-table">
               <tr>
                 <td><label for="contact-input-name">Navn</label><input id="contact-input-name"></td>
-                <td rowspan="3">
+                <td rowspan="2">
                   <label>Reception</label>
                   <div id="contact-reception-selector"></div>
                   <button id="contact-add">Tilføj</button>
@@ -140,6 +140,7 @@
               </tr>
               <tr>
                 <td><label for="contact-input-type">Type</label><select id="contact-select-type"></select></td>
+                <td><label>Id:</label><span id="contact-span-id"></span></td>
               </tr>
             </table>
             <button id="contact-save">Gem</button>
@@ -148,18 +149,18 @@
           <ul id="reception-contacts"></ul>
         </div>
         <div id="contact-rightbar">
-          <div> <div> 
+          <div> <div>
             <span>Organisationer</span>
             <ul id="contact-organization-list" class="zebra"></ul>
           </div> </div>
-          <div> <div> 
+          <div> <div>
             <span>Receptioner</span>
             <ul id="contact-reception-list" class="zebra"></ul>
           </div> </div>
         </div>
       </div>
     </div>
-    
+
     <script type="application/dart" src="client.dart"></script>
     <script src="packages/browser/dart.js"></script>
   </body>

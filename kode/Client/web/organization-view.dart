@@ -71,6 +71,9 @@ class OrganizationView {
 
     bus.on(windowChanged).listen((Map event) {
       element.classes.toggle('hidden', event['window'] != viewName);
+      if(event.containsKey('organization_id')) {
+        activateOrganization(event['organization_id']);
+      }
     });
 
     bus.on(Invalidate.receptionAdded).listen((int organizationId) {
