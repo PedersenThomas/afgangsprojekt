@@ -29,8 +29,11 @@ final Pattern ContactOrganizationUrl = new UrlPattern(r'/contact/(\d+)/organizat
 
 final Pattern contactypestUrl = new UrlPattern(r'/contacttypes(/?)');
 
-final List<Pattern> Serviceagents = 
-[organizationReceptionIdUrl, organizationReceptionUrl, organizationContactUrl, organizationIdUrl, organizationUrl, 
+final Pattern UserUrl = new UrlPattern(r'/user(/?)');
+final Pattern UserIdUrl = new UrlPattern(r'/user/(\d+)');
+
+final List<Pattern> Serviceagents =
+[organizationReceptionIdUrl, organizationReceptionUrl, organizationContactUrl, organizationIdUrl, organizationUrl,
  contactIdUrl, contactUrl, receptionUrl, receptionContactIdUrl, receptionContactUrl, ContactOrganizationUrl];
 
 ContactController contact;
@@ -42,7 +45,7 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
   Router router = new Router(server)
     ..filter(anyThing, (HttpRequest req) => logHit(req, logger))
     ..filter(matchAny(Serviceagents), (HttpRequest req) => authorized(req, config.authUrl, groupName: 'Service agent'))
-    
+
     ..serve(organizationReceptionUrl, method: HttpMethod.GET).listen(reception.getOrganizationReceptionList)
     ..serve(receptionUrl, method: HttpMethod.GET).listen(reception.getReceptionList)
     ..serve(organizationReceptionUrl, method: HttpMethod.PUT).listen(reception.createReception)
@@ -51,13 +54,13 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     ..serve(organizationReceptionIdUrl, method: HttpMethod.DELETE).listen(reception.deleteReception)
 
     ..serve(organizationContactUrl, method: HttpMethod.GET).listen(organization.getOrganizationContactList)
-    
+
     ..serve(ContactReceptionUrl, method: HttpMethod.GET).listen(contact.getReceptionList)
-    
+
     ..serve(contactypestUrl, method: HttpMethod.GET).listen(contact.getContactTypeList)
-    
+
     ..serve(ContactOrganizationUrl, method: HttpMethod.GET).listen(contact.getAContactsOrganizationList)
-    
+
     ..serve(contactUrl, method: HttpMethod.GET).listen(contact.getContactList)
     ..serve(contactUrl, method: HttpMethod.PUT).listen(contact.createContact)
     ..serve(contactIdUrl, method: HttpMethod.GET)   .listen(contact.getContact)
@@ -69,15 +72,15 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     ..serve(receptionContactIdUrl, method: HttpMethod.GET)   .listen(receptionContact.getReceptionContact)
     ..serve(receptionContactIdUrl, method: HttpMethod.POST)  .listen(receptionContact.updateReceptionContact)
     ..serve(receptionContactIdUrl, method: HttpMethod.DELETE).listen(receptionContact.deleteReceptionContact)
-    
+
     ..serve(organizationUrl, method: HttpMethod.GET).listen(organization.getOrganizationList)
     ..serve(organizationUrl, method: HttpMethod.PUT).listen(organization.createOrganization)
     ..serve(organizationIdUrl, method: HttpMethod.GET)   .listen(organization.getOrganization)
     ..serve(organizationIdUrl, method: HttpMethod.POST)  .listen(organization.updateOrganization)
     ..serve(organizationIdUrl, method: HttpMethod.DELETE).listen(organization.deleteOrganization)
-    
+
     ..serve(anyThing, method: HttpMethod.OPTIONS).listen(PreFlight)
-    
+
     ..defaultStream.listen(NOTFOUND);
 }
 
