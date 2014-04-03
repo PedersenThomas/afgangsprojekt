@@ -32,6 +32,7 @@ class AdminServer:
         receptionUrl    = "/reception"
         contactUrl      = "/contact"
         organizationUrl = "/organization"
+        userUrl =         "/user"
         tokenParam      = "?token="
 
     authToken = None
@@ -151,6 +152,21 @@ class AdminServer:
     def updateOrganization(self, organizationId, params):
         return self.request(self.Protocol.organizationUrl + "/" + str(organizationId), "POST", params)
 
+######################## USER
+    def getUser(self, userId):
+        return self.request(self.Protocol.userUrl + "/" + str(userId), "GET")
+
+    def getUserList(self):
+        return self.request(self.Protocol.userUrl, "GET")
+
+    def createUser(self, params):
+        return self.request(self.Protocol.userUrl, "PUT", params)
+
+    def deleteUser(self, userId):
+        return self.request(self.Protocol.userUrl + "/" + str(userId), "DELETE")
+
+    def updateUser(self, userId, params):
+        return self.request(self.Protocol.userUrl + "/" + str(userId), "POST", params)
 
 # Organization Reception List
 # Organization Contact List
