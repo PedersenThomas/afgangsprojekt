@@ -45,7 +45,7 @@ Future<model.User> _getUser(Pool pool, int userId) {
 
 Future<List<model.User>> _getUserList(Pool pool) {
   String sql = '''
-    SELECT id, name, extension, enabled
+    SELECT id, name, extension
     FROM users
   ''';
 

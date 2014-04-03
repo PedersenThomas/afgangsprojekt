@@ -7,7 +7,7 @@ import '../model.dart';
 String userAsJson(User user) => JSON.encode(_userAsJsonMap(user));
 
 String listUserAsJson(List<User> users) =>
-    JSON.encode({'contacts':_listUserAsJsonList(users)});
+    JSON.encode({'users':_listUserAsJsonList(users)});
 
 String userIdAsJson(int id) => JSON.encode({'id': id});
 
