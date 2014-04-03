@@ -11,6 +11,7 @@ class ReceptionTests(unittest.TestCase):
     adminServer = admin_server.AdminServer(uri=config.adminUrl, authToken=config.authToken)
 
     receptionSchema = {'type': 'object',
+                       'required': True,
                        'properties':
                            {'id':
                                 {'type': 'integer',
@@ -24,6 +25,7 @@ class ReceptionTests(unittest.TestCase):
                                 {'type': 'string'}}}
 
     receptionListSchema = {'type': 'object',
+                           'required': True,
                            'properties':
                                {'receptions':
                                     {'type': 'array',
@@ -104,3 +106,10 @@ class ReceptionTests(unittest.TestCase):
             self.adminServer.deleteReception(organizationId, receptionId)
         except Exception, e:
             self.fail('Response: "' + str(jsonBody) + '" Error: ' + str(e))
+
+    def test_getOrganizationReceptionList(self):
+        organizationId = 1
+        headers, body = self.adminServer.getOrganizationReceptionList(organizationId)
+        jsonBody = json.loads(body)
+        schema = self.receptionListSchema
+        utilities.verifySchema(schema, jsonBody)

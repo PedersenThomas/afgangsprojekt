@@ -11,19 +11,121 @@ import logging
 class ReceptionContactTests(unittest.TestCase):
     adminServer = admin_server.AdminServer(uri=config.adminUrl, authToken=config.authToken)
 
-    receptionContactSchema = \
-        {'type': 'object',
-         'properties': {'reception_id':
-                             {'type': 'integer',
-                              'required': True,
-                              'minimum': 0},
-                        'contact_id':
-                             {'type': 'integer',
-                              'required': True,
-                              'minimum': 0},
-                        'wants_messages':
-                             {'type': 'boolean',
-                              'required': True}}}
+    priorityListSchema = {"type": "object",
+                          "required": False,
+                          "properties": {
+                              "priority": {
+                                  "type": "integer",
+                                  "required": True
+                              },
+                              "value": {
+                                  "type": "string",
+                                  "required": True
+                              }
+                          }
+                        }
+
+    contactAttributesSchema = {
+                            "department": {
+                                "type": "string",
+                                "required": True
+                            },
+                            "info": {
+                                "type": "string",
+                                "required": True
+                            },
+                            "position": {
+                                "type": "string",
+                                "required": True
+                            },
+                            "relations": {
+                                "type": "string",
+                                "required": True
+                            },
+                            "responsibility": {
+                                "type": "string",
+                                "required": True
+                            },
+                            "backup": {
+                                "type": "array",
+                                "required": True,
+                                "items": priorityListSchema
+                            },
+                            "emailaddresses": {
+                                "type": "array",
+                                "required": True,
+                                "items": priorityListSchema
+                            },
+                            "handling": {
+                                "type": "array",
+                                "required": True,
+                                "items": priorityListSchema
+                            },
+                            "telephonenumbers": {
+                                "type": "array",
+                                "required": True,
+                                "items": priorityListSchema
+                            },
+                            "workhours": {
+                                "type": "array",
+                                "required": True,
+                                "items": priorityListSchema
+                            },
+                            "tags": {
+                                "type": "array",
+                                "required": True,
+                                "items": {
+                                    "type": "string",
+                                    "required": True
+                                }
+                            }
+                        }
+
+
+    receptionContactSchema = {
+                    "type": "object",
+                    "required": True,
+                    "properties": {
+                        "reception_id": {
+                            "type": "integer",
+                            "required": True
+                        },
+                        "contact_id": {
+                            "type": "integer",
+                            "required": True
+                        },
+                        "full_name": {
+                            "type": "string",
+                            "required": True
+                        },
+                        "contact_type": {
+                            "type": "string",
+                            "required": True
+                        },
+                        "contact_enabled": {
+                            "type": "boolean",
+                            "required": True
+                        },
+                        "wants_messages": {
+                            "type": "boolean",
+                            "required": True
+                        },
+                        "distribution_list_id": {
+                            "type": ["null", "integer"],
+                            "required": True
+                        },
+                        "reception_enabled": {
+                            "type": "boolean",
+                            "required": True
+                        },
+                        "attributes": {
+                        "type": "object",
+                        "required": True,
+                        "properties": contactAttributesSchema
+                        }
+                    }
+                }
+
 
     receptionContactListSchema = {'type': 'object',
                                   'properties':
@@ -44,7 +146,7 @@ class ReceptionContactTests(unittest.TestCase):
         schema = self.receptionContactSchema
         utilities.verifySchema(schema, jsonBody)
 
-    def test_getReceptionList(self):
+    def test_getReceptionContactList(self):
         receptionId = 1
         headers, body = self.adminServer.getReceptionContactList(receptionId)
         jsonBody = json.loads(body)
@@ -55,7 +157,18 @@ class ReceptionContactTests(unittest.TestCase):
         receptionContact = {
             'wants_messages': True,
             'distribution_list_id': 1,
-            'attributes': {},
+            'attributes': {
+                "backup": [],
+                "department": "",
+                "emailaddresses": [],
+                "handling": [],
+                "info": "",
+                "position": "",
+                "relations": "",
+                "responsibility": "",
+                "telephonenumbers": [],
+                "tags": [],
+                "workhours": []},
             'enabled': False
         }
         receptionId = 1
@@ -78,7 +191,7 @@ class ReceptionContactTests(unittest.TestCase):
         except Exception as e:
             self.log.info('ReceptionContact: ' + str(receptionContact) + ' Json: ' + str(jsonBody))
             self.fail('Creating a new receptionContact did not give the expected output. Response: "' +
-                      str(jsonBody) + '" Error ' + str(e))
+                      str(jsonBody) + '"\n Error ' + str(e))
         finally:
             self.adminServer.deleteReceptionContact(receptionId, contactId)
 

@@ -28,6 +28,20 @@ class ContactTests(unittest.TestCase):
                                      'required': True,
                                      'items': contactSchema}}}
 
+    contactTypeSchema = {"type": "object",
+                         "required": True,
+                         "properties": {
+                           "contacttypes": {
+                             "type": "array",
+                             "required": True,
+                             "items": {
+                               "type": "string",
+                               "required": False
+                             }
+                           }
+                         }
+                        }
+
     def __init__(self, *args, **kwargs):
         super(ContactTests, self).__init__(*args, **kwargs)
         self.log = logging.getLogger(self.__class__.__name__)
@@ -109,3 +123,16 @@ class ContactTests(unittest.TestCase):
             self.adminServer.deleteContact(contactId)
         except Exception, e:
             self.fail('Response: "' + str(jsonBody) + '" Error: ' + str(e))
+
+    def test_getContactTypeList(self):
+        headers, body = self.adminServer.getContactTypes()
+        jsonBody = json.loads(body)
+        schema = self.contactTypeSchema
+        utilities.verifySchema(schema, jsonBody)
+
+    def test_getOrganizationContactList(self):
+        organizationId = 1
+        headers, body = self.adminServer.getOrganizationContactList(organizationId)
+        jsonBody = json.loads(body)
+        schema = self.contactListSchema
+        utilities.verifySchema(schema, jsonBody)

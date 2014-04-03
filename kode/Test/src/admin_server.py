@@ -29,6 +29,7 @@ class Server500(ServerBadStatus):
 
 class AdminServer:
     class Protocol:
+        contactTypeUrl  = "/contacttypes"
         receptionUrl    = "/reception"
         contactUrl      = "/contact"
         organizationUrl = "/organization"
@@ -99,6 +100,9 @@ class AdminServer:
         return self.request(self.Protocol.organizationUrl + "/" + str(organizationId) +
                             self.Protocol.receptionUrl + "/" + str(receptionId), "POST", params)
 
+    def getOrganizationReceptionList(self, organizationId):
+        return self.request(self.Protocol.organizationUrl + "/" + str(organizationId) + self.Protocol.receptionUrl, "GET")
+
 ######################## CONTACT
     def getContact(self, contactId):
         return self.request(self.Protocol.contactUrl + "/" + str(contactId), "GET")
@@ -114,6 +118,12 @@ class AdminServer:
 
     def deleteContact(self, contactId):
         return self.request(self.Protocol.contactUrl + "/" + str(contactId), "DELETE")
+
+    def getContactTypes(self):
+        return self.request(self.Protocol.contactTypeUrl, 'GET')
+
+    def getOrganizationContactList(self, organizationId):
+        return self.request(self.Protocol.organizationUrl + "/" + str(organizationId) + self.Protocol.contactUrl, "GET")
 
 ######################## RECEPTION-CONTACT
     def getReceptionContact(self, receptionId, contactId):
@@ -152,6 +162,9 @@ class AdminServer:
     def updateOrganization(self, organizationId, params):
         return self.request(self.Protocol.organizationUrl + "/" + str(organizationId), "POST", params)
 
+    def getContactOrganization(self, contactId):
+        return self.request(self.Protocol.contactUrl + "/" + str(contactId) + self.Protocol.organizationUrl, "GET")
+
 ######################## USER
     def getUser(self, userId):
         return self.request(self.Protocol.userUrl + "/" + str(userId), "GET")
@@ -168,9 +181,5 @@ class AdminServer:
     def updateUser(self, userId, params):
         return self.request(self.Protocol.userUrl + "/" + str(userId), "POST", params)
 
-# Organization Reception List
-# Organization Contact List
 # Contact reception List //Complex?
-# Contact Types
-# Contact Organization
 # 

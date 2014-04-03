@@ -12,19 +12,27 @@ import logging
 class OrganizationTests(unittest.TestCase):
     adminServer = admin_server.AdminServer(uri=config.adminUrl, authToken=config.authToken)
 
-    organizationSchema = {'type': 'object',
-         'properties': {'id':
-                             {'type': 'integer',
-                              'minimum': 0},
-                         'full_name':
-                             {'type': 'string'}}}
+    organizationSchema = {"type": "object",
+                          "required": True,
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "required": True
+                            },
+                            "full_name": {
+                              "type": "string",
+                              "required": True
+                            }
+                          }
+                        }
 
     organizationListSchema = {'type': 'object',
+                              'required': True,
                               'properties':
-                               {'organizations':
-                                    {'type': 'array',
-                                     'required': True,
-                                     'items': organizationSchema}}}
+                                  {'organizations':
+                                      {'type': 'array',
+                                       'required': True,
+                                       'items': organizationSchema}}}
 
     def __init__(self, *args, **kwargs):
         super(OrganizationTests, self).__init__(*args, **kwargs)
@@ -95,3 +103,10 @@ class OrganizationTests(unittest.TestCase):
             self.adminServer.deleteOrganization(organizationId)
         except Exception, e:
             self.fail('Response: "' + str(jsonBody) + '" Error: ' + str(e))
+
+    def test_getOrganization(self):
+        contactId = 1
+        headers, body = self.adminServer.getContactOrganization(contactId)
+        jsonBody = json.loads(body)
+        schema = self.organizationListSchema
+        utilities.verifySchema(schema, jsonBody)
