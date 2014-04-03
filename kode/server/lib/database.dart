@@ -13,6 +13,7 @@ part 'database/contact.dart';
 part 'database/organization.dart';
 part 'database/reception.dart';
 part 'database/reception_contact.dart';
+part 'database/user.dart';
 
 Future<Database> setupDatabase(Configuration config) {
   Database db = new Database(config.dbuser, config.dbpassword, config.dbhost, config.dbport, config.dbname);
@@ -124,7 +125,26 @@ class Database {
 
   Future<int> updateOrganization(int organizationId, String fullName) =>
       _updateOrganization(pool, organizationId, fullName);
+
+  /* ***********************************************
+     ********************* User ********************
+   */
+  Future<int> createUser(String name, String extension) =>
+      _createUser(pool, name, extension);
+
+  Future<int> deleteUser(int userId) => _deleteUser(pool, userId);
+
+  Future<model.User> getUser(int userId) => _getUser(pool, userId);
+
+  Future<List<model.User>> getUserList() => _getUserList(pool);
+
+  Future<int> updateUser(int userId, String name, String extension) =>
+      _updateUser(pool, userId, name, extension);
 }
+
+/* ***********************************************
+   ***************** Utilities *******************
+ */
 
 Future<List<Row>> query(Pool pool, String sql, [Map parameters = null]) =>  pool.connect()
   .then((Connection conn) => conn.query(sql, parameters).toList()
@@ -133,4 +153,5 @@ Future<List<Row>> query(Pool pool, String sql, [Map parameters = null]) =>  pool
 Future<int> execute(Pool pool, String sql, [Map parameters = null]) => pool.connect()
   .then((Connection conn) => conn.execute(sql, parameters)
   .whenComplete(() => conn.close()));
+
 

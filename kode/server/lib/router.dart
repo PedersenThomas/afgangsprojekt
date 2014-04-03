@@ -8,6 +8,7 @@ import 'controller/contact.dart';
 import 'controller/organization.dart';
 import 'controller/reception.dart';
 import 'controller/reception_contact.dart';
+import 'controller/user.dart';
 import 'database.dart';
 import 'utilities/http.dart';
 import 'utilities/logger.dart';
@@ -34,12 +35,13 @@ final Pattern UserIdUrl = new UrlPattern(r'/user/(\d+)');
 
 final List<Pattern> Serviceagents =
 [organizationReceptionIdUrl, organizationReceptionUrl, organizationContactUrl, organizationIdUrl, organizationUrl,
- contactIdUrl, contactUrl, receptionUrl, receptionContactIdUrl, receptionContactUrl, ContactOrganizationUrl];
+ contactIdUrl, contactUrl, receptionUrl, receptionContactIdUrl, receptionContactUrl, ContactOrganizationUrl, UserUrl, UserIdUrl];
 
 ContactController contact;
 OrganizationController organization;
 ReceptionController reception;
 ReceptionContactController receptionContact;
+UserController user;
 
 void setupRoutes(HttpServer server, Configuration config, Logger logger) {
   Router router = new Router(server)
@@ -79,6 +81,13 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     ..serve(organizationIdUrl, method: HttpMethod.POST)  .listen(organization.updateOrganization)
     ..serve(organizationIdUrl, method: HttpMethod.DELETE).listen(organization.deleteOrganization)
 
+
+    ..serve(UserUrl, method: HttpMethod.GET).listen(user.getUserList)
+    ..serve(UserUrl, method: HttpMethod.PUT).listen(user.createUser)
+    ..serve(UserIdUrl, method: HttpMethod.GET).listen(user.getUser)
+    ..serve(UserIdUrl, method: HttpMethod.POST)  .listen(user.updateUser)
+    ..serve(UserIdUrl, method: HttpMethod.DELETE).listen(user.deleteUser)
+
     ..serve(anyThing, method: HttpMethod.OPTIONS).listen(PreFlight)
 
     ..defaultStream.listen(NOTFOUND);
@@ -89,4 +98,5 @@ void setupControllers(Database db) {
   organization = new OrganizationController(db);
   reception = new ReceptionController(db);
   receptionContact = new ReceptionContactController(db);
+  user = new UserController(db);
 }
