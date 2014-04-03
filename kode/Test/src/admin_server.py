@@ -150,3 +150,11 @@ class AdminServer:
 
     def updateOrganization(self, organizationId, params):
         return self.request(self.Protocol.organizationUrl + "/" + str(organizationId), "POST", params)
+
+
+# Organization Reception List
+# Organization Contact List
+# Contact reception List //Complex?
+# Contact Types
+# Contact Organization
+# 
