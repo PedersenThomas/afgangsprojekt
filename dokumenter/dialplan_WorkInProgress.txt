@@ -1,0 +1,42 @@
+ |  __ \(_)     | |     | |            
+ | |  | |_  __ _| |_ __ | | __ _ _ __  
+ | |  | | |/ _` | | '_ \| |/ _` | '_ \ 
+ | |__| | | (_| | | |_) | | (_| | | | |
+ |_____/|_|\__,_|_| .__/|_|\__,_|_| |_|
+                  | |                  
+                  |_|    
+
+Note
+  Alt i modellen skal kunne have en kommentar.
+
+Extension
+  Conditions
+    Actions
+
+Conditions
+  Conditions efter hinanden vil lave en AND mængde.
+  Har man brug for en OR eller XOR, kan man lave regex noder inde i conditions. http://wiki.freeswitch.org/wiki/Dialplan_XML#Multiple_Conditions_.28Logical_OR.2C_XOR.29
+  Man kan godt have tomme conditions. <condition> <action.....>
+  Time Routing. https://wiki.freeswitch.org/wiki/Time_of_Day_Routing
+  
+Actions
+  Viderstil til nummer.
+    nummer
+
+  Viderstil til extension
+    Extension navn
+
+  Send ud til receptionisterne.
+    Velkomst lydfil
+    vente musik spilleliste
+    ventetid før velkomst
+
+  Start IVR menu
+    IVR
+
+  Afspil lydfil
+    lydfil
+
+  Voicemail
+
+  Læg på.
