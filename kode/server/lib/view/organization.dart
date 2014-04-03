@@ -8,6 +8,14 @@ String organizationAsJson(Organization organization) => JSON.encode(organization
     {'id': organization.id,
      'full_name': organization.fullName});
 
-String listOrganizatonAsJson(List<Organization> organizations) => JSON.encode({'organizations':organizations.map(organizationAsJson).toList()});
+String listOrganizatonAsJson(List<Organization> organizations) =>
+    JSON.encode({'organizations':_listOrganizatonAsJsonList(organizations)});
 
 String organizationIdAsJson(int id) => JSON.encode({'id': id});
+
+Map _organizationAsJsonMap(Organization organization) => organization == null ? {} :
+    {'id': organization.id,
+     'full_name': organization.fullName};
+
+List _listOrganizatonAsJsonList(List<Organization> organizations) =>
+    organizations.map(_organizationAsJsonMap).toList();
