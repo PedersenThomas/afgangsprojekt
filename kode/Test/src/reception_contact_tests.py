@@ -134,6 +134,75 @@ class ReceptionContactTests(unittest.TestCase):
                                      'required': True,
                                      'items': receptionContactSchema}}}
 
+    contactReceptionListSchema = {"type": "object",
+  "required": True,
+  "properties": {
+    "contacts": {
+      "id": "#contacts",
+      "type": "array",
+      "required": True,
+      "items": {
+        "id": "#3",
+        "type": "object",
+        "required": True,
+        "properties": {
+          "contact_id": {
+            "id": "#contact_id",
+            "type": "integer",
+            "required": True
+          },
+          "contact_wants_messages": {
+            "id": "#contact_wants_messages",
+            "type": "boolean",
+            "required": True
+          },
+          "contact_distribution_list_id": {
+            "id": "#contact_distribution_list_id",
+            "type": ["null", "integer"],
+            "required": True
+          },
+          "contact_attributes": {
+            "id": "#contact_attributes",
+            "type": "object",
+            "required": True,
+            "properties": contactAttributesSchema
+          },
+          "contact_enabled": {
+            "id": "#contact_enabled",
+            "type": "boolean",
+            "required": True
+          },
+          "reception_id": {
+            "id": "#reception_id",
+            "type": "integer",
+            "required": True
+          },
+          "reception_full_name": {
+            "id": "#reception_full_name",
+            "type": "string",
+            "required": True
+          },
+          "reception_uri": {
+            "id": "#reception_uri",
+            "type": "string",
+            "required": True
+          },
+          "reception_enabled": {
+            "id": "#reception_enabled",
+            "type": "boolean",
+            "required": True
+          },
+          "organization_id": {
+            "id": "#organization_id",
+            "type": "integer",
+            "required": True
+          }
+        }
+      }
+    }
+  }
+}
+
     def __init__(self, *args, **kwargs):
         super(ReceptionContactTests, self).__init__(*args, **kwargs)
         self.log = logging.getLogger(self.__class__.__name__)
@@ -235,3 +304,10 @@ class ReceptionContactTests(unittest.TestCase):
         finally:
             #Clean up.
             self.adminServer.deleteReceptionContact(receptionId, contactId)
+
+    def test_getReceptionContactList(self):
+        receptionId = 1
+        headers, body = self.adminServer.getContactReceptionList(receptionId)
+        jsonBody = json.loads(body)
+        schema = self.contactReceptionListSchema
+        utilities.verifySchema(schema, jsonBody)

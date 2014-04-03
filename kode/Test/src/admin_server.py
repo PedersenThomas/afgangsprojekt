@@ -181,5 +181,7 @@ class AdminServer:
     def updateUser(self, userId, params):
         return self.request(self.Protocol.userUrl + "/" + str(userId), "POST", params)
 
+    def getContactReceptionList(self, contactId):
+        return self.request(self.Protocol.contactUrl + "/" + str(contactId) + self.Protocol.receptionUrl, "GET")
 # Contact reception List //Complex?
 # 
