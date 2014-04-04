@@ -1,6 +1,8 @@
 part of Dialplan;
 
-abstract class DialplanNode {
+class Action implements DialplanNode {
+  String comment;
+
   Map toJson() => {};
   XmlElement toXml() => null;
 }

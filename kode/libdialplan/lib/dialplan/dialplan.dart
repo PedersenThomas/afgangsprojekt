@@ -1,18 +1,20 @@
 part of Dialplan;
 
-class Dialplan extends DialplanNode {
+class Dialplan {
   int receptionId;
   List<Extension> Extensions = new List<Extension>();
 
-  factory Dialplan.fromJson(Map json) {
+  Dialplan.internal();
 
+  factory Dialplan.fromJson(Map json) {
+    Dialplan plan = new Dialplan.internal();
+
+    return plan;
   }
 
   Map toJson() {
-    return {};
+    return {'extension': Extensions.map((e) => e.toJson())};
   }
 
-  XmlElement toXml() {
-
-  }
+  List<XmlElement> toXml() => Extensions.map((e) => e.toXml()).toList();
 }
