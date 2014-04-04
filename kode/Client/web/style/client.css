@@ -20,7 +20,7 @@ html, body {
   height: 100%;
 }
 
-nav#navigation {  
+nav#navigation {
   left: 0%;
   top: 0%;
   width: 4%;
@@ -69,3 +69,58 @@ nav#navigation {
 .content-list > li {
   padding: 2px 0;
 }
+
+.notificationbox {
+  z-index: 10;
+  position: fixed;
+  top: -50px;
+  left: -moz-calc(50% - 100px);
+  left: -webkit-calc(50% - 100px);
+
+  width: 200px;
+  height: 50px;
+  background-color: lightgreen;
+  border: 1px solid grey;
+  border-radius: 5px;
+
+  padding-top: 10px;
+  display: table-cell;
+
+  text-align:center;
+  vertical-align:middle;
+}
+
+.notifyActivate {
+  animation-duration: 3s;
+  animation-name: slidein;
+
+  top: 0;
+}
+
+.notifyDeActivate {
+
+  animation-duration: 3s;
+  animation-name: slideout;
+
+}
+
+@keyframes slidein {
+  from {
+    top: -50px;
+  }
+
+  to {
+    top: 0;
+  }
+}
+
+@keyframes slideout {
+  from {
+    top: 0;
+  }
+
+  to {
+    top: -50px;
+  }
+}
+
