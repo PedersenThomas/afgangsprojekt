@@ -1,3 +1,4 @@
+  _____  _       _       _
  |  __ \(_)     | |     | |            
  | |  | |_  __ _| |_ __ | | __ _ _ __  
  | |  | | |/ _` | | '_ \| |/ _` | '_ \ 
@@ -40,3 +41,12 @@ Actions
   Voicemail
 
   Læg på.
+
+
+
+----------------------------------- NOTE
+ Vi generarer dialplans hver 1-2 måneder.
+ Helligedag, kan vi lave en extension til, som sætter en variabel.
+   Extension er lavet ud fra en liste af datoer.
+   Man kan godt forestille sig at brugerne laver "custom helligdag" f.eks. Bankdage. eller lignende.
+ 
