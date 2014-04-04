@@ -1,0 +1,4 @@
+name: XmlDialplanGenerator
+description: A sample command-line application
+dependencies:
+  xml: any
