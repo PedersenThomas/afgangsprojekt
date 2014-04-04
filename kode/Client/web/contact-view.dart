@@ -188,9 +188,6 @@ class ContactView {
           Map event = {"receptionId": RC.receptionId,
                        "contactId": RC.contactId };
           bus.fire(Invalidate.receptionContactAdded, event);
-
-          //TODO Remove.
-          print('Activating receptionContact: $event');
         })
     .catchError((error) {
       print('Tried to update a Reception Contact, but failed with "$error"');
@@ -451,9 +448,6 @@ class ContactView {
 
   void addReceptionToContact() {
     if(SC.currentElement != null && selectedContactId > 0) {
-      //TODO
-      print('Add!');
-
       Reception reception = SC.currentElement;
 
       ReceptionContact_ReducedReception template = new ReceptionContact_ReducedReception()

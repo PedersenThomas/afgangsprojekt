@@ -17,10 +17,10 @@ class OrganizationView {
   UListElement ulReceptionList;
   UListElement ulContactList;
 
+  bool createNew = false;
+
   List<Organization> organizations = [];
   int selectedOrganizationId = 0;
-
-  bool createNew = false;
 
   List<Contact> currentContactList = [];
   List<Reception> currentReceptionList = [];
