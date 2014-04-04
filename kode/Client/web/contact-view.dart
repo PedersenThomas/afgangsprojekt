@@ -2,7 +2,6 @@ library contact_view;
 
 import 'dart:async';
 import 'dart:html';
-import 'dart:convert';
 
 import 'lib/model.dart';
 import 'lib/request.dart' as request;

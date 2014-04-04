@@ -162,8 +162,6 @@ class OrganizationView {
   }
 
   void refreshList() {
-    print('Organization refreshList');
-
     getOrganizationList().then((List<Organization> organizations) {
       organizations.sort((a,b) => a.full_name.compareTo(b.full_name));
       //TODO Skal det være her.

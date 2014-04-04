@@ -2,9 +2,6 @@ library reception_view;
 
 import 'dart:async';
 import 'dart:html';
-import 'dart:convert';
-
-import 'package:html5_dnd/html5_dnd.dart';
 
 import 'lib/model.dart';
 import 'lib/request.dart';

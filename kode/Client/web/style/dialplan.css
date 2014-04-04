@@ -1,0 +1,73 @@
+#dialplan-page {
+  height: 100%;
+}
+
+#dialplan-controlbar {
+  height: 100%;
+  float: left;
+  width: 20%;
+
+  margin:0 5px;
+  border: solid 2px grey;
+  border-radius: 10px;
+}
+
+#dialplan-contentbar {
+  height: 100%;
+  float: left;
+  width: 40%;
+
+  margin:0 5px;
+  border: solid 2px grey;
+  border-radius: 10px;
+}
+
+#dialplan-controls {
+  list-style-type: none;
+}
+
+#dialplan-settingsbar {
+  height: 100%;
+  float: right;
+  width: 40%;
+  width: -moz-calc(40% - 30px);
+  width: -webkit-calc(40% - 30px);
+
+  margin:0 5px;
+}
+
+#dialplan-extention-listing {
+  border: solid 2px grey;
+  border-radius: 10px;
+  height: 20%;
+  margin-bottom: 5px;
+}
+
+#dialplan-extension-list {
+  list-style-type: none;
+}
+
+#dialplan-settings {
+  border: solid 2px grey;
+  border-radius: 10px;
+  height: 60%;
+  height: -moz-calc(60% - 20px);
+  height: -webkit-calc(60% - 20px);
+  margin: 10px 0;
+}
+
+#dialplan-comment-container {
+  border: solid 2px grey;
+  border-radius: 10px;
+  height: 20%;
+  margin-top: 5px;
+  padding: 2px;
+}
+
+#dialplan-comment {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+
