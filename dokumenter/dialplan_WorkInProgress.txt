@@ -43,6 +43,14 @@ Actions
   Læg på.
 
 
+Model
+  Den bliver gemt i JSON, da det er nem at arbejde med i klienten.
+  {"extensions": [
+      {"name": "main",
+       "comment": "",
+       "nodes": []}
+    ]
+  }
 
 ----------------------------------- NOTE
  Vi generarer dialplans hver 1-2 måneder.
