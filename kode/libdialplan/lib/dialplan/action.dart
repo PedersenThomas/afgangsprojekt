@@ -1,12 +1,13 @@
 part of Dialplan;
 
 class Action implements DialplanNode {
+  bool antiAction = false;
   String comment;
 
-  Action.internal();
+  Action();
 
   factory Action.fromJson(Map json) {
-    Action object = new Action.internal();
+    Action object = new Action();
 
     return object;
   }

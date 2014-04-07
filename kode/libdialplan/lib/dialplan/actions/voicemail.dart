@@ -1,12 +1,10 @@
 part of Dialplan;
 
-class Voicemail implements Action {
-  String comment;
-
-  Voicemail.internal();
+class Voicemail extends Action {
+  Voicemail();
 
   factory Voicemail.fromJson(Map json) {
-    Voicemail object = new Voicemail.internal();
+    Voicemail object = new Voicemail();
 
     return object;
   }
