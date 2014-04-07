@@ -1,4 +1,6 @@
 name: XmlDialplanGenerator
 description: A sample command-line application
 dependencies:
+  libdialplan:
+    path: ../libdialplan
   xml: any
