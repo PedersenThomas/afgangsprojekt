@@ -1,23 +1,28 @@
 part of Dialplan;
 
-class Extension implements DialplanNode {
+class Extension {
   String comment;
   String name;
-  List<Condition> Conditions = new List<Condition>();
+  List<Condition> conditions = new List<Condition>();
+  List<Action> actions = new List<Action>();
 
   Extension({String this.name});
 
   factory Extension.fromJson(Map json) {
-    Extension object = new Extension();
-    name = json['name'];
-    comment = json['comment'];
-    Conditions.addAll((json['conditions'] as List).map((c) => new Condition.fromJson(c)));
+    Extension object = new Extension()
+      ..name = json['name']
+      ..comment = json['comment']
+      ..conditions.addAll((json['conditions'] as List).map((c) => new Condition.fromJson(c)))
+      ..actions.addAll((json['actions'] as List).map((c) => new Action.fromJson(c)));
     return object;
   }
 
-  Map toJson() => {'conditions': Conditions.map((c) => c.toJson())};
+  Map toJson() {
+    Map result =
+      {'name': name,
+       'conditions': conditions.map((c) => c.toJson()).toList(),
+       'actions': actions.map((c) => c.toJson()).toList()};
 
-  XmlElement toXml() => new XmlElement('extension')
-    ..attributes['name'] = name
-    ..children.addAll(Conditions.map((c) => c.toXml()));
+    return result;
+  }
 }

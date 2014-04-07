@@ -1,23 +1,18 @@
 part of Dialplan;
 
-class Action implements DialplanNode {
-  String comment;
-  String application, data;
-  bool antiAction = false;
-
+class Action {
   Action();
 
   factory Action.fromJson(Map json) {
-    Action object = new Action();
+    switch (json['action'] as String) {
+      case 'playAudio': return new PlayAudio.fromJson(json);
+      case 'receptionists': return new Receptionists.fromJson(json);
+      case 'voicemail': return new Voicemail.fromJson(json);
 
-    return object;
+      default:
+        throw('Unknown action "${json['action']} ${json}"');
+    }
   }
 
-  Map toJson() => {};
-  XmlElement toXml() {
-    XmlElement node = new XmlElement(antiAction ? 'anti-action': 'action')
-      ..attributes['application'] = application
-      ..attributes['data'] = data;
-    return node;
-  }
+  Map toJson() => null;
 }
