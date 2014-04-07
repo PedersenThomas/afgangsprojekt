@@ -1,8 +1,9 @@
 part of Dialplan;
 
 class Action implements DialplanNode {
-  bool antiAction = false;
   String comment;
+  String application, data;
+  bool antiAction = false;
 
   Action();
 
@@ -13,5 +14,10 @@ class Action implements DialplanNode {
   }
 
   Map toJson() => {};
-  XmlElement toXml() => null;
+  XmlElement toXml() {
+    XmlElement node = new XmlElement(antiAction ? 'anti-action': 'action')
+      ..attributes['application'] = application
+      ..attributes['data'] = data;
+    return node;
+  }
 }
