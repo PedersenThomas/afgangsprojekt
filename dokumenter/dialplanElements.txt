@@ -11,21 +11,24 @@ Afspilningsliste laves i /conf/autoload_configs/local_stream.conf.xml
 
 
 
----- JSON Model
+---- Model
+Det bliver gemt i JSON, men der arbejdes med Dart Objekter. Så der er stort set en, èn til en binding.
+Når så at der skal laves XML, så bliver modellen manipuleret, og selv om der er en "toXml" så bliver vi nød til at ændre på hvordan outputtet ser ud, inden vi kan kalde den.
+
 {
     "extensions": [
         {
             "name": "open",
             "conditions": [
                 {
-                    "name": "Time",
+                    "condition": "Time",
                     "wday": "2-6",
                     "minute-of-day": "480-1020"
                 }
             ],
             "actions": [
                 {
-                    "name": "receptionists",
+                    "action": "receptionists",
                     "sleeptime": 0,
                     "music": "mohrec7",
                     "welcomefile": "r_7_welcome.wav"
@@ -37,13 +40,12 @@ Afspilningsliste laves i /conf/autoload_configs/local_stream.conf.xml
             "conditions": [],
             "actions": [
                 {
-                    "name": "voicemail",
+                    "action": "voicemail",
                     "email": "voicemail@responsum.dk"
                 }
             ]
         }
-    ],
-    "IVR": "Not Implemented"
+    ]
 }
 
 
