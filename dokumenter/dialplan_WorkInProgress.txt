@@ -7,25 +7,15 @@
                   | |                  
                   |_|    
 
-Note
+KRAV
   Alt i modellen skal kunne have en kommentar.
 
-Extension
-  Conditions
-    Actions
-
 Conditions
-  Conditions efter hinanden vil lave en AND mængde.
-  Har man brug for en OR eller XOR, kan man lave regex noder inde i conditions. http://wiki.freeswitch.org/wiki/Dialplan_XML#Multiple_Conditions_.28Logical_OR.2C_XOR.29
-  Man kan godt have tomme conditions. <condition> <action.....>
   Time Routing. https://wiki.freeswitch.org/wiki/Time_of_Day_Routing
   
 Actions
   Viderstil til nummer.
     nummer
-
-  Viderstil til extension
-    Extension navn
 
   Send ud til receptionisterne.
     Velkomst lydfil
@@ -41,16 +31,6 @@ Actions
   Voicemail
 
   Læg på.
-
-
-Model
-  Den bliver gemt i JSON, da det er nem at arbejde med i klienten.
-  {"extensions": [
-      {"name": "main",
-       "comment": "",
-       "nodes": []}
-    ]
-  }
 
 ----------------------------------- NOTE
  Vi generarer dialplans hver 1-2 måneder.

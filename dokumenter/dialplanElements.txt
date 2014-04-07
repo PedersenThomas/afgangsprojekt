@@ -1,0 +1,61 @@
+Extensions skal ALTID have et unikt navn, Derfor en fil per reception.
+Der skal først laves en "entry" extension, som sætte reception_id, fifo_music, sleeptime og sådan nogle ting.
+De conditions som sættes på en extension, skal trækkes ud, så sættes der en variable, som der bliver branched på senere.
+
+Afspilningsliste laves i /conf/autoload_configs/local_stream.conf.xml
+  Man burde nok lave en mappe til dem, så man ikke skal fjerne hele filen, for at lave den igen.
+
+
+* Bliver alt andet en "entry" extension ikke nød til at ligge i default context?
+* Waitqueue skal være mere generisk. Lige nu afspiller den "Please wait while i connect you"
+
+
+
+---- JSON Model
+{
+    "extensions": [
+        {
+            "name": "open",
+            "conditions": [
+                {
+                    "name": "Time",
+                    "wday": "2-6",
+                    "minute-of-day": "480-1020"
+                }
+            ],
+            "actions": [
+                {
+                    "name": "receptionists",
+                    "sleeptime": 0,
+                    "music": "mohrec7",
+                    "welcomefile": "r_7_welcome.wav"
+                }
+            ]
+        },
+        {
+            "name": "catchall",
+            "conditions": [],
+            "actions": [
+                {
+                    "name": "voicemail",
+                    "email": "voicemail@responsum.dk"
+                }
+            ]
+        }
+    ],
+    "IVR": "Not Implemented"
+}
+
+
+---- Compiler Strategi
+Find alle conditions
+
+Opret Entry extension
+  Fyld den med standart ting som id, MOH.
+  "execute_extension" på condition extensions
+
+Opret condition extension
+
+Opret "rigtige" extension, med deres angivne navn.
+  Lad deres først condition være "destination_number" = "r_<id>_main"
+  Den næste er tjekket på om condition er sat til "True"
