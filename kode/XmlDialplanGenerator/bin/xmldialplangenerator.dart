@@ -10,28 +10,35 @@ import '../lib/configuration.dart';
 void main() {
   Configuration config = new Configuration();
   config.loadFromFile('config.json').then((_) {
-    int receptionId = 8;
-    String number = '1234000${receptionId}';
-
-    Map dialplan = JSON.decode(dialplan1);
-    Dialplan handplan = new Dialplan.fromJson(dialplan)
-      ..receptionId = receptionId
-      ..entryNumber = number;
-
-    List<XmlElement> extensions = generateXml(handplan);
-
-    extensions.forEach(print);
+    TestStart();
   }).catchError((error, stack) {
     print('Error: "${error}"');
     print(stack);
   });
 }
 
-void start() {
+void TestStart() {
+  int receptionId = 9;
+  String number = '1234000${receptionId}';
 
+  Map dialplan = JSON.decode(dialplan2);
+  Dialplan handplan = new Dialplan.fromJson(dialplan)
+    ..receptionId = receptionId
+    ..entryNumber = number;
+
+  GeneratorOutput output = generateXml(handplan);
+
+
+  print(output.entry);
+  //print('-- ^ PUBLIC CONTEXT ^ ---- v RECEPTION CONTEXT v --');
+  print(output.receptionContext);
 }
 
-
+/**
+ * ---- Krav til modellen.
+ * Der skal altid være en, og kun en, extension med start = true
+ * Der skal altid være en, og kun en, extension med catchall = true
+ */
 
 /**
  * TODO TESTING. DELETE IF YOU SEE ME IN DOC!.
@@ -40,11 +47,13 @@ String dialplan1 = '''
 {
     "extensions": [
         {
+            "start": true,
+            "catchall": false,
             "name": "open",
             "conditions": [
                 {
                     "condition": "time",
-                    "minute-of-day": "480-1020",
+                    "time-of-day": "08:00-17:00",
                     "wday": "mon-fri"
                 }
             ],
@@ -59,11 +68,70 @@ String dialplan1 = '''
         },
         {
             "name": "catchall",
+            "catchall": true,
             "conditions": [],
             "actions": [
                 {
                     "action": "playaudio",
                     "filename": "en/us/callie/misc/8000/misc-speak_live_with_community.wav"
+                }
+            ]
+        }
+    ]
+}
+''';
+
+String dialplan2 ='''
+{
+    "extensions": [
+        {
+            "start": true,
+            "catchall": false,
+            "name": "man-tors",
+            "conditions": [
+                {
+                    "condition": "time",
+                    "time-of-day": "08:00-17:00",
+                    "wday": "mon-thu"
+                }
+            ],
+            "actions": [
+                {
+                    "action": "receptionists",
+                    "sleeptime": 0,
+                    "music": "mohrec7",
+                    "welcomefile": "r_8_welcome.wav"
+                }
+            ]
+        },
+        {
+            "start": false,
+            "catchall": false,
+            "name": "fredag",
+            "conditions": [
+                {
+                    "condition": "time",
+                    "time-of-day": "08:00-16:30",
+                    "wday": "fri"
+                }
+            ],
+            "actions": [
+                {
+                    "action": "receptionists",
+                    "sleeptime": 0,
+                    "music": "mohrec7",
+                    "welcomefile": "r_8_welcome.wav"
+                }
+            ]
+        },
+        {
+            "name": "natsvar",
+            "catchall": true,
+            "conditions": [],
+            "actions": [
+                {
+                    "action": "playaudio",
+                    "filename": "en/us/callie/misc/8000/error.wav"
                 }
             ]
         }

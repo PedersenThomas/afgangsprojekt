@@ -5,58 +5,47 @@ import 'package:libdialplan/utilities.dart';
 import 'package:xml/xml.dart';
 import 'package:XmlDialplanGenerator/action_to_xml.dart';
 
-const String TrueVariable = 'True';
-const String FalseVariable = 'False';
+class GeneratorOutput {
+  XmlElement entry;
+  XmlElement receptionContext;
+}
 
 /**
  * Generates multiple extensions for a receptions dialplan.
  */
-List<XmlElement> generateXml(Dialplan dialplan) {
-  List<XmlElement> nodes = new List<XmlElement>();
-
-  //Map of Extension names, and its conditions.
-  Map<String, List<Condition>> conditions = extractConditions(dialplan);
-
-  //Finds every extension that have conditions
-  Map<String, List<Condition>> nonEmptyConditions = new Map<String, List<Condition>>();
-  conditions.forEach((k, v) {
-    if(v != null && v.isNotEmpty) {
-      nonEmptyConditions[k] = v;
-    }
-  });
+GeneratorOutput generateXml(Dialplan dialplan) {
+  GeneratorOutput output = new GeneratorOutput();
 
   //The extension the caller hits.
-  XmlElement entry = makeEntryNode(dialplan,
-      nonEmptyConditions.keys
-      .map((String extensionName) => conditionSetterExtensionName(dialplan.receptionId, extensionName)));
-  nodes.add(entry);
+  output.entry = makeEntryNode(dialplan,[]);
 
-  //Condition variable setter Extensions.
-  List<XmlElement> conditionVariableSetters = new List<XmlElement>();
-  nonEmptyConditions.forEach((k, v) => conditionVariableSetters.add(ConditionVariableSetter(dialplan.receptionId, k, v)));
-  nodes.addAll(conditionVariableSetters);
+  XmlElement context = new XmlElement('context')
+    ..attributes['name'] = contextName(dialplan.receptionId);
+
+  output.receptionContext = context;
 
   //Make actual Extension.
-  Iterable<XmlElement> branchingExtensions = dialplan.Extensions.map((ext) => makeBranchingExtensions(ext, dialplan.receptionId));
-  nodes.addAll(branchingExtensions);
+  Iterable<XmlElement> extensions = dialplan.Extensions.map((Extension ext) => makeReceptionExtensions(ext, dialplan.receptionId));
+  context.children.addAll(extensions);
 
-  return nodes;
+  return output;
 }
 
 /**
- * Makes the brancing extensions.
+ * Makes the reception extensions.
  */
-XmlElement makeBranchingExtensions(Extension extension, int receptionId) {
+XmlElement makeReceptionExtensions(Extension extension, int receptionId) {
   XmlElement head = new XmlElement('extension')
-    ..attributes['name'] = branchingExtensionName(receptionId, extension.name);
+    ..attributes['name'] = receptionExtensionName(receptionId, extension.name);
 
-  //Makes the conditions.
-  XmlElement destCond = XmlCondition('destination_number', mainDestinationName(receptionId));
-  head.children.add(destCond);
+  if(!extension.isCatchAll) {
+    //Makes the conditions.
+    XmlElement destCond = XmlCondition('destination_number', mainDestinationName(receptionId));
+    head.children.add(destCond);
 
-  if(extension.conditions.isNotEmpty) {
-    XmlElement cond = XmlCondition('\${${conditionVariableName(receptionId, extension.name)}}', TrueVariable);
-    head.children.add(cond);
+    head.children.addAll(extension.conditions.map((e) => e.toXml()));
+  } else {
+    head.children.add(new XmlElement('condition'));
   }
   XmlElement lastCondition = head.children.last;
 
@@ -82,11 +71,20 @@ XmlElement makeEntryNode(Dialplan dialplan, Iterable<String> conditionExtensions
   //Executes all the extensions that sets condition variables.
   numberCondition.children.addAll(conditionExtensions.map((extention) => XmlAction('execute_extension', extention)));
 
-  XmlElement main = XmlAction('transfer', mainDestinationName(dialplan.receptionId));
+  Extension startExtension = dialplan.Extensions.firstWhere((e) => e.isStart);
+  XmlElement main = FsTransfer(receptionExtensionName(dialplan.receptionId, startExtension.name), contextName(dialplan.receptionId)); //XmlAction('transfer', receptionExtensionName(dialplan.receptionId, startExtension.name));
   numberCondition.children.add(main);
 
   return entry;
 }
+
+//TODO REMOVE - LIBRARY THIS.
+XmlElement FsTransfer(String extension, String context) {
+  return XmlAction('transfer', '${extension} xml ${context}');
+}
+
+/** Returns the name of the context for the reception*/
+String contextName(int receptionId) => 'Rcontext_${receptionId}';
 
 /** Returns the name of the branching extensions for a reception.*/
 String mainDestinationName(int receptionId) => 'r_${receptionId}_main';
@@ -94,48 +92,6 @@ String mainDestinationName(int receptionId) => 'r_${receptionId}_main';
 /** Returns the name of the entry extension for a reception.*/
 String entryExtensionName(int receptionid) => 'r_$receptionid';
 
-/** Returns the name of the extension where the condition variable is set.*/
-String conditionSetterExtensionName(int receptionId, String extensionName) => 'r_${receptionId}_cond_${extensionName}';
-
-/**Returns the name of the condition variable used in the branching extensions.*/
-String conditionVariableName(int receptionId, String extensionName) => 'r_${receptionId}_${extensionName}';
-
 /** Returns the name of the branching extension.*/
-String branchingExtensionName(int receptionId, String extensionName) => 'r_${receptionId}_${extensionName}';
-
-/**
- * Pulls out every conditions list from extensions.
- */
-Map<String, List<Condition>> extractConditions(Dialplan dialplan) {
-  Map<String, List<Condition>> conditions = new Map<String, List<Condition>>();
-
-  for(Extension extension in dialplan.Extensions) {
-    if(extension.conditions.isNotEmpty) {
-      conditions[extension.name] = extension.conditions;
-    }
-  }
-
-  return conditions;
-}
-
-/**
- * Makes the extension that sets the condition variable.
- */
-XmlElement ConditionVariableSetter(int receptionId, String extensionName, List<Condition> conditions) {
-  String condExtensionName = conditionSetterExtensionName(receptionId, extensionName);
-  String conditionVariable = conditionVariableName(receptionId, extensionName);
-  XmlElement node = new XmlElement('extension')
-    ..attributes['name'] = condExtensionName;
-
-  XmlElement destination = XmlCondition('destination_number', condExtensionName)
-      ..children.add(XmlAction('set', '${conditionVariable}=${FalseVariable}'));
-  node.children.add(destination);
-
-  node.children.addAll(conditions.map((c) => c.toXml()));
-
-  XmlElement last = node.children.last;
-  last.children.add(XmlAction('set', '${conditionVariable}=${TrueVariable}'));
-
-  return node;
-}
+String receptionExtensionName(int receptionId, String extensionName) => 'r_${receptionId}_${extensionName}';
 
