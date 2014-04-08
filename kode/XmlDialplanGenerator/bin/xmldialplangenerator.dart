@@ -5,10 +5,11 @@ import 'package:xml/xml.dart';
 import 'package:libdialplan/libdialplan.dart';
 
 import '../lib/generator.dart';
+import '../lib/configuration.dart';
 
 void main() {
-
-  //try {
+  Configuration config = new Configuration();
+  config.loadFromFile('config.json').then((_) {
     int receptionId = 8;
     String number = '1234000${receptionId}';
 
@@ -17,17 +18,16 @@ void main() {
       ..receptionId = receptionId
       ..entryNumber = number;
 
-    //print(JSON.encode(handplan.toJson()));
-
     List<XmlElement> extensions = generateXml(handplan);
 
     extensions.forEach(print);
+  }).catchError((error, stack) {
+    print('Error: "${error}"');
+    print(stack);
+  });
+}
 
-//  } catch(e, s) {
-//    print('error $e');
-//    print('stack $s');
-//  }
-
+void start() {
 
 }
 
