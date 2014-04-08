@@ -14,6 +14,6 @@ class Dialplan {
   }
 
   Map toJson() {
-    return {'extensions': Extensions.map((e) => e.toJson()).toList()};
+    return {'extensions': Extensions.map((Extension e) => e.toJson()).toList()};
   }
 }

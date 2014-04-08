@@ -25,11 +25,14 @@ class Extension {
   Map toJson() {
     Map result =
       {'name': name,
-       'comment': comment,
        'start': isStart,
        'catchall': isCatchAll,
        'conditions': conditions.map((c) => c.toJson()).toList(),
        'actions': actions.map((c) => c.toJson()).toList()};
+
+    if(comment != null) {
+      result['comment'] = comment;
+    }
 
     return result;
   }

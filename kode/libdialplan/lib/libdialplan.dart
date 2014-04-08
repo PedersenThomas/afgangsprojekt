@@ -8,6 +8,7 @@ part 'dialplan/dialplan.dart';
 part 'dialplan/extension.dart';
 
 part 'dialplan/actions/ivr.dart';
+part 'dialplan/actions/forward.dart';
 part 'dialplan/actions/playaudio.dart';
 part 'dialplan/actions/receptionists.dart';
 part 'dialplan/actions/voicemail.dart';

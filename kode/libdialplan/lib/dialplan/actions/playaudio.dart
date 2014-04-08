@@ -15,7 +15,7 @@ class PlayAudio implements Action {
   }
 
   Map toJson() {
-    Map result = {};
+    Map result = {'action': 'playaudio'};
 
     if(comment != null) {
       result['comment'] = comment;
