@@ -2,18 +2,23 @@ part of Dialplan;
 
 class Time implements Condition {
   String comment;
-  String minute_of_day;
+  String timeOfDay;
   String wday;
+  String yday;
 
   Time();
 
   Time.fromJson(Map json) {
-    if(json.containsKey('minute-of-day')) {
-      minute_of_day = json['minute-of-day'];
+    if(json.containsKey('time-of-day')) {
+      timeOfDay = json['time-of-day'];
     }
 
     if(json.containsKey('wday')) {
       wday = json['wday'];
+    }
+
+    if(json.containsKey('yday')) {
+      yday = json['yday'];
     }
 
     if(json.containsKey('comment')) {
@@ -28,25 +33,34 @@ class Time implements Condition {
       result['comment'] = comment;
     }
 
-    if(minute_of_day != null) {
-      result['minute-of-day'] = minute_of_day;
+    if(timeOfDay != null) {
+      result['time-of-day'] = timeOfDay;
     }
 
     if(wday != null) {
       result['wday'] = wday;
     }
+
+    if(yday != null) {
+      result['yday'] = yday;
+    }
+
     return result;
   }
 
   XmlElement toXml() {
     XmlElement node = new XmlElement('condition');
 
-    if(minute_of_day != null && minute_of_day.isNotEmpty) {
-      node.attributes['minute-of-day'] = minute_of_day;
+    if(timeOfDay != null && timeOfDay.isNotEmpty) {
+      node.attributes['time-of-day'] = timeOfDay;
     }
 
     if(wday != null && wday.isNotEmpty) {
       node.attributes['wday'] = transformWdayToFreeSwitchFormat(wday);
+    }
+
+    if(yday != null && yday.isNotEmpty) {
+      node.attributes['yday'] = yday;
     }
 
     return node;
