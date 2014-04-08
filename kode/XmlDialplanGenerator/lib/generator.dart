@@ -69,9 +69,9 @@ XmlElement makeEntryNode(Dialplan dialplan, Iterable<String> conditionExtensions
   numberCondition.children.add(setId);
 
   //Executes all the extensions that sets condition variables.
-  numberCondition.children.addAll(conditionExtensions.map((extention) => XmlAction('execute_extension', extention)));
+  numberCondition.children.addAll(conditionExtensions.map((String extentionName) => XmlAction('execute_extension', extentionName)));
 
-  Extension startExtension = dialplan.Extensions.firstWhere((e) => e.isStart);
+  Extension startExtension = dialplan.Extensions.firstWhere((Extension e) => e.isStart);
   XmlElement main = FsTransfer(receptionExtensionName(dialplan.receptionId, startExtension.name), contextName(dialplan.receptionId)); //XmlAction('transfer', receptionExtensionName(dialplan.receptionId, startExtension.name));
   numberCondition.children.add(main);
 

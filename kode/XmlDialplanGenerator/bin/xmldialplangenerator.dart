@@ -27,59 +27,21 @@ void TestStart() {
     ..entryNumber = number;
 
   GeneratorOutput output = generateXml(handplan);
-
-
-  print(output.entry);
+  print(JSON.encode(handplan.toJson()));
+  //print(output.entry.toString().substring(1));
   //print('-- ^ PUBLIC CONTEXT ^ ---- v RECEPTION CONTEXT v --');
-  print(output.receptionContext);
+  //print(output.receptionContext);
 }
 
 /**
  * ---- Krav til modellen.
  * Der skal altid være en, og kun en, extension med start = true
- * Der skal altid være en, og kun en, extension med catchall = true
+ * Der må højst være en extension med catchall = true
  */
 
 /**
  * TODO TESTING. DELETE IF YOU SEE ME IN DOC!.
  */
-String dialplan1 = '''
-{
-    "extensions": [
-        {
-            "start": true,
-            "catchall": false,
-            "name": "open",
-            "conditions": [
-                {
-                    "condition": "time",
-                    "time-of-day": "08:00-17:00",
-                    "wday": "mon-fri"
-                }
-            ],
-            "actions": [
-                {
-                    "action": "receptionists",
-                    "sleeptime": 0,
-                    "music": "mohrec7",
-                    "welcomefile": "r_7_welcome.wav"
-                }
-            ]
-        },
-        {
-            "name": "catchall",
-            "catchall": true,
-            "conditions": [],
-            "actions": [
-                {
-                    "action": "playaudio",
-                    "filename": "en/us/callie/misc/8000/misc-speak_live_with_community.wav"
-                }
-            ]
-        }
-    ]
-}
-''';
 
 String dialplan2 ='''
 {
@@ -125,6 +87,7 @@ String dialplan2 ='''
             ]
         },
         {
+            "start": false,
             "name": "natsvar",
             "catchall": true,
             "conditions": [],
