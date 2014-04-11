@@ -1,7 +1,7 @@
 library ActionToXml;
 
 import 'package:libdialplan/libdialplan.dart';
-import 'package:libdialplan/utilities.dart';
+import 'package:XmlDialplanGenerator/utilities.dart';
 import 'package:xml/xml.dart';
 
 List<XmlElement> actionToXml(Action action) {
@@ -13,6 +13,9 @@ List<XmlElement> actionToXml(Action action) {
 
   } else if (action is PlayAudio) {
     return playAudio(action);
+
+  } else if (action is Forward) {
+    return forward(action);
 
   } else {
     return [];
@@ -39,6 +42,14 @@ List<XmlElement> playAudio(PlayAudio action) {
   List<XmlElement> nodes = new List<XmlElement>();
 
   nodes.add(XmlAction('playback', '\$\${sounds_dir}/${action.filename}'));
+
+  return nodes;
+}
+
+List<XmlElement> forward(Forward action) {
+  List<XmlElement> nodes = new List<XmlElement>();
+
+  nodes.add(XmlAction('bridge', action.number));
 
   return nodes;
 }

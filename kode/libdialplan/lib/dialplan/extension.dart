@@ -5,6 +5,7 @@ class Extension {
   bool isCatchAll;
   String comment;
   String name;
+  String failoverExtension;
   List<Condition> conditions = new List<Condition>();
   List<Action> actions = new List<Action>();
 
@@ -16,6 +17,7 @@ class Extension {
       ..comment = json['comment']
       ..isStart = json['start']
       ..isCatchAll = json['catchall']
+      ..failoverExtension = json['failoverextension']
       ..conditions.addAll((json['conditions'] as List).map((c) => new Condition.fromJson(c)))
       ..actions.addAll((json['actions'] as List).map((c) => new Action.fromJson(c)));
 
@@ -32,6 +34,10 @@ class Extension {
 
     if(comment != null) {
       result['comment'] = comment;
+    }
+
+    if(failoverExtension != null) {
+      result['failoverextension'] = failoverExtension;
     }
 
     return result;

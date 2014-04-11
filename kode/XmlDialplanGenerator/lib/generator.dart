@@ -1,9 +1,11 @@
 library generator;
 
 import 'package:libdialplan/libdialplan.dart';
-import 'package:libdialplan/utilities.dart';
+import 'package:XmlDialplanGenerator/utilities.dart';
 import 'package:xml/xml.dart';
-import 'package:XmlDialplanGenerator/action_to_xml.dart';
+
+import 'action_to_xml.dart';
+import 'condition_to_xml.dart';
 
 class GeneratorOutput {
   XmlElement entry;
@@ -40,19 +42,30 @@ XmlElement makeReceptionExtensions(Extension extension, int receptionId) {
 
   if(!extension.isCatchAll) {
     //Makes the conditions.
-    XmlElement destCond = XmlCondition('destination_number', mainDestinationName(receptionId));
+    XmlElement destCond = XmlCondition('destination_number', receptionExtensionName(receptionId, extension.name));
     head.children.add(destCond);
 
-    head.children.addAll(extension.conditions.map((e) => e.toXml()));
+    head.children.addAll(extension.conditions.map((condition) => conditionToXml(condition, extension.failoverExtension, receptionId)));
   } else {
     head.children.add(new XmlElement('condition'));
   }
   XmlElement lastCondition = head.children.last;
 
   //Makes all the actions
-  lastCondition.children.addAll(extension.actions.map(actionToXml).reduce((List<XmlElement> aList, List<XmlElement> bList) => aList.addAll(bList)));
+  Iterable<List<XmlElement>> actions = extension.actions.map(actionToXml);
+  if(actions.isNotEmpty) {
+    lastCondition.children.addAll(actions.reduce(union));
+  }
 
   return head;
+}
+
+/** Makes a third list containing the content of the two lists.*/
+List union(List aList, List bList) {
+  List cList = new List();
+  cList.addAll(aList);
+  cList.addAll(bList);
+  return cList;
 }
 
 /**
@@ -79,8 +92,8 @@ XmlElement makeEntryNode(Dialplan dialplan, Iterable<String> conditionExtensions
 }
 
 //TODO REMOVE - LIBRARY THIS.
-XmlElement FsTransfer(String extension, String context) {
-  return XmlAction('transfer', '${extension} xml ${context}');
+XmlElement FsTransfer(String extension, String context, {bool anti_action: false}) {
+  return XmlAction('transfer', '${extension} xml ${context}', anti_action);
 }
 
 /** Returns the name of the context for the reception*/

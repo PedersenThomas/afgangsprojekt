@@ -27,10 +27,10 @@ void TestStart() {
     ..entryNumber = number;
 
   GeneratorOutput output = generateXml(handplan);
-  print(JSON.encode(handplan.toJson()));
-  //print(output.entry.toString().substring(1));
-  //print('-- ^ PUBLIC CONTEXT ^ ---- v RECEPTION CONTEXT v --');
-  //print(output.receptionContext);
+  //print(JSON.encode(handplan.toJson()));
+  print(output.entry.toString().substring(1));
+  print('-- ^ PUBLIC CONTEXT ^ ---- v RECEPTION CONTEXT v --');
+  print(output.receptionContext);
 }
 
 /**
@@ -50,6 +50,7 @@ String dialplan2 ='''
             "start": true,
             "catchall": false,
             "name": "man-tors",
+            "failoverextension": "fredag",
             "conditions": [
                 {
                     "condition": "time",
@@ -70,6 +71,7 @@ String dialplan2 ='''
             "start": false,
             "catchall": false,
             "name": "fredag",
+            "failoverextension": "lukket",
             "conditions": [
                 {
                     "condition": "time",
@@ -83,6 +85,18 @@ String dialplan2 ='''
                     "sleeptime": 0,
                     "music": "mohrec7",
                     "welcomefile": "r_8_welcome.wav"
+                }
+            ]
+        },
+        {
+            "start": false,
+            "catchall": false,
+            "name": "lukket",
+            "conditions": [],
+            "actions": [
+                {
+                    "action": "playaudio",
+                    "filename": "en/us/callie/misc/8000/misc-soccer_mom.wav"
                 }
             ]
         },
