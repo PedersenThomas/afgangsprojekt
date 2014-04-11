@@ -5,3 +5,5 @@ dependencies:
   http: any
   postgresql: any
   route: any
+  libdialplan:
+    path: ../libdialplan

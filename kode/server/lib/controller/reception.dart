@@ -3,10 +3,13 @@ library receptionController;
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:libdialplan/libdialplan.dart';
+
 import '../utilities/http.dart';
 import '../utilities/logger.dart';
 import '../database.dart';
 import '../model.dart';
+import '../view/dialplan.dart';
 import '../view/reception.dart';
 
 
@@ -57,7 +60,7 @@ class ReceptionController {
 
     extractContent(request)
     .then(JSON.decode)
-    .then((Map data) => db.createReception(organizationId, data['full_name'], data['uri'], data['attributes'], data['extradatauri'], data['enabled']))
+    .then((Map data) => db.createReception(organizationId, data['full_name'], data['uri'], data['attributes'], data['extradatauri'], data['enabled'], data['number']))
     .then((int id) => writeAndCloseJson(request, receptionIdAsJson(id)))
     .catchError((error) {
       logger.error(error);
@@ -71,7 +74,7 @@ class ReceptionController {
 
     extractContent(request)
     .then(JSON.decode)
-    .then((Map data) => db.updateReception(organizationId, receptionId, data['full_name'], data['uri'], data['attributes'], data['extradatauri'], data['enabled']))
+    .then((Map data) => db.updateReception(organizationId, receptionId, data['full_name'], data['uri'], data['attributes'], data['extradatauri'], data['enabled'], data['number']))
     .then((int id) => writeAndCloseJson(request, receptionIdAsJson(id)))
     .catchError((error) {
       logger.error('updateReception url: "${request.uri}" gave error "${error}"');
@@ -85,9 +88,20 @@ class ReceptionController {
 
     db.deleteReception(organizationId, receptionId)
     .then((int id) => writeAndCloseJson(request, receptionIdAsJson(id)))
-    .catchError((error) {
-      logger.error('deleteReception url: "${request.uri}" gave error "${error}"');
+    .catchError((error, stack) {
+      logger.error('deleteReception url: "${request.uri}" gave error "${error}" ${stack}');
       Internal_Error(request);
     });
+  }
+
+  void getDialplan(HttpRequest request) {
+    int receptionId = pathParameter(request.uri, 'reception');
+
+    db.getDialplan(receptionId)
+      .then((Dialplan dialplan) => writeAndCloseJson(request, dialplanAsJson(dialplan)))
+      .catchError((error) {
+        logger.error('getDialplan url: "${request.uri}" gave error "${error}"');
+        Internal_Error(request);
+      });
   }
 }

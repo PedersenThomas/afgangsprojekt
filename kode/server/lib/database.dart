@@ -5,11 +5,13 @@ import 'dart:convert';
 
 import 'package:postgresql/postgresql_pool.dart';
 import 'package:postgresql/postgresql.dart';
+import 'package:libdialplan/libdialplan.dart';
 
 import 'model.dart' as model;
 import 'configuration.dart';
 
 part 'database/contact.dart';
+part 'database/dialplan.dart';
 part 'database/organization.dart';
 part 'database/reception.dart';
 part 'database/reception_contact.dart';
@@ -40,8 +42,8 @@ class Database {
      ***************** Reception *******************
   */
 
-  Future<int> createReception(int organizationId, String fullName, String uri, Map attributes, String extradatauri, bool enabled) =>
-      _createReception(pool, organizationId, fullName, uri, attributes, extradatauri, enabled);
+  Future<int> createReception(int organizationId, String fullName, String uri, Map attributes, String extradatauri, bool enabled, String number) =>
+      _createReception(pool, organizationId, fullName, uri, attributes, extradatauri, enabled, number);
 
   Future<int> deleteReception(int organizationId, int id) =>
       _deleteReception(pool, organizationId, id);
@@ -54,8 +56,8 @@ class Database {
 
   Future<List<model.Reception>> getReceptionList() => _getReceptionList(pool);
 
-  Future<int> updateReception(int organizationId, int id, String fullName, String uri, Map attributes, String extradatauri, bool enabled) =>
-      _updateReception(pool, organizationId, id, fullName, uri, attributes, extradatauri, enabled);
+  Future<int> updateReception(int organizationId, int id, String fullName, String uri, Map attributes, String extradatauri, bool enabled, String number) =>
+      _updateReception(pool, organizationId, id, fullName, uri, attributes, extradatauri, enabled, number);
 
   Future<List<model.Reception>> getOrganizationReceptionList(int organizationId) =>
       _getOrganizationReceptionList(pool, organizationId);
@@ -124,6 +126,13 @@ class Database {
 
   Future<int> updateOrganization(int organizationId, String fullName) =>
       _updateOrganization(pool, organizationId, fullName);
+
+  /* ***********************************************
+     ****************** Dialplan *******************
+   */
+
+  Future<Dialplan> getDialplan(int receptionId) =>
+      _getDialplan(pool, receptionId);
 
   /* ***********************************************
      ********************* User ********************

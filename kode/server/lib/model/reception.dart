@@ -8,6 +8,14 @@ class Reception {
   Map attributes;
   String extradatauri;
   bool enabled;
-  
-  Reception(int this.id, int this.organizationId, String this.fullName, String this.uri, Map this.attributes, String this.extradatauri, bool this.enabled);
+  String receptionNumber;
+
+  Reception(int this.id,
+      int this.organizationId,
+      String this.fullName,
+      String this.uri,
+      Map this.attributes,
+      String this.extradatauri,
+      bool this.enabled,
+      String this.receptionNumber);
 }

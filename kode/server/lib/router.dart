@@ -23,6 +23,7 @@ final Pattern contactIdUrl = new UrlPattern(r'/contact/(\d+)');
 final Pattern contactUrl = new UrlPattern(r'/contact(/?)');
 final Pattern receptionContactIdUrl = new UrlPattern(r'/reception/(\d+)/contact/(\d+)');
 final Pattern receptionContactUrl = new UrlPattern(r'/reception/(\d+)/contact(/?)');
+final Pattern dialplanUrl = new UrlPattern(r'/reception/(\d+)/dialplan');
 
 final Pattern organizationContactUrl = new UrlPattern(r'/organization/(\d+)/contact(/?)');
 final Pattern ContactReceptionUrl = new UrlPattern(r'/contact/(\d+)/reception(/?)');
@@ -81,6 +82,7 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     ..serve(organizationIdUrl, method: HttpMethod.POST)  .listen(organization.updateOrganization)
     ..serve(organizationIdUrl, method: HttpMethod.DELETE).listen(organization.deleteOrganization)
 
+    ..serve(dialplanUrl, method: HttpMethod.GET).listen(reception.getDialplan)
 
     ..serve(UserUrl, method: HttpMethod.GET).listen(user.getUserList)
     ..serve(UserUrl, method: HttpMethod.PUT).listen(user.createUser)
