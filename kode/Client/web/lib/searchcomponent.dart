@@ -6,10 +6,10 @@ import 'dart:html';
 import 'package:okeyee/okeyee.dart';
 
 /*
- * SetViewedObject(T obj) // Writes to _selectedElementText, but don't find it in the DataList. 
+ * SetViewedObject(T obj) // Writes to _selectedElementText, but don't find it in the DataList.
  *                             Saved to CurrentObject, and find it in the list when the component is activated.
  * UpdateDataList(List<T> list) // saves reference to list in a new variable for UpdatedLists. On next open reload Datalist with UpdatedList.
- * 
+ *
  */
 
 typedef bool Filter<T>(T element);
@@ -35,7 +35,7 @@ class SearchComponent<T> {
                bool            _withDropDown = false;
 
                T get currentElement => _currentElement;
-               
+
   callback _whenClearSelection = () {};
 
   /**
@@ -56,7 +56,7 @@ class SearchComponent<T> {
       return '${before}<em>${match}</em>${after}';
     }
   };
-  
+
   ElementInvokation<T> _selectedElementChanged;
 
   void set whenClearSelection(callback function) {
@@ -163,7 +163,7 @@ class SearchComponent<T> {
     _container.classes.remove('chosen-with-drop');
     _withDropDown = false;
   }
-  
+
   void _fadeComponent() {
     _container.classes.remove('chosen-container-active');
   }
@@ -173,8 +173,6 @@ class SearchComponent<T> {
   void _highLightComponent() {
     _container.classes.add('chosen-container-active');
   }
-  
-  
 
   /**
    * Highlights the given LIElement
@@ -191,7 +189,7 @@ class SearchComponent<T> {
 
     _makeElementVisible();
   }
-  
+
   /**
     * Adjust the scollbar to keep the highlighted list element visible.
     */
@@ -260,7 +258,7 @@ class SearchComponent<T> {
     _searchBox.onFocus.listen((_) {
       _highLightComponent();
     });
-    
+
     _searchBox.onBlur.listen((_) {
       closeDropDown();
       _fadeComponent();

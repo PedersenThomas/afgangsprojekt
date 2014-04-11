@@ -22,6 +22,11 @@
   border-radius: 10px;
 }
 
+#dialplan-items-list {
+  width: 100%;
+  list-style-type: none;
+}
+
 #dialplan-controls {
   list-style-type: none;
 }

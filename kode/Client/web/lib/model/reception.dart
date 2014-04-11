@@ -11,7 +11,8 @@ class Reception {
   String customertype;
   String extradatauri;
   bool enabled;
-  
+  String number;
+
   List<String> addresses;
   List<String> alternatenames;
   List<String> bankinginformation;
@@ -22,20 +23,21 @@ class Reception {
   List<String> registrationnumbers;
   List<String> telephonenumbers;
   List<String> websites;
-  
+
   /**
    * Default constructor
    */
   Reception();
-  
+
   factory Reception.fromJson(Map json) {
     Reception reception = new Reception()
       ..id = json['id']
       ..organization_id = json['organization_id']
       ..full_name = stringFromJson(json, 'full_name')
       ..uri = stringFromJson(json, 'uri')
-      ..enabled = json['enabled'];
-    
+      ..enabled = json['enabled']
+      ..number = json['number'];
+
     if(json.containsKey('attributes')) {
       Map attributes = json['attributes'];
 
@@ -44,7 +46,7 @@ class Reception {
         ..other = stringFromJson(attributes, 'other')
         ..greeting = stringFromJson(attributes, 'greeting')
         ..customertype = stringFromJson(attributes, 'customertype')
-        
+
         ..addresses = priorityListFromJson(attributes, 'addresses')
         ..alternatenames = priorityListFromJson(attributes, 'alternatenames')
         ..bankinginformation = priorityListFromJson(attributes, 'bankinginformation')
@@ -56,10 +58,10 @@ class Reception {
         ..telephonenumbers = priorityListFromJson(attributes, 'telephonenumbers')
         ..websites = priorityListFromJson(attributes, 'websites');
     }
-    
+
     return reception;
   }
-  
+
   String toJson() {
     Map attributes = {
       'product': product,
@@ -77,16 +79,17 @@ class Reception {
       'telephonenumbers': priorityListToJson(telephonenumbers),
       'websites': priorityListToJson(websites)
     };
-    
+
     Map data = {
       'id': id,
       'orgaanization_id': organization_id,
       'full_name': full_name,
       'uri': uri,
       'enabled': enabled,
-      'attributes': attributes
+      'attributes': attributes,
+      'number': number
     };
-    
+
     return JSON.encode(data);
   }
 }

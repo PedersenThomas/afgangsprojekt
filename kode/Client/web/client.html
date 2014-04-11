@@ -86,6 +86,11 @@
             </tr>
 
             <tr>
+              <td><label>Reception-telefon-nummber</label><input id="reception-input-receptionnumber"></input></td>
+              <td><button disabled id="reception-button-dialplan">Dialplan</button></td>
+            </tr>
+
+            <tr>
               <td><label>Adresser</label><ul id="reception-list-addresses"></ul></td>
               <td><label>Alternative firmanavne</label><ul id="reception-list-alternatenames"></ul></td>
             </tr>
@@ -171,20 +176,22 @@
             <li value="1">Receptionisterne</li>
             <li value="2">Telefonsvare</li>
             <li value="3">lydfil</li>
-            <li value="4">lægpå</li>
+            <li value="4">ivr</li>
           </ul>
         </div>
 
         <div id="dialplan-contentbar">
+          <ul id="dialplan-items-list"></ul>
         </div>
 
         <div id="dialplan-settingsbar">
           <div id="dialplan-extention-listing">
-            <ul id="dialplan-extension-list">
+            <ul id="dialplan-extension-list" class="zebra">
               <li>Indgang</li>
               <li>Lukket</li>
               <li>Ferie</li>
             </ul>
+            <button id="dialplan-extension-add">Tilføj</button>
           </div>
 
           <div id="dialplan-settings">

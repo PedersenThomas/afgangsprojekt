@@ -10,20 +10,6 @@ bool handleToken() {
   //TODO Save to localStorage.
   if(url.queryParameters.containsKey('settoken')) {
     config.token = url.queryParameters['settoken'];
-    //Didn't work. try localStorage.
-    
-    //TODO ask if the user have the right premissions?
-//    protocol.userInfo(configuration.token).then((protocol.Response<Map> response) {
-//      Map data = response.data;
-//      configuration.profile = data;
-//      if(data.containsKey('id')) {
-//        configuration.userId = data['id'];
-//        configuration.userName = data['name'];
-//        print('---------- BOB.dart --------- UserId ${configuration.userId}');
-//      } else {
-//        log.error('bob.dart userInfo did not contain an id');
-//      }
-//    });
     return true;
   } else {
     login();
@@ -33,7 +19,7 @@ bool handleToken() {
 
 void login() {
   String loginUrl = '${config.authBaseUrl}/token/create?returnurl=${window.location.toString()}';
-  //TODO 
+  //TODO
   loginUrl = 'http://127.0.0.1:3030/Client/web/client.html?settoken=feedabbadeadbeef0';
   window.location.assign(loginUrl);
 }

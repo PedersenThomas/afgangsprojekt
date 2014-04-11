@@ -3,9 +3,10 @@ library organization_view;
 import 'dart:html';
 import 'dart:convert';
 
+import 'lib/eventbus.dart';
+import 'lib/logger.dart' as log;
 import 'lib/model.dart';
 import 'lib/request.dart';
-import 'lib/eventbus.dart';
 
 class OrganizationView {
   String viewName = 'organization';
@@ -64,7 +65,7 @@ class OrganizationView {
           buttonDelete.disabled = true;
           selectedOrganizationId = 0;
         }).catchError((error) {
-          print('Failed to delete organization "${selectedOrganizationId}", got "${error}"');
+          log.error('Failed to delete organization "${selectedOrganizationId}", got "${error}"');
         });
       }
     });
@@ -156,7 +157,7 @@ class OrganizationView {
         activateOrganization(organizationId);
         bus.fire(Invalidate.organizationAdded, null);
       }).catchError((error) {
-        print('Tried to create a new Organizaitonbut got: $error');
+        log.error('Tried to create a new Organizaitonbut got: $error');
       });
     }
   }
@@ -168,7 +169,7 @@ class OrganizationView {
       this.organizations = organizations;
       renderOrganizationList(organizations);
     }).catchError((error) {
-      print('Tried to fetch organization but got error: $error');
+      log.error('Tried to fetch organization but got error: $error');
     });
   }
 
@@ -199,7 +200,7 @@ class OrganizationView {
       updateReceptionList(selectedOrganizationId);
       updateContactList(selectedOrganizationId);
     }).catchError((error) {
-      print('Tried to activate organization "$organizationId" but gave error: $error');
+      log.error('Tried to activate organization "$organizationId" but gave error: $error');
     });
   }
 
@@ -211,7 +212,7 @@ class OrganizationView {
         ..clear()
         ..addAll(receptions.map(makeReceptionNode));
     }).catchError((error) {
-      print('Tried to fetch the receptionlist Error: $error');
+      log.error('Tried to fetch the receptionlist Error: $error');
     });
   }
 
@@ -236,7 +237,7 @@ class OrganizationView {
         ..clear()
         ..addAll(contacts.map(makeContactNode));
     }).catchError((error) {
-      print('Tried to fetch the contactlist from an organization Error: $error');
+      log.error('Tried to fetch the contactlist from an organization Error: $error');
     });
   }
 

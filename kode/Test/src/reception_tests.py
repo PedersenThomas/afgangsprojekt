@@ -22,7 +22,8 @@ class ReceptionTests(unittest.TestCase):
                                  'required': True,
                                  'minimum': 0},
                             'full_name':
-                                {'type': 'string'}}}
+                                {'type': 'string'}},
+                       "additionalProperties": True}
 
     receptionListSchema = {'type': 'object',
                            'required': True,

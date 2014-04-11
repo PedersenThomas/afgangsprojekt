@@ -3,11 +3,12 @@ library contact_view;
 import 'dart:async';
 import 'dart:html';
 
+import 'lib/eventbus.dart';
+import 'lib/logger.dart' as log;
 import 'lib/model.dart';
 import 'lib/request.dart' as request;
-import 'lib/eventbus.dart';
-import 'lib/view_utilities.dart';
 import 'lib/searchcomponent.dart';
+import 'lib/view_utilities.dart';
 
 typedef Future HandleReceptionContact(ReceptionContact receptionContact);
 typedef Future LazyFuture();
@@ -107,7 +108,7 @@ class ContactView {
       this.contactList = contacts;
       performSearch();
     }).catchError((error) {
-      print('Tried to fetch organization but got error: $error');
+      log.error('Tried to fetch organization but got error: $error');
     });
   }
 
@@ -165,7 +166,7 @@ class ContactView {
         }
       });
     }).catchError((error) {
-      print('Tried to activate contact "${id}" but gave "${error}"');
+      log.error('Tried to activate contact "${id}" but gave "${error}"');
     });
   }
 
@@ -177,7 +178,7 @@ class ContactView {
 
   Future receptionContactUpdate(ReceptionContact RC) {
     return request.updateReceptionContact(RC.receptionId, RC.contactId, RC.toJson()).catchError((error) {
-      print('Tried to update a Reception Contact, but failed with "$error"');
+      log.error('Tried to update a Reception Contact, but failed with "$error"');
     });
   }
 
@@ -189,7 +190,7 @@ class ContactView {
           bus.fire(Invalidate.receptionContactAdded, event);
         })
     .catchError((error) {
-      print('Tried to update a Reception Contact, but failed with "$error"');
+      log.error('Tried to update a Reception Contact, but failed with "$error"');
     });
   }
 
@@ -217,7 +218,7 @@ class ContactView {
                  bus.fire(Invalidate.receptionContactRemoved, event);
                })
                .catchError((error) {
-             print('deleteReceptionContact error: "error"');
+             log.error('deleteReceptionContact error: "error"');
            });
          };
          li.parent.children.remove(li);
@@ -394,7 +395,7 @@ class ContactView {
         //Show a message that tells the user, that the changes went through.
         refreshList();
       }).catchError((error) {
-        print('Tried to update a contact but failed with error "${error}" from body: "${updatedContact.toJson()}"');
+        log.error('Tried to update a contact but failed with error "${error}" from body: "${updatedContact.toJson()}"');
       }));
 
       work.addAll(saveList.values.map((f) => f()));
@@ -402,11 +403,11 @@ class ContactView {
       //When all updates are applied. Reload the contact.
       Future.wait(work).then((_) {
         //TODO Remove.
-        print('Activating Contact.');
+        log.info('Activating Contact.');
 
         return activateContact(contactId);
       }).catchError((error) {
-        print('Contact was appling update for ${contactId} when "$error"');
+        log.error('Contact was appling update for ${contactId} when "$error"');
       });
 
     } else if (createNew) {
@@ -422,7 +423,7 @@ class ContactView {
       refreshList();
       activateContact(response['id']);
     }).catchError((error) {
-      print('Tried to make a new contact but failed with error "${error}" from body: "${newContact.toJson()}"');
+      log.error('Tried to make a new contact but failed with error "${error}" from body: "${newContact.toJson()}"');
     });
     }
   }
@@ -519,10 +520,10 @@ class ContactView {
         buttonJoinReception.disabled = true;
         selectedContactId = 0;
       }).catchError((error) {
-        print('Failed to delete contact "${selectedContactId}" got "$error"');
+        log.error('Failed to delete contact "${selectedContactId}" got "$error"');
       });
     } else {
-      print('Failed to delete. createNew: ${createNew} id: ${selectedContactId}');
+      log.error('Failed to delete. createNew: ${createNew} id: ${selectedContactId}');
     }
   }
 }

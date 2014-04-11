@@ -3,17 +3,20 @@ library reception_view;
 import 'dart:async';
 import 'dart:html';
 
+import 'lib/logger.dart' as log;
 import 'lib/model.dart';
 import 'lib/request.dart';
 import 'lib/eventbus.dart';
 import 'lib/view_utilities.dart';
 import 'lib/searchcomponent.dart';
+import 'menu.dart';
 
 class ReceptionView {
   String addNewLiClass = 'addnew';
   String viewName = 'reception';
   DivElement element;
-  InputElement inputFullName, inputUri, inputProduct, inputGreeting, inputOther, inputCostumerstype;
+  InputElement inputFullName, inputUri, inputProduct, inputGreeting, inputOther, inputCostumerstype, inputReceptionNumber;
+  ButtonElement buttonDialplan;
   CheckboxInputElement inputEnabled;
   ButtonElement buttonSave, buttonCreate, buttonDelete;
   UListElement ulAddresses, ulAlternatenames, ulBankinginformation, ulCrapcallhandling, ulEmailaddresses,
@@ -26,7 +29,7 @@ class ReceptionView {
   List<Reception> receptions = [];
 
   SearchComponent<Organization> SC;
-  int selectedReceptionId, currentOrganizationId;
+  int selectedReceptionId = 0, currentOrganizationId = 0;
 
   ReceptionView(DivElement this.element) {
     searchBox = element.querySelector('#reception-search-box');
@@ -40,6 +43,8 @@ class ReceptionView {
     inputCostumerstype = element.querySelector('#reception-input-customertype');
     inputGreeting = element.querySelector('#reception-input-greeting');
     inputEnabled = element.querySelector('#reception-input-enabled');
+    inputReceptionNumber = element.querySelector('#reception-input-receptionnumber');
+    buttonDialplan = element.querySelector('#reception-button-dialplan');
 
     ulAddresses = element.querySelector('#reception-list-addresses');
     ulAlternatenames = element.querySelector('#reception-list-alternatenames');
@@ -126,6 +131,8 @@ class ReceptionView {
     });
 
     searchBox.onInput.listen((_) => performSearch());
+
+    buttonDialplan.onClick.listen((_) => goToDialplan());
   }
 
   void performSearch() {
@@ -155,9 +162,11 @@ class ReceptionView {
   }
 
   void clearContent() {
+    buttonDialplan.disabled = true;
     inputFullName.value = '';
     inputUri.value = '';
     inputEnabled.checked = true;
+    inputReceptionNumber.value = '';
     inputCostumerstype.value = '';
     inputGreeting.value = '';
     inputOther.value = '';
@@ -174,6 +183,14 @@ class ReceptionView {
     fillList(ulWebsites, []);
   }
 
+  void goToDialplan() {
+    if(selectedReceptionId != null && selectedReceptionId > 0) {
+      Map event = {'window': Menu.DIALPLAN_WINDOW,
+                   'receptionid': selectedReceptionId};
+      bus.fire(windowChanged, event);
+    }
+  }
+
   void deleteCurrentReception() {
     if(currentOrganizationId > 0 && selectedReceptionId > 0) {
       deleteReception(currentOrganizationId, selectedReceptionId).then((_) {
@@ -185,7 +202,7 @@ class ReceptionView {
         clearContent();
         refreshList();
       }).catchError((error) {
-        print('Failed to delete reception orgId: "${currentOrganizationId}" recId: "${selectedReceptionId}" got "${error}"');
+        log.error('Failed to delete reception orgId: "${currentOrganizationId}" recId: "${selectedReceptionId}" got "${error}"');
       });
     }
   }
@@ -209,7 +226,7 @@ class ReceptionView {
             return activateReception(organizationId, receptionId);
           });
         }).catchError((error) {
-          print('Tried to create a new reception but got "$error"');
+          log.error('Tried to create a new reception but got "$error"');
         });
       }
     }
@@ -221,6 +238,7 @@ class ReceptionView {
       ..full_name = inputFullName.value
       ..uri = inputUri.value
       ..enabled = inputEnabled.checked
+      ..number = inputReceptionNumber.value
 
       ..customertype = inputCostumerstype.value
       ..greeting = inputGreeting.value
@@ -245,7 +263,7 @@ class ReceptionView {
       this.receptions = receptions;
       performSearch();
     }).catchError((error) {
-      print('Failed to refreshing the list of receptions in reception window.');
+      log.error('Failed to refreshing the list of receptions in reception window.');
     });
   }
 
@@ -273,9 +291,12 @@ class ReceptionView {
 
     if(organizationId > 0 && receptionId > 0) {
       getReception(currentOrganizationId, selectedReceptionId).then((Reception response) {
+        buttonDialplan.disabled = false;
+
         inputFullName.value = response.full_name;
         inputUri.value = response.uri;
         inputEnabled.checked = response.enabled;
+        inputReceptionNumber.value = response.number;
 
         inputCostumerstype.value = response.customertype;
         inputGreeting.value = response.greeting;
@@ -323,7 +344,7 @@ class ReceptionView {
         ..clear()
         ..addAll(contacts.map(makeContactNode));
     }).catchError((error) {
-      print('Tried to fetch the contactlist from an reception Error: $error');
+      log.error('Tried to fetch the contactlist from an reception Error: $error');
     });
   }
 
