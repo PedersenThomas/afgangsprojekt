@@ -20,6 +20,4 @@ class Condition  {
 
     return result;
   }
-
-  XmlElement toXml() => throw('Not Implemented');
 }

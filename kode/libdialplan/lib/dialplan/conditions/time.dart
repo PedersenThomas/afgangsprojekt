@@ -48,24 +48,7 @@ class Time implements Condition {
     return result;
   }
 
-  XmlElement toXml() {
-    XmlElement node = new XmlElement('condition');
-
-    if(timeOfDay != null && timeOfDay.isNotEmpty) {
-      node.attributes['time-of-day'] = timeOfDay;
-    }
-
-    if(wday != null && wday.isNotEmpty) {
-      node.attributes['wday'] = transformWdayToFreeSwitchFormat(wday);
-    }
-
-    if(yday != null && yday.isNotEmpty) {
-      node.attributes['yday'] = yday;
-    }
-
-    return node;
-  }
-
+  /** Convert the human-readable format (mon-wed, fri-sun) */
   static String transformWdayToFreeSwitchFormat(String item) {
     int count = 1;
     String result = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].fold(item, (String text, String day) => text.replaceAll(day, (count++).toString()));
