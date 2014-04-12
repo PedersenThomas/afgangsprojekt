@@ -8,7 +8,7 @@ import 'menu.dart';
 import 'lib/auth.dart';
 
 void main() {
-  if(handleToken()) {
+  if (handleToken()) {
     new orgView.OrganizationView(querySelector('#organization-page'));
     new recView.ReceptionView(querySelector('#reception-page'));
     new conView.ContactView(querySelector('#contact-page'));

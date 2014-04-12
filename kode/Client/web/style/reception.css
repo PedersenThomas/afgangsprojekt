@@ -7,7 +7,7 @@
 }
 
 #reception-listing {
-  float:left;
+  float: left;
   width: 20%;
   height: 100%;
   padding: 0 5px;
@@ -15,8 +15,8 @@
 
 #reception-create {
   width: 100%;
-  width: -moz-calc(100% - 2px);
-  width: -webkit-calc(100% - 2px);
+  width: -moz-calc(100% -   2px);
+  width: -webkit-calc(100% -   2px);
   margin: 5px 1px;
   background-color: white;
   border: 1px solid grey;
@@ -34,30 +34,29 @@
 
 #reception-list {
   height: 100%;
-  height: -moz-calc(100% - 68px);
-  height: -webkit-calc(100% - 68px);
+  height: -moz-calc(100% -   68px);
+  height: -webkit-calc(100% -   68px);
   overflow: auto;
   border: 1px solid grey;
   border-radius: 2px;
 }
 
-#reception-list > li {
+#reception-list>li {
   padding: 5px 8px;
 }
 
 #reception-content {
-  float:left;
+  float: left;
   width: 60%;
-  width: -moz-calc(60% - 5px);
-  width: -webkit-calc(60% - 5px);
+  width: -moz-calc(60% -   5px);
+  width: -webkit-calc(60% -   5px);
   height: 100%;
-  height: -moz-calc(100% - 10px);
-  height: -webkit-calc(100% - 10px);
+  height: -moz-calc(100% -   10px);
+  height: -webkit-calc(100% -   10px);
   border: solid 2px grey;
   border-radius: 10px;
   padding: 5px;
   margin: 5px;
-  
   overflow: auto;
 }
 
@@ -66,15 +65,15 @@
 }
 
 #reception-rightbar {
-  float:right;
+  float: right;
   width: 20%;
-  width: -moz-calc(20% - 10px);
-  width: -webkit-calc(20% - 10px);
+  width: -moz-calc(20% -   10px);
+  width: -webkit-calc(20% -   10px);
   height: 100%;
   padding: 5px 10px 5px 0px;
 }
 
-#reception-rightbar > div  {
+#reception-rightbar>div {
   height: 100%;
   border: 2px solid grey;
   border-radius: 10px;
@@ -85,6 +84,6 @@
   margin-left: 10px;
 }
 
-#reception-save, #reception-delete {
+#reception-save,#reception-delete {
   width: 50px;
 }

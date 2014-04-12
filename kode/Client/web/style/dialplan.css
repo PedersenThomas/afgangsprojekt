@@ -6,8 +6,7 @@
   height: 100%;
   float: left;
   width: 20%;
-
-  margin:0 5px;
+  margin: 0 5px;
   border: solid 2px grey;
   border-radius: 10px;
 }
@@ -16,8 +15,7 @@
   height: 100%;
   float: left;
   width: 40%;
-
-  margin:0 5px;
+  margin: 0 5px;
   border: solid 2px grey;
   border-radius: 10px;
 }
@@ -35,10 +33,9 @@
   height: 100%;
   float: right;
   width: 40%;
-  width: -moz-calc(40% - 30px);
-  width: -webkit-calc(40% - 30px);
-
-  margin:0 5px;
+  width: -moz-calc(40% -   30px);
+  width: -webkit-calc(40% -   30px);
+  margin: 0 5px;
 }
 
 #dialplan-extention-listing {
@@ -56,8 +53,8 @@
   border: solid 2px grey;
   border-radius: 10px;
   height: 60%;
-  height: -moz-calc(60% - 20px);
-  height: -webkit-calc(60% - 20px);
+  height: -moz-calc(60% -   20px);
+  height: -webkit-calc(60% -   20px);
   margin: 10px 0;
 }
 
@@ -74,5 +71,3 @@
   height: 100%;
   border: 0;
 }
-
-

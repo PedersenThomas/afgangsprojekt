@@ -15,12 +15,14 @@ class ReceptionView {
   String addNewLiClass = 'addnew';
   String viewName = 'reception';
   DivElement element;
-  InputElement inputFullName, inputUri, inputProduct, inputGreeting, inputOther, inputCostumerstype, inputReceptionNumber;
+  InputElement inputFullName, inputUri, inputProduct, inputGreeting, inputOther,
+      inputCostumerstype, inputReceptionNumber;
   ButtonElement buttonDialplan;
   CheckboxInputElement inputEnabled;
   ButtonElement buttonSave, buttonCreate, buttonDelete;
-  UListElement ulAddresses, ulAlternatenames, ulBankinginformation, ulCrapcallhandling, ulEmailaddresses,
-               ulHandlings, ulOpeninghours, ulRegistrationnumbers, ulTelephonenumbers, ulWebsites;
+  UListElement ulAddresses, ulAlternatenames, ulBankinginformation,
+      ulCrapcallhandling, ulEmailaddresses, ulHandlings, ulOpeninghours,
+      ulRegistrationnumbers, ulTelephonenumbers, ulWebsites;
   SearchInputElement searchBox;
   UListElement uiReceptionList;
   UListElement ulContactList;
@@ -29,7 +31,8 @@ class ReceptionView {
   List<Reception> receptions = [];
 
   SearchComponent<Organization> SC;
-  int selectedReceptionId = 0, currentOrganizationId = 0;
+  int selectedReceptionId = 0,
+      currentOrganizationId = 0;
 
   ReceptionView(DivElement this.element) {
     searchBox = element.querySelector('#reception-search-box');
@@ -43,29 +46,36 @@ class ReceptionView {
     inputCostumerstype = element.querySelector('#reception-input-customertype');
     inputGreeting = element.querySelector('#reception-input-greeting');
     inputEnabled = element.querySelector('#reception-input-enabled');
-    inputReceptionNumber = element.querySelector('#reception-input-receptionnumber');
+    inputReceptionNumber = element.querySelector(
+        '#reception-input-receptionnumber');
     buttonDialplan = element.querySelector('#reception-button-dialplan');
 
     ulAddresses = element.querySelector('#reception-list-addresses');
     ulAlternatenames = element.querySelector('#reception-list-alternatenames');
-    ulBankinginformation = element.querySelector('#reception-list-bankinginformation');
-    ulCrapcallhandling = element.querySelector('#reception-list-crapcallhandling');
+    ulBankinginformation = element.querySelector(
+        '#reception-list-bankinginformation');
+    ulCrapcallhandling = element.querySelector(
+        '#reception-list-crapcallhandling');
     ulEmailaddresses = element.querySelector('#reception-list-emailaddresses');
     ulHandlings = element.querySelector('#reception-list-handlings');
     ulOpeninghours = element.querySelector('#reception-list-openinghours');
-    ulRegistrationnumbers = element.querySelector('#reception-list-registrationnumbers');
-    ulTelephonenumbers = element.querySelector('#reception-list-telephonenumbers');
+    ulRegistrationnumbers = element.querySelector(
+        '#reception-list-registrationnumbers');
+    ulTelephonenumbers = element.querySelector(
+        '#reception-list-telephonenumbers');
     ulWebsites = element.querySelector('#reception-list-websites');
 
     buttonSave = element.querySelector('#reception-save');
     buttonCreate = element.querySelector('#reception-create');
     buttonDelete = element.querySelector('#reception-delete');
 
-    organizationOuterSelector = element.querySelector('#reception-organization-selector');
+    organizationOuterSelector = element.querySelector(
+        '#reception-organization-selector');
 
-    SC = new SearchComponent<Organization>(organizationOuterSelector, 'reception-organization-searchbox')
-      ..listElementToString = organizationToSearchboxString
-      ..searchFilter = organizationSearchHandler;
+    SC = new SearchComponent<Organization>(organizationOuterSelector,
+        'reception-organization-searchbox')
+        ..listElementToString = organizationToSearchboxString
+        ..searchFilter = organizationSearchHandler;
 
     fillSearchComponent();
 
@@ -84,12 +94,14 @@ class ReceptionView {
     });
   }
 
-  String organizationToSearchboxString(Organization organization, String searchterm) {
+  String organizationToSearchboxString(Organization organization, String
+      searchterm) {
     return '${organization.full_name}';
   }
 
   bool organizationSearchHandler(Organization organization, String searchTerm) {
-    return organization.full_name.toLowerCase().contains(searchTerm.toLowerCase());
+    return organization.full_name.toLowerCase().contains(searchTerm.toLowerCase(
+        ));
   }
 
   void registrateEventHandlers() {
@@ -103,7 +115,8 @@ class ReceptionView {
 
     bus.on(windowChanged).listen((Map event) {
       element.classes.toggle('hidden', event['window'] != viewName);
-      if(event.containsKey('organization_id') && event.containsKey('reception_id')) {
+      if (event.containsKey('organization_id') && event.containsKey(
+          'reception_id')) {
         activateReception(event['organization_id'], event['reception_id']);
       }
     });
@@ -118,14 +131,14 @@ class ReceptionView {
 
     bus.on(Invalidate.receptionContactAdded).listen((Map event) {
       int receptionId = event['receptionId'];
-      if(selectedReceptionId == receptionId) {
+      if (selectedReceptionId == receptionId) {
         activateReception(currentOrganizationId, selectedReceptionId);
       }
     });
 
     bus.on(Invalidate.receptionContactRemoved).listen((Map event) {
       int receptionId = event['receptionId'];
-      if(selectedReceptionId == receptionId) {
+      if (selectedReceptionId == receptionId) {
         activateReception(currentOrganizationId, selectedReceptionId);
       }
     });
@@ -137,15 +150,15 @@ class ReceptionView {
 
   void performSearch() {
     String searchText = searchBox.value;
-    List<Reception> filteredList = receptions.where(
-        (Reception recep) => recep.full_name.toLowerCase().contains(searchText.toLowerCase())).toList();
+    List<Reception> filteredList = receptions.where((Reception recep) =>
+        recep.full_name.toLowerCase().contains(searchText.toLowerCase())).toList();
     renderReceptionList(filteredList);
   }
 
   void renderReceptionList(List<Reception> receptions) {
     uiReceptionList.children
-      ..clear()
-      ..addAll(receptions.map(makeReceptionNode));
+        ..clear()
+        ..addAll(receptions.map(makeReceptionNode));
   }
 
   void createReceptionClickHandler() {
@@ -184,40 +197,47 @@ class ReceptionView {
   }
 
   void goToDialplan() {
-    if(selectedReceptionId != null && selectedReceptionId > 0) {
-      Map event = {'window': Menu.DIALPLAN_WINDOW,
-                   'receptionid': selectedReceptionId};
+    if (selectedReceptionId != null && selectedReceptionId > 0) {
+      Map event = {
+        'window': Menu.DIALPLAN_WINDOW,
+        'receptionid': selectedReceptionId
+      };
       bus.fire(windowChanged, event);
     }
   }
 
   void deleteCurrentReception() {
-    if(currentOrganizationId > 0 && selectedReceptionId > 0) {
+    if (currentOrganizationId > 0 && selectedReceptionId > 0) {
       deleteReception(currentOrganizationId, selectedReceptionId).then((_) {
-        Map event = {'organizationId': currentOrganizationId,
-                     'receptionId': selectedReceptionId};
+        Map event = {
+          'organizationId': currentOrganizationId,
+          'receptionId': selectedReceptionId
+        };
         bus.fire(Invalidate.receptionRemoved, event);
         selectedReceptionId = 0;
         currentOrganizationId = 0;
         clearContent();
         refreshList();
       }).catchError((error) {
-        log.error('Failed to delete reception orgId: "${currentOrganizationId}" recId: "${selectedReceptionId}" got "${error}"');
+        log.error(
+            'Failed to delete reception orgId: "${currentOrganizationId}" recId: "${selectedReceptionId}" got "${error}"'
+            );
       });
     }
   }
 
   void saveChanges() {
-    if(selectedReceptionId > 0) {
+    if (selectedReceptionId > 0) {
       Reception updatedReception = extractValues();
 
-      updateReception(currentOrganizationId, selectedReceptionId, updatedReception.toJson()).then((_) {
+      updateReception(currentOrganizationId, selectedReceptionId,
+          updatedReception.toJson()).then((_) {
         //Show a message that tells the user, that the changes went threw.
         refreshList();
       });
-    } else if(selectedReceptionId == 0 && currentOrganizationId == 0) {
+    } else if (selectedReceptionId == 0 && currentOrganizationId == 0) {
       Reception newReception = extractValues();
-      if(SC.currentElement != null) {
+      if (SC.currentElement != null) {
         int organizationId = SC.currentElement.id;
         createReception(organizationId, newReception.toJson()).then((Map data) {
           int receptionId = data['id'];
@@ -234,27 +254,27 @@ class ReceptionView {
 
   Reception extractValues() {
     return new Reception()
-      ..organization_id = currentOrganizationId
-      ..full_name = inputFullName.value
-      ..uri = inputUri.value
-      ..enabled = inputEnabled.checked
-      ..number = inputReceptionNumber.value
+        ..organization_id = currentOrganizationId
+        ..full_name = inputFullName.value
+        ..uri = inputUri.value
+        ..enabled = inputEnabled.checked
+        ..number = inputReceptionNumber.value
 
-      ..customertype = inputCostumerstype.value
-      ..greeting = inputGreeting.value
-      ..other = inputOther.value
-      ..product = inputProduct.value
+        ..customertype = inputCostumerstype.value
+        ..greeting = inputGreeting.value
+        ..other = inputOther.value
+        ..product = inputProduct.value
 
-      ..addresses = getListValues(ulAddresses)
-      ..alternatenames = getListValues(ulAlternatenames)
-      ..bankinginformation = getListValues(ulBankinginformation)
-      ..crapcallhandling = getListValues(ulCrapcallhandling)
-      ..emailaddresses = getListValues(ulEmailaddresses)
-      ..handlings = getListValues(ulHandlings)
-      ..openinghours = getListValues(ulOpeninghours)
-      ..registrationnumbers = getListValues(ulRegistrationnumbers)
-      ..telephonenumbers = getListValues(ulTelephonenumbers)
-      ..websites = getListValues(ulWebsites);
+        ..addresses = getListValues(ulAddresses)
+        ..alternatenames = getListValues(ulAlternatenames)
+        ..bankinginformation = getListValues(ulBankinginformation)
+        ..crapcallhandling = getListValues(ulCrapcallhandling)
+        ..emailaddresses = getListValues(ulEmailaddresses)
+        ..handlings = getListValues(ulHandlings)
+        ..openinghours = getListValues(ulOpeninghours)
+        ..registrationnumbers = getListValues(ulRegistrationnumbers)
+        ..telephonenumbers = getListValues(ulTelephonenumbers)
+        ..websites = getListValues(ulWebsites);
   }
 
   Future refreshList() {
@@ -263,18 +283,19 @@ class ReceptionView {
       this.receptions = receptions;
       performSearch();
     }).catchError((error) {
-      log.error('Failed to refreshing the list of receptions in reception window.');
+      log.error(
+          'Failed to refreshing the list of receptions in reception window.');
     });
   }
 
   LIElement makeReceptionNode(Reception reception) {
     return new LIElement()
-      ..classes.add('clickable')
-      ..value = reception.id //TODO Er den brugt?
-      ..text = '${reception.id} - ${reception.full_name}'
-      ..onClick.listen((_) {
-        activateReception(reception.organization_id, reception.id);
-      });
+        ..classes.add('clickable')
+        ..value = reception.id //TODO Er den brugt?
+        ..text = '${reception.id} - ${reception.full_name}'
+        ..onClick.listen((_) {
+          activateReception(reception.organization_id, reception.id);
+        });
   }
 
   void activateReception(int organizationId, int receptionId) {
@@ -289,8 +310,9 @@ class ReceptionView {
       return listItem.id == organizationId;
     });
 
-    if(organizationId > 0 && receptionId > 0) {
-      getReception(currentOrganizationId, selectedReceptionId).then((Reception response) {
+    if (organizationId > 0 && receptionId > 0) {
+      getReception(currentOrganizationId, selectedReceptionId).then((Reception
+          response) {
         buttonDialplan.disabled = false;
 
         inputFullName.value = response.full_name;
@@ -339,25 +361,29 @@ class ReceptionView {
   }
 
   void updateContactList(int receptionId) {
-    getReceptionContactList(receptionId).then((List<CustomReceptionContact> contacts) {
+    getReceptionContactList(receptionId).then((List<CustomReceptionContact>
+        contacts) {
       ulContactList.children
-        ..clear()
-        ..addAll(contacts.map(makeContactNode));
+          ..clear()
+          ..addAll(contacts.map(makeContactNode));
     }).catchError((error) {
-      log.error('Tried to fetch the contactlist from an reception Error: $error');
+      log.error('Tried to fetch the contactlist from an reception Error: $error'
+          );
     });
   }
 
   LIElement makeContactNode(CustomReceptionContact contact) {
     LIElement li = new LIElement();
     li
-      ..classes.add('clickable')
-      ..text = '${contact.fullName}'
-      ..onClick.listen((_) {
-        Map event = {'window': 'contact',
-                     'contact_id': contact.contactId};
-        bus.fire(windowChanged, event);
-      });
+        ..classes.add('clickable')
+        ..text = '${contact.fullName}'
+        ..onClick.listen((_) {
+          Map event = {
+            'window': 'contact',
+            'contact_id': contact.contactId
+          };
+          bus.fire(windowChanged, event);
+        });
     return li;
   }
 }

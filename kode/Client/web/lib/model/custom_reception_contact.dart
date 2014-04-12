@@ -10,9 +10,9 @@ class CustomReceptionContact {
   int distributionListId;
   Map attributes;
   bool receptionEnabled;
- 
+
   CustomReceptionContact();
-  
+
   factory CustomReceptionContact.fromJson(Map json) {
     CustomReceptionContact object = new CustomReceptionContact();
     object.contactId = json['contact_id'];
@@ -24,11 +24,11 @@ class CustomReceptionContact {
     object.distributionListId = json['distribution_list_id'];
     object.attributes = json['attributes'];
     object.receptionEnabled = json['reception_enabled'];
-    
+
     return object;
   }
-  
-  String toJson() {    
+
+  String toJson() {
     Map data = {
       'contact_id': contactId,
       'full_name': fullName,
@@ -40,7 +40,7 @@ class CustomReceptionContact {
       'attributes': attributes,
       'reception_enabled': receptionEnabled
     };
-    
+
     return JSON.encode(data);
   }
 }

@@ -15,21 +15,20 @@ body {
   margin: 0;
 }
 /*DART STUFF*/
-
-html, body {
+html,body {
   height: 100%;
 }
 
-nav#navigation {  
+nav#navigation {
   left: 0%;
   top: 0%;
   width: 4%;
   height: 100%;
-  float:left;
+  float: left;
 }
 
 #page-main-screen {
-  float:left;
+  float: left;
   width: 96%;
   height: 100%;
   overflow: auto;
@@ -56,16 +55,16 @@ nav#navigation {
   width: 100%;
 }
 
-.content-table > tbody > tr > td {
+.content-table>tbody>tr>td {
   width: 50%;
   vertical-align: top;
   padding-bottom: 10px;
 }
 
-.content-table > tbody > tr > td > label {
+.content-table>tbody>tr>td>label {
   font-weight: bolder;
 }
 
-.content-list > li {
+.content-list>li {
   padding: 2px 0;
 }

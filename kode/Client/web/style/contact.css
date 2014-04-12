@@ -10,7 +10,7 @@
   Left side panel.
 */
 #contact-listing {
-  float:left;
+  float: left;
   width: 20%;
   height: 100%;
   padding: 0 5px;
@@ -18,8 +18,8 @@
 
 #contact-create {
   width: 100%;
-  width: -moz-calc(100% - 2px);
-  width: -webkit-calc(100% - 2px);
+  width: -moz-calc(100% -   2px);
+  width: -webkit-calc(100% -   2px);
   margin: 5px 1px;
   background-color: white;
   border: 1px solid grey;
@@ -37,14 +37,14 @@
 
 #contact-list {
   height: 100%;
-  height: -moz-calc(100% - 68px);
-  height: -webkit-calc(100% - 68px);
+  height: -moz-calc(100% -   68px);
+  height: -webkit-calc(100% -   68px);
   overflow: auto;
   border: 1px solid grey;
   border-radius: 2px;
 }
 
-#contact-list > li {
+#contact-list>li {
   padding: 5px 8px;
 }
 
@@ -52,18 +52,17 @@
   Content panel.
 */
 #contact-content {
-  float:left;
+  float: left;
   width: 60%;
-  width: -moz-calc(60% - 5px);
-  width: -webkit-calc(60% - 5px);
+  width: -moz-calc(60% -   5px);
+  width: -webkit-calc(60% -   5px);
   height: 100%;
-  height: -moz-calc(100% - 10px);
-  height: -webkit-calc(100% - 10px);
+  height: -moz-calc(100% -   10px);
+  height: -webkit-calc(100% -   10px);
   border: solid 2px grey;
   border-radius: 10px;
   padding: 5px;
   margin: 5px;
-  
   overflow: auto;
 }
 
@@ -90,7 +89,7 @@
   display: inline-block;
 }
 
-#contact-save, #contact-delete, #contact-add {
+#contact-save,#contact-delete,#contact-add {
   width: 50px;
 }
 
@@ -98,30 +97,30 @@
   Right side panel.
 */
 #contact-rightbar {
-  float:right;
+  float: right;
   width: 20%;
-  width: -moz-calc(20% - 10px);
-  width: -webkit-calc(20% - 10px);
+  width: -moz-calc(20% -   10px);
+  width: -webkit-calc(20% -   10px);
   height: 100%;
   padding: 5px 10px 5px 0px;
 }
 
-#contact-rightbar > div {
+#contact-rightbar>div {
   height: 50%;
 }
 
-#contact-rightbar > div + div {
+#contact-rightbar>div+div {
   height: 50%;
   padding-top: 15px;
 }
 
-#contact-rightbar > div > div {
+#contact-rightbar>div>div {
   height: 100%;
   border: 2px solid grey;
   border-radius: 10px;
   padding: 5px;
 }
 
-#contact-organization-list li, #contact-reception-list li {
+#contact-organization-list li,#contact-reception-list li {
   margin-left: 10px;
 }

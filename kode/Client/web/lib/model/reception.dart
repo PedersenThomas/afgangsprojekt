@@ -31,32 +31,36 @@ class Reception {
 
   factory Reception.fromJson(Map json) {
     Reception reception = new Reception()
-      ..id = json['id']
-      ..organization_id = json['organization_id']
-      ..full_name = stringFromJson(json, 'full_name')
-      ..uri = stringFromJson(json, 'uri')
-      ..enabled = json['enabled']
-      ..number = json['number'];
+        ..id = json['id']
+        ..organization_id = json['organization_id']
+        ..full_name = stringFromJson(json, 'full_name')
+        ..uri = stringFromJson(json, 'uri')
+        ..enabled = json['enabled']
+        ..number = json['number'];
 
-    if(json.containsKey('attributes')) {
+    if (json.containsKey('attributes')) {
       Map attributes = json['attributes'];
 
       reception
-        ..product = stringFromJson(attributes, 'product')
-        ..other = stringFromJson(attributes, 'other')
-        ..greeting = stringFromJson(attributes, 'greeting')
-        ..customertype = stringFromJson(attributes, 'customertype')
+          ..product = stringFromJson(attributes, 'product')
+          ..other = stringFromJson(attributes, 'other')
+          ..greeting = stringFromJson(attributes, 'greeting')
+          ..customertype = stringFromJson(attributes, 'customertype')
 
-        ..addresses = priorityListFromJson(attributes, 'addresses')
-        ..alternatenames = priorityListFromJson(attributes, 'alternatenames')
-        ..bankinginformation = priorityListFromJson(attributes, 'bankinginformation')
-        ..crapcallhandling = priorityListFromJson(attributes, 'crapcallhandling')
-        ..emailaddresses = priorityListFromJson(attributes, 'emailaddresses')
-        ..handlings = priorityListFromJson(attributes, 'handlings')
-        ..openinghours = priorityListFromJson(attributes, 'openinghours')
-        ..registrationnumbers = priorityListFromJson(attributes, 'registrationnumbers')
-        ..telephonenumbers = priorityListFromJson(attributes, 'telephonenumbers')
-        ..websites = priorityListFromJson(attributes, 'websites');
+          ..addresses = priorityListFromJson(attributes, 'addresses')
+          ..alternatenames = priorityListFromJson(attributes, 'alternatenames')
+          ..bankinginformation = priorityListFromJson(attributes,
+              'bankinginformation')
+          ..crapcallhandling = priorityListFromJson(attributes,
+              'crapcallhandling')
+          ..emailaddresses = priorityListFromJson(attributes, 'emailaddresses')
+          ..handlings = priorityListFromJson(attributes, 'handlings')
+          ..openinghours = priorityListFromJson(attributes, 'openinghours')
+          ..registrationnumbers = priorityListFromJson(attributes,
+              'registrationnumbers')
+          ..telephonenumbers = priorityListFromJson(attributes,
+              'telephonenumbers')
+          ..websites = priorityListFromJson(attributes, 'websites');
     }
 
     return reception;

@@ -8,7 +8,7 @@ import 'configuration.dart';
 bool handleToken() {
   Uri url = Uri.parse(window.location.href);
   //TODO Save to localStorage.
-  if(url.queryParameters.containsKey('settoken')) {
+  if (url.queryParameters.containsKey('settoken')) {
     config.token = url.queryParameters['settoken'];
     return true;
   } else {
@@ -18,8 +18,10 @@ bool handleToken() {
 }
 
 void login() {
-  String loginUrl = '${config.authBaseUrl}/token/create?returnurl=${window.location.toString()}';
+  String loginUrl =
+      '${config.authBaseUrl}/token/create?returnurl=${window.location.toString()}';
   //TODO
-  loginUrl = 'http://127.0.0.1:3030/Client/web/client.html?settoken=feedabbadeadbeef0';
+  loginUrl =
+      'http://127.0.0.1:3030/Client/web/client.html?settoken=feedabbadeadbeef0';
   window.location.assign(loginUrl);
 }

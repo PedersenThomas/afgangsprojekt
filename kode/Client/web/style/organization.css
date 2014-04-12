@@ -7,7 +7,7 @@
 }
 
 #organization-listing {
-  float:left;
+  float: left;
   width: 20%;
   height: 100%;
   padding: 0 5px;
@@ -15,8 +15,8 @@
 
 #organization-create {
   width: 100%;
-  width: -moz-calc(100% - 2px);
-  width: -webkit-calc(100% - 2px);
+  width: -moz-calc(100% -   2px);
+  width: -webkit-calc(100% -   2px);
   margin: 5px 1px;
   background-color: white;
   border: 1px solid grey;
@@ -34,58 +34,57 @@
 
 #organization-list {
   height: 100%;
-  height: -moz-calc(100% - 68px);
-  height: -webkit-calc(100% - 68px);
+  height: -moz-calc(100% -   68px);
+  height: -webkit-calc(100% -   68px);
   overflow: auto;
   border: 1px solid grey;
   border-radius: 2px;
 }
 
-#organization-list > li {
+#organization-list>li {
   padding: 5px 8px;
 }
 
 #organization-content {
-  float:left;
+  float: left;
   width: 60%;
-  width: -moz-calc(60% - 5px);
-  width: -webkit-calc(60% - 5px);
+  width: -moz-calc(60% -   5px);
+  width: -webkit-calc(60% -   5px);
   height: 100%;
-  height: -moz-calc(100% - 10px);
-  height: -webkit-calc(100% - 10px);
+  height: -moz-calc(100% -   10px);
+  height: -webkit-calc(100% -   10px);
   border: solid 2px grey;
   border-radius: 10px;
   padding: 5px;
   margin: 5px;
-  
   overflow: auto;
 }
 
 #organization-rightbar {
-  float:right;
+  float: right;
   width: 20%;
-  width: -moz-calc(20% - 10px);
-  width: -webkit-calc(20% - 10px);
+  width: -moz-calc(20% -   10px);
+  width: -webkit-calc(20% -   10px);
   height: 100%;
   padding: 5px 10px 5px 0px;
 }
 
-#organization-rightbar > div {
+#organization-rightbar>div {
   height: 50%;
 }
 
-#organization-rightbar > div + div {
+#organization-rightbar>div+div {
   height: 50%;
   padding-top: 15px;
 }
 
-#organization-rightbar > div > div {
+#organization-rightbar>div>div {
   height: 100%;
   border: 2px solid grey;
   border-radius: 10px;
   padding: 5px;
 }
 
-#organization-reception-list li, #organization-contact-list li {
+#organization-reception-list li,#organization-contact-list li {
   margin-left: 10px;
 }

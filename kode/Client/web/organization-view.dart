@@ -54,7 +54,7 @@ class OrganizationView {
     });
 
     buttonDelete.onClick.listen((_) {
-      if(!createNew && selectedOrganizationId > 0) {
+      if (!createNew && selectedOrganizationId > 0) {
         deleteOrganization(selectedOrganizationId).then((_) {
           currentContactList.clear();
           currentReceptionList.clear();
@@ -65,46 +65,49 @@ class OrganizationView {
           buttonDelete.disabled = true;
           selectedOrganizationId = 0;
         }).catchError((error) {
-          log.error('Failed to delete organization "${selectedOrganizationId}", got "${error}"');
+          log.error(
+              'Failed to delete organization "${selectedOrganizationId}", got "${error}"');
         });
       }
     });
 
     bus.on(windowChanged).listen((Map event) {
       element.classes.toggle('hidden', event['window'] != viewName);
-      if(event.containsKey('organization_id')) {
+      if (event.containsKey('organization_id')) {
         activateOrganization(event['organization_id']);
       }
     });
 
     bus.on(Invalidate.receptionAdded).listen((int organizationId) {
-      if(organizationId == selectedOrganizationId) {
+      if (organizationId == selectedOrganizationId) {
         activateOrganization(selectedOrganizationId);
       }
     });
 
     bus.on(Invalidate.receptionRemoved).listen((Map event) {
-      if(event['organizationId'] == selectedOrganizationId) {
+      if (event['organizationId'] == selectedOrganizationId) {
         activateOrganization(selectedOrganizationId);
       }
     });
 
-    bus.on(Invalidate.receptionContactAdded).listen(handleReceptionContactAdded);
-    bus.on(Invalidate.receptionContactRemoved).listen(handleReceptionContactRemoved);
+    bus.on(Invalidate.receptionContactAdded).listen(handleReceptionContactAdded
+        );
+    bus.on(Invalidate.receptionContactRemoved).listen(
+        handleReceptionContactRemoved);
 
     searchBox.onInput.listen((_) => performSearch());
   }
 
   void handleReceptionContactAdded(Map event) {
     int receptionId = event['receptionId'];
-    if(currentReceptionList.any((r) => r.id == receptionId)) {
+    if (currentReceptionList.any((r) => r.id == receptionId)) {
       activateOrganization(selectedOrganizationId);
     }
   }
 
   void handleReceptionContactRemoved(Map event) {
     int contactId = event['contactId'];
-    if(currentContactList.any((contact) => contact.id == contactId)) {
+    if (currentContactList.any((contact) => contact.id == contactId)) {
       activateOrganization(selectedOrganizationId);
     }
   }
@@ -132,23 +135,27 @@ class OrganizationView {
 
   void performSearch() {
     String searchText = searchBox.value;
-    List<Organization> filteredList = organizations.where(
-        (Organization org) => org.full_name.toLowerCase().contains(searchText.toLowerCase())).toList();
+    List<Organization> filteredList = organizations.where((Organization org) =>
+        org.full_name.toLowerCase().contains(searchText.toLowerCase())).toList();
     renderOrganizationList(filteredList);
   }
 
   void saveChanges() {
     //TODO Does this make sense? Remove currentOrganizationId?????
-    if(selectedOrganizationId > 0) {
-      Map organization = {'id': selectedOrganizationId,
-                          'full_name': inputName.value};
+    if (selectedOrganizationId > 0) {
+      Map organization = {
+        'id': selectedOrganizationId,
+        'full_name': inputName.value
+      };
       String newOrganization = JSON.encode(organization);
       updateOrganization(selectedOrganizationId, newOrganization).then((_) {
         //Show a message that tells the user, that the changes went through.
         refreshList();
       });
-    } else if(createNew) {
-      Map organization = {'full_name': inputName.value};
+    } else if (createNew) {
+      Map organization = {
+        'full_name': inputName.value
+      };
       String newOrganization = JSON.encode(organization);
       createOrganization(newOrganization).then((Map response) {
         //TODO visable clue that a new organization is created.
@@ -164,7 +171,7 @@ class OrganizationView {
 
   void refreshList() {
     getOrganizationList().then((List<Organization> organizations) {
-      organizations.sort((a,b) => a.full_name.compareTo(b.full_name));
+      organizations.sort((a, b) => a.full_name.compareTo(b.full_name));
       //TODO Skal det være her.
       this.organizations = organizations;
       renderOrganizationList(organizations);
@@ -175,18 +182,18 @@ class OrganizationView {
 
   void renderOrganizationList(List<Organization> organizations) {
     uiList.children
-      ..clear()
-      ..addAll(organizations.map(makeOrganizationNode));
+        ..clear()
+        ..addAll(organizations.map(makeOrganizationNode));
   }
 
   LIElement makeOrganizationNode(Organization organization) {
     return new LIElement()
-      ..classes.add('clickable')
-      ..value = organization.id
-      ..text = '${organization.id} - ${organization.full_name}'
-      ..onClick.listen((_) {
-        activateOrganization(organization.id);
-      });
+        ..classes.add('clickable')
+        ..value = organization.id
+        ..text = '${organization.id} - ${organization.full_name}'
+        ..onClick.listen((_) {
+          activateOrganization(organization.id);
+        });
   }
 
   void activateOrganization(int organizationId) {
@@ -200,17 +207,19 @@ class OrganizationView {
       updateReceptionList(selectedOrganizationId);
       updateContactList(selectedOrganizationId);
     }).catchError((error) {
-      log.error('Tried to activate organization "$organizationId" but gave error: $error');
+      log.error(
+          'Tried to activate organization "$organizationId" but gave error: $error');
     });
   }
 
   void updateReceptionList(int organizationId) {
-    getAnOrganizationsReceptionList(organizationId).then((List<Reception> receptions) {
+    getAnOrganizationsReceptionList(organizationId).then((List<Reception>
+        receptions) {
       receptions.sort((a, b) => a.full_name.compareTo(b.full_name));
       currentReceptionList = receptions;
       ulReceptionList.children
-        ..clear()
-        ..addAll(receptions.map(makeReceptionNode));
+          ..clear()
+          ..addAll(receptions.map(makeReceptionNode));
     }).catchError((error) {
       log.error('Tried to fetch the receptionlist Error: $error');
     });
@@ -218,14 +227,16 @@ class OrganizationView {
 
   LIElement makeReceptionNode(Reception reception) {
     LIElement li = new LIElement()
-      ..classes.add('clickable')
-      ..text = '${reception.full_name}'
-      ..onClick.listen((_) {
-        Map event = {'window': 'reception',
-                     'organization_id': reception.organization_id,
-                     'reception_id': reception.id};
-        bus.fire(windowChanged, event);
-      });
+        ..classes.add('clickable')
+        ..text = '${reception.full_name}'
+        ..onClick.listen((_) {
+          Map event = {
+            'window': 'reception',
+            'organization_id': reception.organization_id,
+            'reception_id': reception.id
+          };
+          bus.fire(windowChanged, event);
+        });
     return li;
   }
 
@@ -234,23 +245,26 @@ class OrganizationView {
       contacts.sort((a, b) => a.full_name.compareTo(b.full_name));
       currentContactList = contacts;
       ulContactList.children
-        ..clear()
-        ..addAll(contacts.map(makeContactNode));
+          ..clear()
+          ..addAll(contacts.map(makeContactNode));
     }).catchError((error) {
-      log.error('Tried to fetch the contactlist from an organization Error: $error');
+      log.error(
+          'Tried to fetch the contactlist from an organization Error: $error');
     });
   }
 
   LIElement makeContactNode(Contact contact) {
     LIElement li = new LIElement();
     li
-      ..classes.add('clickable')
-      ..text = '${contact.full_name}'
-      ..onClick.listen((_) {
-        Map event = {'window': 'contact',
-                     'contact_id': contact.id};
-        bus.fire(windowChanged, event);
-      });
+        ..classes.add('clickable')
+        ..text = '${contact.full_name}'
+        ..onClick.listen((_) {
+          Map event = {
+            'window': 'contact',
+            'contact_id': contact.id
+          };
+          bus.fire(windowChanged, event);
+        });
     return li;
   }
 }

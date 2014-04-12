@@ -20,28 +20,29 @@ typedef bool Equality<T>(T x, T y);
 typedef void callback();
 
 class SearchComponent<T> {
-               DivElement      _container;
-               T               _currentElement;
-               List<T>         _dataList = new List<T>();
-               DivElement      _element;
-               bool            _hasFocus = false;
-               LIElement       _highlightedLi;
-  static const String          liIdTag = 'data-index';
-               List<LIElement> _list = new List<LIElement>();
-               UListElement    _resultsList;
-               InputElement    _searchBox;
-               String          _searchPlaceholder = 'Make a Search';
-               SpanElement     _selectedElementText;
-               bool            _withDropDown = false;
+  DivElement _container;
+  T _currentElement;
+  List<T> _dataList = new List<T>();
+  DivElement _element;
+  bool _hasFocus = false;
+  LIElement _highlightedLi;
+  static const String liIdTag = 'data-index';
+  List<LIElement> _list = new List<LIElement>();
+  UListElement _resultsList;
+  InputElement _searchBox;
+  String _searchPlaceholder = 'Make a Search';
+  SpanElement _selectedElementText;
+  bool _withDropDown = false;
 
-               T get currentElement => _currentElement;
+  T get currentElement => _currentElement;
 
   callback _whenClearSelection = () {};
 
   /**
    * Given an [_element] and the [searchText] tells whether the element gets displayed.
    */
-  SearchFilter<T> _searchFilter = (T element, String searchText) => element.toString().contains(searchText);
+  SearchFilter<T> _searchFilter = (T element, String searchText) =>
+      element.toString().contains(searchText);
 
   ElementToString<T> _listElementToString = (T element, String searchText) {
     if (searchText == null || searchText.isEmpty) {
@@ -139,7 +140,7 @@ class SearchComponent<T> {
     setSearchText('');
     performSearch(getSearchText());
 
-    if(_selectedElementChanged != null) {
+    if (_selectedElementChanged != null) {
       _selectedElementChanged(dataElement);
     }
     _currentElement = dataElement;
