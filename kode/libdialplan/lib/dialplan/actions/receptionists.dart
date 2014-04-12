@@ -11,35 +11,37 @@ class Receptionists implements Action {
   Receptionists.fromJson(Map json) {
     comment = json['comment'];
 
-    if(json.containsKey('sleeptime')) {
+    if (json.containsKey('sleeptime')) {
       sleepTime = json['sleeptime'];
     }
 
-    if(json.containsKey('music')) {
+    if (json.containsKey('music')) {
       music = json['music'];
     }
 
-    if(json.containsKey('welcomefile')) {
+    if (json.containsKey('welcomefile')) {
       welcomeFile = json['welcomefile'];
     }
   }
 
   Map toJson() {
-    Map result = {'action': 'receptionists'};
+    Map result = {
+      'action': 'receptionists'
+    };
 
-    if(comment != null) {
+    if (comment != null) {
       result['comment'] = comment;
     }
 
-    if(sleepTime != null) {
+    if (sleepTime != null) {
       result['sleeptime'] = sleepTime;
     }
 
-    if(music != null) {
+    if (music != null) {
       result['music'] = music;
     }
 
-    if(welcomeFile != null) {
+    if (welcomeFile != null) {
       result['welcomefile'] = welcomeFile;
     }
     return result;

@@ -9,19 +9,21 @@ class Voicemail implements Action {
   Voicemail.fromJson(Map json) {
     comment = json['comment'];
 
-    if(json.containsKey('email')) {
+    if (json.containsKey('email')) {
       email = json['email'];
     }
   }
 
   Map toJson() {
-    Map result = {'action': 'voicemail'};
+    Map result = {
+      'action': 'voicemail'
+    };
 
-    if(comment != null) {
+    if (comment != null) {
       result['comment'] = comment;
     }
 
-    if(email != null) {
+    if (email != null) {
       result['email'] = email;
     }
 

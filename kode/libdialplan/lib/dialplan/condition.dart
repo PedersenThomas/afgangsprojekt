@@ -1,6 +1,6 @@
 part of Dialplan;
 
-class Condition  {
+class Condition {
   String comment;
   Condition();
 
@@ -11,7 +11,7 @@ class Condition  {
         break;
 
       default:
-        throw('Unknown condition "${json['condition']}"');
+        throw ('Unknown condition "${json['condition']}"');
     }
   }
 

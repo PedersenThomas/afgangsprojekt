@@ -9,7 +9,7 @@ class Forward implements Action {
   Forward.fromJson(Map json) {
     comment = json['comment'];
 
-    if(json.containsKey('number')) {
+    if (json.containsKey('number')) {
       number = json['number'];
     }
   }
@@ -17,11 +17,11 @@ class Forward implements Action {
   Map toJson() {
     Map result = {};
 
-    if(comment != null) {
+    if (comment != null) {
       result['comment'] = comment;
     }
 
-    if(number != null) {
+    if (number != null) {
       result['number'] = number;
     }
 

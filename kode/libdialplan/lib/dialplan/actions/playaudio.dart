@@ -9,19 +9,21 @@ class PlayAudio implements Action {
   PlayAudio.fromJson(Map json) {
     comment = json['comment'];
 
-    if(json.containsKey('filename')) {
+    if (json.containsKey('filename')) {
       filename = json['filename'];
     }
   }
 
   Map toJson() {
-    Map result = {'action': 'playaudio'};
+    Map result = {
+      'action': 'playaudio'
+    };
 
-    if(comment != null) {
+    if (comment != null) {
       result['comment'] = comment;
     }
 
-    if(filename != null) {
+    if (filename != null) {
       result['filename'] = filename;
     }
 

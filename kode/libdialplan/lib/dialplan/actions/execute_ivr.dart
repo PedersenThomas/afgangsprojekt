@@ -9,7 +9,7 @@ class ExecuteIvr implements Action {
   ExecuteIvr.fromJson(Map json) {
     comment = json['comment'];
 
-    if(json.containsKey('ivrname')) {
+    if (json.containsKey('ivrname')) {
       ivrname = json['ivrname'];
     }
   }
@@ -17,11 +17,11 @@ class ExecuteIvr implements Action {
   Map toJson() {
     Map result = {};
 
-    if(comment != null) {
+    if (comment != null) {
       result['comment'] = comment;
     }
 
-    if(ivrname != null) {
+    if (ivrname != null) {
       result['ivrname'] = ivrname;
     }
 

@@ -8,17 +8,18 @@ class Dialplan {
   Dialplan();
 
   factory Dialplan.fromJson(Map json) {
-    if(json != null) {
+    if (json != null) {
       Dialplan plan = new Dialplan();
-      if(json.containsKey('extensions')) {
-        plan.Extensions.addAll((json['extensions'] as List<Map>).map((Map e) => new Extension.fromJson(e)));
+      if (json.containsKey('extensions')) {
+        plan.Extensions.addAll((json['extensions'] as List<Map>).map((Map e) =>
+            new Extension.fromJson(e)));
       }
 
-      if(json.containsKey('number')) {
+      if (json.containsKey('number')) {
         plan.entryNumber = json['number'];
       }
 
-      if(json.containsKey('receptionid')) {
+      if (json.containsKey('receptionid')) {
         plan.receptionId = json['receptionid'];
       }
 
@@ -29,5 +30,6 @@ class Dialplan {
   }
 
   Map toJson() => {
-    'extensions': Extensions.map((Extension e) => e.toJson()).toList()};
+    'extensions': Extensions.map((Extension e) => e.toJson()).toList()
+  };
 }
