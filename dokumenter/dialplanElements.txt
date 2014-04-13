@@ -6,7 +6,7 @@ Afspilningsliste laves i /conf/autoload_configs/local_stream.conf.xml
   Man burde nok lave en mappe til dem, så man ikke skal fjerne hele filen, for at lave den igen.
 
 
-* Bliver alt andet en "entry" extension ikke nød til at ligge i default context?
+* Bliver alt andet en "entry" extension ikke nød til at ligge i public context?
 * Waitqueue skal være mere generisk. Lige nu afspiller den "Please wait while i connect you"
 
 
@@ -25,7 +25,7 @@ Når så at der skal laves XML, så bliver modellen manipuleret, og selv om der 
                     "wday": "2-6",
                     "minute-of-day": "480-1020"
                 }
-            ],
+ 		           ],
             "actions": [
                 {
                     "action": "receptionists",
