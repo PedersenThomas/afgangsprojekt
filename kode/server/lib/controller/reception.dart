@@ -23,7 +23,7 @@ class ReceptionController {
     int receptionId = pathParameter(request.uri, 'reception');
 
     db.getReception(organizationId, receptionId).then((Reception reception) {
-      if(reception == null) {
+      if (reception == null) {
         request.response.statusCode = 404;
         return writeAndCloseJson(request, JSON.encode({}));
       } else {
@@ -47,7 +47,8 @@ class ReceptionController {
   void getOrganizationReceptionList(HttpRequest request) {
     int organizationId = pathParameter(request.uri, 'organization');
 
-    db.getOrganizationReceptionList(organizationId).then((List<Reception> list) {
+    db.getOrganizationReceptionList(organizationId).then((List<Reception> list)
+        {
       return writeAndCloseJson(request, listReceptionAsJson(list));
     }).catchError((error) {
       logger.error('get reception list Error: "$error"');
@@ -58,11 +59,11 @@ class ReceptionController {
   void createReception(HttpRequest request) {
     int organizationId = pathParameter(request.uri, 'organization');
 
-    extractContent(request)
-    .then(JSON.decode)
-    .then((Map data) => db.createReception(organizationId, data['full_name'], data['uri'], data['attributes'], data['extradatauri'], data['enabled'], data['number']))
-    .then((int id) => writeAndCloseJson(request, receptionIdAsJson(id)))
-    .catchError((error) {
+    extractContent(request).then(JSON.decode).then((Map data) =>
+        db.createReception(organizationId, data['full_name'], data['uri'],
+        data['attributes'], data['extradatauri'], data['enabled'], data['number'])
+        ).then((int id) => writeAndCloseJson(request, receptionIdAsJson(id))
+        ).catchError((error) {
       logger.error(error);
       Internal_Error(request);
     });
@@ -72,12 +73,13 @@ class ReceptionController {
     int organizationId = pathParameter(request.uri, 'organization');
     int receptionId = pathParameter(request.uri, 'reception');
 
-    extractContent(request)
-    .then(JSON.decode)
-    .then((Map data) => db.updateReception(organizationId, receptionId, data['full_name'], data['uri'], data['attributes'], data['extradatauri'], data['enabled'], data['number']))
-    .then((int id) => writeAndCloseJson(request, receptionIdAsJson(id)))
-    .catchError((error) {
-      logger.error('updateReception url: "${request.uri}" gave error "${error}"');
+    extractContent(request).then(JSON.decode).then((Map data) =>
+        db.updateReception(organizationId, receptionId, data['full_name'], data['uri'],
+        data['attributes'], data['extradatauri'], data['enabled'], data['number'])
+        ).then((int id) => writeAndCloseJson(request, receptionIdAsJson(id))
+        ).catchError((error) {
+      logger.error('updateReception url: "${request.uri}" gave error "${error}"'
+          );
       Internal_Error(request);
     });
   }
@@ -86,10 +88,10 @@ class ReceptionController {
     int organizationId = pathParameter(request.uri, 'organization');
     int receptionId = pathParameter(request.uri, 'reception');
 
-    db.deleteReception(organizationId, receptionId)
-    .then((int id) => writeAndCloseJson(request, receptionIdAsJson(id)))
-    .catchError((error, stack) {
-      logger.error('deleteReception url: "${request.uri}" gave error "${error}" ${stack}');
+    db.deleteReception(organizationId, receptionId).then((int id) =>
+        writeAndCloseJson(request, receptionIdAsJson(id))).catchError((error, stack) {
+      logger.error(
+          'deleteReception url: "${request.uri}" gave error "${error}" ${stack}');
       Internal_Error(request);
     });
   }
@@ -97,11 +99,23 @@ class ReceptionController {
   void getDialplan(HttpRequest request) {
     int receptionId = pathParameter(request.uri, 'reception');
 
-    db.getDialplan(receptionId)
-      .then((Dialplan dialplan) => writeAndCloseJson(request, dialplanAsJson(dialplan)))
-      .catchError((error) {
-        logger.error('getDialplan url: "${request.uri}" gave error "${error}"');
+    db.getDialplan(receptionId).then((Dialplan dialplan) => writeAndCloseJson(
+        request, dialplanAsJson(dialplan))).catchError((error) {
+      logger.error('getDialplan url: "${request.uri}" gave error "${error}"');
+      Internal_Error(request);
+    });
+  }
+
+  void updateDialplan(HttpRequest request) {
+    int receptionId = pathParameter(request.uri, 'reception');
+
+    extractContent(request)
+      .then(JSON.decode)
+      .then((Map data) => db.updateDialplan(receptionId, data))
+      .then((_) => writeAndCloseJson(request, ''))
+      .catchError((error, stack) {
+        logger.error('updateDialplan url: "${request.uri}" gave error "${error}" ${stack}');
         Internal_Error(request);
-      });
+    });
   }
 }

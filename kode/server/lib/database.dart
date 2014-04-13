@@ -134,6 +134,9 @@ class Database {
   Future<Dialplan> getDialplan(int receptionId) =>
       _getDialplan(pool, receptionId);
 
+  Future<Dialplan> updateDialplan(int receptionId, Map dialplan) =>
+      _updateDialplan(pool, receptionId, dialplan);
+
   /* ***********************************************
      ********************* User ********************
    */

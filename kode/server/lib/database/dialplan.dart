@@ -14,7 +14,8 @@ Future<Dialplan> _getDialplan(Pool pool, int receptionId) {
       return null;
     } else {
       Row row = rows.first;
-      Dialplan dialplan = new Dialplan.fromJson(JSON.decode(row.dialplan));
+      Map dialplanMap = JSON.decode(row.dialplan != null ? row.dialplan : '{}');
+      Dialplan dialplan = new Dialplan.fromJson(dialplanMap);
 
       //In case the json is empty.
       if(dialplan == null) {
@@ -27,4 +28,18 @@ Future<Dialplan> _getDialplan(Pool pool, int receptionId) {
       return dialplan;
     }
   });
+}
+
+Future _updateDialplan(Pool pool, int receptionId, Map dialplan) {
+  String sql = '''
+    UPDATE receptions
+    SET dialplan=@dialplan
+    WHERE id=@id;
+  ''';
+
+  Map parameters =
+    {'dialplan': JSON.encode(dialplan),
+     'id'      : receptionId};
+
+  return execute(pool, sql, parameters);
 }
