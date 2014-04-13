@@ -1,10 +1,12 @@
 library dialplan_view;
 
+import 'dart:async';
+import 'dart:convert';
 import 'dart:html';
 
 import 'lib/eventbus.dart';
 import 'lib/logger.dart' as log;
-import 'lib/request.dart';
+import 'lib/request.dart' as request;
 import 'package:libdialplan/libdialplan.dart';
 
 class _ControlLookUp {
@@ -18,6 +20,7 @@ class _ControlLookUp {
 
 class DialplanView {
   String viewName = 'dialplan';
+  int selectedReceptionId;
 
   DivElement element;
   UListElement controlList;
@@ -68,17 +71,19 @@ class DialplanView {
 
         newExtension.name = genericName;
         dialplan.Extensions.add(newExtension);
-        UpdateExtensionList();
+        renderExtensionList(dialplan);
         activateExtension(newExtension);
+
+        updateDialplan();
       }
     });
   }
 
   void activateDialplan(int receptionId) {
-    getDialplan(receptionId).then((Dialplan value) {
+    request.getDialplan(receptionId).then((Dialplan value) {
       dialplan = value;
-
-      UpdateExtensionList();
+      selectedReceptionId = receptionId;
+      renderExtensionList(value);
 
       Extension startExtension = dialplan.Extensions.firstWhere((e) =>
           e.isStart, orElse: () => null);
@@ -88,10 +93,21 @@ class DialplanView {
     });
   }
 
-  void UpdateExtensionList() {
+  void renderExtensionList(Dialplan dialplan) {
     extensionList.children.clear();
     if (dialplan != null && dialplan.Extensions != null) {
       extensionList.children.addAll(dialplan.Extensions.map(extensionListItem));
+    }
+  }
+
+  Future updateDialplan() {
+    if (selectedReceptionId != null && selectedReceptionId > 0) {
+      return request.updateDialplan(selectedReceptionId, JSON.encode(
+          dialplan.toJson())).catchError((error) {
+        log.error('Update Dialplan gave ${error}');
+      });
+    } else {
+      return new Future.value();
     }
   }
 
@@ -157,6 +173,8 @@ class DialplanView {
         }
       }
 
+      settingsExtension(extension);
+
       for (Action action in extension.actions) {
         LIElement li = new LIElement();
         if (action is Forward) {
@@ -174,7 +192,7 @@ class DialplanView {
         } else if (action is PlayAudio) {
           li.text = 'Afspil lyd';
           li.onClick.listen((_) {
-            //settingsActionPlayAudio(action);
+            settingsActionPlayAudio(action);
           });
 
         } else if (action is Receptionists) {
@@ -194,6 +212,44 @@ class DialplanView {
     }
   }
 
+  void settingsExtension(Extension extension) {
+      settingPanel.children.clear();
+      InputElement nameInput = new InputElement()
+          ..id = 'extension-setting-name'
+          ..value = extension.name;
+      LabelElement nameLabel = new LabelElement()
+          ..text = 'Navn'
+          ..htmlFor = nameInput.id;
+
+      CheckboxInputElement startInput = new CheckboxInputElement()
+          ..id = 'extension-setting-start'
+          ..checked = extension.isStart;
+      LabelElement startLabel = new LabelElement()
+          ..text = 'Start'
+          ..htmlFor = startInput.id;
+
+      CheckboxInputElement catchInput = new CheckboxInputElement()
+          ..id = 'extension-setting-catch'
+          ..checked = extension.isCatchAll;
+      LabelElement catchLabel = new LabelElement()
+          ..text = 'Grib fejl'
+          ..htmlFor = catchInput.id;
+
+      commentTextarea.value = extension.comment;
+
+      ButtonElement save = new ButtonElement()
+          ..text = 'Gem'
+          ..onClick.listen((_) {
+        extension.name = nameInput.value;
+        extension.comment = commentTextarea.value;
+        extension.isStart = startInput.checked;
+        extension.isCatchAll = catchInput.checked;
+            //TODO save.
+          });
+
+      settingPanel.children.addAll([nameLabel, nameInput, startLabel, startInput, catchLabel, catchInput, save]);
+    }
+
   void settingsConditionTime(Time condition) {
     settingPanel.children.clear();
     InputElement timeOfDayInput = new InputElement()
@@ -210,7 +266,7 @@ class DialplanView {
         ..value = condition.timeOfDay;
     LabelElement wdayLabel = new LabelElement()
         ..text = 'wday'
-        ..htmlFor = timeOfDayInput.id;
+        ..htmlFor = wdayInput.id;
 
     InputElement ydayInput = new InputElement()
         ..id = 'extension-setting-yday'
@@ -218,7 +274,7 @@ class DialplanView {
         ..value = condition.timeOfDay;
     LabelElement ydayLabel = new LabelElement()
         ..text = 'yday'
-        ..htmlFor = timeOfDayInput.id;
+        ..htmlFor = ydayInput.id;
 
     commentTextarea.value = condition.timeOfDay;
 
@@ -235,6 +291,30 @@ class DialplanView {
 
     settingPanel.children.addAll([timeOfDayLabel, timeOfDayInput, wdayLabel,
         wdayInput, ydayLabel, ydayInput, save]);
+  }
+
+  void settingsActionPlayAudio(PlayAudio action) {
+    settingPanel.children.clear();
+    InputElement numberInput = new InputElement()
+        ..id = 'extension-setting-audiofile'
+        ..value = action.filename;
+
+    LabelElement numberLabel = new LabelElement()
+        ..text = 'Lydfil'
+        ..htmlFor = numberInput.id;
+
+    commentTextarea.value = action.comment;
+
+    ButtonElement save = new ButtonElement()
+        ..text = 'Gem'
+        ..onClick.listen((_) {
+          action.filename = numberInput.value;
+          action.comment = commentTextarea.value;
+
+          //TODO save.
+        });
+
+    settingPanel.children.addAll([numberLabel, numberInput, save]);
   }
 
   void settingsActionForward(Forward action) {
