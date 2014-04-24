@@ -15,7 +15,7 @@ class Forward implements Action {
   }
 
   Map toJson() {
-    Map result = {};
+    Map result = {'action': 'forward'};
 
     if (comment != null) {
       result['comment'] = comment;

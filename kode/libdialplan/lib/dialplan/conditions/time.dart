@@ -4,7 +4,6 @@ class Time implements Condition {
   String comment;
   String timeOfDay;
   String wday;
-  String yday;
 
   Time();
 
@@ -15,10 +14,6 @@ class Time implements Condition {
 
     if (json.containsKey('wday')) {
       wday = json['wday'];
-    }
-
-    if (json.containsKey('yday')) {
-      yday = json['yday'];
     }
 
     if (json.containsKey('comment')) {
@@ -41,10 +36,6 @@ class Time implements Condition {
 
     if (wday != null) {
       result['wday'] = wday;
-    }
-
-    if (yday != null) {
-      result['yday'] = yday;
     }
 
     return result;

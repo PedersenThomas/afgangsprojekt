@@ -15,7 +15,7 @@ class ExecuteIvr implements Action {
   }
 
   Map toJson() {
-    Map result = {};
+    Map result = {'action': 'executeivr'};
 
     if (comment != null) {
       result['comment'] = comment;

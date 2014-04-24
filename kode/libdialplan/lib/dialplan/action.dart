@@ -7,7 +7,7 @@ class Action {
     switch (json['action'] as String) {
       case 'forward':
         return new Forward.fromJson(json);
-      case 'ivr':
+      case 'executeivr':
         return new ExecuteIvr.fromJson(json);
       case 'playaudio':
         return new PlayAudio.fromJson(json);
@@ -17,7 +17,7 @@ class Action {
         return new Voicemail.fromJson(json);
 
       default:
-        throw ('Unknown action "${json['action']} ${json}"');
+        throw ('Unknown action. action name:"${json['action']}" complete Object:"${json}"');
     }
   }
 

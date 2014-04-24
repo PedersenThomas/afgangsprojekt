@@ -1,8 +1,8 @@
 part of Dialplan;
 
 class Extension {
-  bool isStart;
-  bool isCatchAll;
+  bool isStart = false;
+  bool isCatchAll  = false;
   String comment;
   String name;
   String failoverExtension;
