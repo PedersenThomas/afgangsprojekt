@@ -15,17 +15,10 @@
 <body>
   <nav id="navigation">
     <ul>
-      <li><img id="organization-button" alt="Organisation"
-        title="Organisationer" src="image/organization_icon.svg"
-        draggable="false"></li>
-      <li><img id="reception-button" alt="Reception"
-        title="Receptioner" src="image/reception_icon_disable.svg"
-        draggable="false"></li>
-      <li><img id="contact-button" alt="Kontaktpersoner"
-        title="Kontaktpersoner" src="image/contact_icon_disable.svg"
-        draggable="false"></li>
-      <li><img id="dialplan-button" alt="Dialplan" title="Dialplan"
-        src="image/dialplan_icon_disable.svg" draggable="false"></li>
+      <li><img id="organization-button" alt="Organisation" title="Organisationer" src="image/organization_icon.svg" draggable="false"></li>
+      <li><img id="reception-button" alt="Reception" title="Receptioner" src="image/reception_icon_disable.svg" draggable="false"></li>
+      <li><img id="contact-button" alt="Kontaktpersoner" title="Kontaktpersoner" src="image/contact_icon_disable.svg" draggable="false"></li>
+      <li><img id="dialplan-button" alt="Dialplan" title="Dialplan" src="image/dialplan_icon_disable.svg" draggable="false"></li>
     </ul>
   </nav>
 
@@ -33,8 +26,7 @@
     <div id="organization-page">
       <div id="organization-listing">
         <button id="organization-create">Ny Organisation</button>
-        <input id="organization-search-box" type="search"
-          placeholder="Søg...">
+        <input id="organization-search-box" type="search" placeholder="Søg...">
         <ul id="organization-list" class="zebra"></ul>
       </div>
       <div id="organization-content">
@@ -72,7 +64,7 @@
             <td><label for="reception-input-name">Navn</label><input
               id="reception-input-name"></td>
             <td><label>Organisation</label>
-            <div id="reception-organization-selector"></div></td>
+              <div id="reception-organization-selector"></div></td>
           </tr>
 
           <tr>
@@ -104,37 +96,37 @@
 
           <tr>
             <td><label>Adresser</label>
-            <ul id="reception-list-addresses"></ul></td>
+              <ul id="reception-list-addresses"></ul></td>
             <td><label>Alternative firmanavne</label>
-            <ul id="reception-list-alternatenames"></ul></td>
+              <ul id="reception-list-alternatenames"></ul></td>
           </tr>
 
           <tr>
             <td><label>Bankoplysninger</label>
-            <ul id="reception-list-bankinginformation"></ul></td>
+              <ul id="reception-list-bankinginformation"></ul></td>
             <td><label>Sælgere / Analyser</label>
-            <ul id="reception-list-crapcallhandling"></ul></td>
+              <ul id="reception-list-crapcallhandling"></ul></td>
           </tr>
 
           <tr>
             <td><label>E-mailadresser</label>
-            <ul id="reception-list-emailaddresses"></ul></td>
+              <ul id="reception-list-emailaddresses"></ul></td>
             <td><label>Håndtering</label>
-            <ul id="reception-list-handlings"></ul></td>
+              <ul id="reception-list-handlings"></ul></td>
           </tr>
 
           <tr>
             <td><label>Adresser</label>
-            <ul id="reception-list-openinghours"></ul></td>
+              <ul id="reception-list-openinghours"></ul></td>
             <td><label>CVR</label>
-            <ul id="reception-list-registrationnumbers"></ul></td>
+              <ul id="reception-list-registrationnumbers"></ul></td>
           </tr>
 
           <tr>
             <td><label>Hovednumre</label>
-            <ul id="reception-list-telephonenumbers"></ul></td>
+              <ul id="reception-list-telephonenumbers"></ul></td>
             <td><label>Web-sider</label>
-            <ul id="reception-list-websites"></ul></td>
+              <ul id="reception-list-websites"></ul></td>
           </tr>
         </table>
 
@@ -199,28 +191,51 @@
     </div>
 
     <div id="dialplan-page" class="hidden">
-      <div id="dialplan-controlbar">
-        <ul id="dialplan-control-list" class="zebra">
-          <li value="0">Tidsstyring</li>
-          <li value="1">viderstil</li>
-          <li value="2">Receptionisterne</li>
-          <li value="3">Telefonsvare</li>
-          <li value="4">lydfil</li>
-          <li value="5">ivr</li>
-        </ul>
+      <div id="dialplan-leftbar">
+        <div id="dialplan-mainbar">
+          <div id="dialplan-receptionbar"></div>
+          <button id="dialplan-savebutton">Gem</button>
+        </div>
+
+        <div id="dialplan-controlbar">
+          <ul id="dialplan-control-list">
+            <li value="0">
+              <img alt="Tidsstyring" src="image/tp/time.svg" class="dialplan-controlitem-img">
+              <span class="dialplan-controlitem-nametag">Tidsstyring</span>
+            </li>
+            <li value="1">
+              <img alt="viderstil" src="image/tp/bendedarrow.svg" class="dialplan-controlitem-img">
+              <span class="dialplan-controlitem-nametag">viderstil</span>
+            </li>
+            <li value="2">
+              <img alt="Receptionisterne" src="image/tp/multiplemen.svg" class="dialplan-controlitem-img">
+              <span class="dialplan-controlitem-nametag">Receptionisterne</span>
+            </li>
+            <li value="3">
+              <img alt="Telefonsvare" src="image/tp/microphone.svg" class="dialplan-controlitem-img">
+              <span class="dialplan-controlitem-nametag">Telefonsvare</span>
+            </li>
+            <li value="4">
+              <img alt="lydfil" src="image/tp/speaker.svg" class="dialplan-controlitem-img">
+              <span class="dialplan-controlitem-nametag">lydfil</span>
+            </li>
+            <li value="5">
+              <img alt="ivr" src="image/organization_icon.svg" class="dialplan-controlitem-img">
+              <span class="dialplan-controlitem-nametag">ivr</span>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div id="dialplan-contentbar">
+        <span id="dialplan-selected-extensionname"></span>
         <ul id="dialplan-items-list"></ul>
       </div>
 
       <div id="dialplan-settingsbar">
         <div id="dialplan-extention-listing">
-          <ul id="dialplan-extension-list" class="zebra">
-            <li>Indgang</li>
-            <li>Lukket</li>
-            <li>Ferie</li>
-          </ul>
+          <span>Extensionliste</span>
+          <ul id="dialplan-extension-list" class="zebra"></ul>
           <button id="dialplan-extension-add">Tilføj</button>
         </div>
 

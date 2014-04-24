@@ -19,7 +19,6 @@ class Contact {
   }
 
   String toJson() {
-
     Map data = {
       'id': id,
       'full_name': full_name,

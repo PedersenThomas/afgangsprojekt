@@ -6,8 +6,10 @@ import 'dart:html';
 
 import 'lib/eventbus.dart';
 import 'lib/logger.dart' as log;
+import 'lib/model.dart';
 import 'lib/request.dart' as request;
 import 'package:libdialplan/libdialplan.dart';
+import 'lib/searchcomponent.dart';
 
 class _ControlLookUp {
   static const int timeControl = 0;
@@ -29,7 +31,11 @@ class DialplanView {
   ButtonElement extensionAdd;
   DivElement settingPanel;
   TextAreaElement commentTextarea;
+  StreamSubscription<Event> commentTextSubscription;
+  DivElement receptionOuterSelector;
+  ButtonElement saveButton;
 
+  SearchComponent SC;
   Dialplan dialplan;
   Extension selectedExtension;
 
@@ -40,6 +46,16 @@ class DialplanView {
     extensionAdd = element.querySelector('#dialplan-extension-add');
     settingPanel = element.querySelector('#dialplan-settings');
     commentTextarea = element.querySelector('#dialplan-comment');
+    saveButton = element.querySelector('#dialplan-savebutton');
+
+    receptionOuterSelector = element.querySelector('#dialplan-receptionbar');
+
+    SC = new SearchComponent<Reception>(receptionOuterSelector,
+        'dialplan-reception-searchbox')
+        ..listElementToString = receptionToSearchboxString
+        ..searchFilter = receptionSearchHandler;
+
+    fillSearchComponent();
 
     registrateEventHandlers();
   }
@@ -50,6 +66,12 @@ class DialplanView {
       if (event.containsKey('receptionid')) {
         activateDialplan(event['receptionid']);
       }
+    });
+
+    SC.selectedElementChanged = SearchComponentChanged;
+
+    saveButton.onClick.listen((_) {
+      saveDialplan();
     });
 
     controlList.children.forEach((LIElement li) {
@@ -74,22 +96,41 @@ class DialplanView {
         renderExtensionList(dialplan);
         activateExtension(newExtension);
 
-        updateDialplan();
+        saveDialplan();
       }
     });
   }
 
+  void SearchComponentChanged(Reception reception) {
+    activateDialplan(reception.id);
+  }
+
+  String receptionToSearchboxString(Reception reception, String searchterm) {
+    return '${reception.full_name}';
+  }
+
+  bool receptionSearchHandler(Reception reception, String searchTerm) {
+    return reception.full_name.toLowerCase().contains(searchTerm.toLowerCase());
+  }
+
+  void fillSearchComponent() {
+    request.getReceptionList().then((List<Reception> list) {
+      list.sort((a, b) => a.full_name.compareTo(b.full_name));
+      SC.updateSourceList(list);
+    });
+  }
+
   void activateDialplan(int receptionId) {
+    SC.selectElement(null, (Reception a,_) => a.id == receptionId);
+
     request.getDialplan(receptionId).then((Dialplan value) {
       dialplan = value;
       selectedReceptionId = receptionId;
       renderExtensionList(value);
 
       Extension startExtension = dialplan.Extensions.firstWhere((e) =>
-          e.isStart, orElse: () => null);
-      if (startExtension != null) {
-        activateExtension(startExtension);
-      }
+          e.isStart, orElse: () => dialplan.Extensions.isNotEmpty ? dialplan.Extensions.first : null);
+      activateExtension(startExtension);
     });
   }
 
@@ -100,7 +141,7 @@ class DialplanView {
     }
   }
 
-  Future updateDialplan() {
+  Future saveDialplan() {
     if (selectedReceptionId != null && selectedReceptionId > 0) {
       return request.updateDialplan(selectedReceptionId, JSON.encode(
           dialplan.toJson())).catchError((error) {
@@ -112,12 +153,19 @@ class DialplanView {
   }
 
   LIElement extensionListItem(Extension extension) {
-    LIElement li = new LIElement()
-        ..text = extension.name
+    LIElement li = new LIElement();
+
+    ButtonElement deleteButton = new ButtonElement()
+      ..text = 'Slet'
+      ..onClick.listen((_) {
+      dialplan.Extensions.remove(extension);
+    });
+    SpanElement text = new SpanElement()
+        ..text = '${extension.name}${extension.isStart ? '(s)' : ''}${extension.isCatchAll ? '(c)' : ''}'
         ..onClick.listen((_) {
           activateExtension(extension);
         });
-
+    li.children.addAll([deleteButton, text]);
     return li;
   }
 
@@ -127,282 +175,442 @@ class DialplanView {
         case _ControlLookUp.timeControl:
           Time condition = new Time();
           selectedExtension.conditions.add(condition);
+          settingsConditionTime(condition);
           break;
 
         case _ControlLookUp.forward:
           Forward action = new Forward();
           selectedExtension.actions.add(action);
+          settingsActionForward(action);
           break;
 
         case _ControlLookUp.receptionist:
           Receptionists action = new Receptionists();
           selectedExtension.actions.add(action);
+          settingsActionReceptionists(action);
           break;
 
         case _ControlLookUp.voicemail:
           Voicemail action = new Voicemail();
           selectedExtension.actions.add(action);
+          settingsActionVoicemail(action);
           break;
 
         case _ControlLookUp.playAudioFile:
           PlayAudio action = new PlayAudio();
           selectedExtension.actions.add(action);
+          settingsActionPlayAudio(action);
           break;
 
         case _ControlLookUp.ivr:
           ExecuteIvr action = new ExecuteIvr();
           selectedExtension.actions.add(action);
+          settingsActionExecuteIvr(action);
           break;
       }
 
-      activateExtension(selectedExtension);
+      renderContent();
     }
   }
 
-  void activateExtension(Extension extension) {
-    if (extension != null) {
-      selectedExtension = extension;
-      itemsList.children.clear();
-      for (Condition condition in extension.conditions) {
-        if (condition is Time) {
-          itemsList.children.add(new LIElement()
-              ..text = 'Tidsstyring'
-              ..onClick.listen((_) {
-                settingsConditionTime(condition);
-              }));
-        }
-      }
-
-      settingsExtension(extension);
-
-      for (Action action in extension.actions) {
+  void renderSelectedExtensionActions() {
+    if(selectedExtension != null) {
+      for (Action action in selectedExtension.actions) {
         LIElement li = new LIElement();
+        ImageElement image = new ImageElement()
+          ..classes.add('dialplan-controlitem-img');
+        SpanElement nameTag = new SpanElement()
+          ..classes.add('dialplan-controlitem-nametag');
+        li.children.addAll([image, nameTag]);
+
         if (action is Forward) {
-          li.text = 'Viderstil';
+          image.src = 'image/tp/bendedarrow.svg';
+          nameTag.text = 'Viderstil';
           li.onClick.listen((_) {
             settingsActionForward(action);
           });
 
         } else if (action is ExecuteIvr) {
-          li.text = 'Ivrmenu';
+          image.src = 'image/organization_icon.svg';
+          nameTag.text = 'Ivrmenu';
           li.onClick.listen((_) {
             settingsActionExecuteIvr(action);
           });
 
         } else if (action is PlayAudio) {
-          li.text = 'Afspil lyd';
+          image.src = 'image/tp/speaker.svg';
+          nameTag.text = 'Afspil lyd';
           li.onClick.listen((_) {
             settingsActionPlayAudio(action);
           });
 
         } else if (action is Receptionists) {
-          li.text = 'Reception';
+          image.src = 'image/tp/multiplemen.svg';
+          nameTag.text = 'Reception';
           li.onClick.listen((_) {
             settingsActionReceptionists(action);
           });
 
         } else if (action is Voicemail) {
-          li.text = 'Telefonsvare';
+          image.src = 'image/tp/microphone.svg';
+          nameTag.text = 'Telefonsvare';
+          li.onClick.listen((_) {
+            settingsActionVoicemail(action);
+          });
 
         } else {
-          li.text = 'Ukendt';
+          image.src = 'image/organization_icon_disable.svg';
+          nameTag.text = 'Ukendt';
         }
         itemsList.children.add(li);
       }
     }
   }
 
+  void renderSelectedExtensionCondition() {
+    if(selectedExtension != null) {
+      for (Condition condition in selectedExtension.conditions) {
+        if (condition is Time) {
+          ImageElement image = new ImageElement(src: 'image/tp/time.svg')
+            ..classes.add('dialplan-controlitem-img');
+          SpanElement nameTag = new SpanElement()
+            ..text = 'Tidsstyring'
+            ..classes.add('dialplan-controlitem-nametag');
+
+          itemsList.children.add(new LIElement()
+              ..children.addAll([image, nameTag])
+              ..onClick.listen((_) {
+                settingsConditionTime(condition);
+              }));
+        }
+      }
+    }
+  }
+
+  void activateExtension(Extension extension) {
+    if (extension != null) {
+      selectedExtension = extension;
+      settingsExtension(extension);
+    }
+    renderContent();
+  }
+
+  void renderContent() {
+    itemsList.children.clear();
+    renderSelectedExtensionCondition();
+    renderSelectedExtensionActions();
+  }
+
   void settingsExtension(Extension extension) {
       settingPanel.children.clear();
-      InputElement nameInput = new InputElement()
-          ..id = 'extension-setting-name'
-          ..value = extension.name;
-      LabelElement nameLabel = new LabelElement()
-          ..text = 'Navn'
-          ..htmlFor = nameInput.id;
+      String html = '''
+      <ul class="dialplan-settingsList">
+        <li>
+            <label for="dialplan-setting-extensionname">Navn</label>
+            <input id="dialplan-setting-extensionname" type="text" value="${extension.name != null ? extension.name : ''}">
+        </li>
+        <li>
+            <label for="dialplan-setting-extensionstart">Start</label>
+            <input id="dialplan-setting-extensionstart" type="checkbox" ${extension.isStart ? 'checked': ''}>
+        </li>
+        <li>
+            <label for="dialplan-setting-extensioncatch">Grib fejl</label>
+            <input id="dialplan-setting-extensioncatch" type="checkbox" ${extension.isCatchAll ? 'checked': ''}>
+        </li>
+        <li>
+            <label for="dialplan-setting-extensioncatch">failover</label>
+            <select id="dialplan-setting-extensionfailover">
+              <option value="none">Ingen</option>
+            </select>
+        </li>
+      </ul>
+      ''';
 
-      CheckboxInputElement startInput = new CheckboxInputElement()
-          ..id = 'extension-setting-start'
-          ..checked = extension.isStart;
-      LabelElement startLabel = new LabelElement()
-          ..text = 'Start'
-          ..htmlFor = startInput.id;
+      DocumentFragment fragment = new DocumentFragment.html(html);
+      settingPanel.children.addAll(fragment.children);
 
-      CheckboxInputElement catchInput = new CheckboxInputElement()
-          ..id = 'extension-setting-catch'
-          ..checked = extension.isCatchAll;
-      LabelElement catchLabel = new LabelElement()
-          ..text = 'Grib fejl'
-          ..htmlFor = catchInput.id;
+      InputElement nameInput = settingPanel.querySelector('#dialplan-setting-extensionname');
+      nameInput
+        ..onInput.listen((_) {
+        extension.name = nameInput.value;
+        renderExtensionList(dialplan);
+      })
+      ..onInvalid.listen((_) {
+        nameInput.title = nameInput.validationMessage;
+      });
+
+      CheckboxInputElement startInput = settingPanel.querySelector('#dialplan-setting-extensionstart');
+      startInput.onChange.listen((_) {
+         extension.isStart = startInput.checked;
+         renderExtensionList(dialplan);
+      });
+
+      SelectElement failover = settingPanel.querySelector('#dialplan-setting-extensionfailover');
+      for(Extension ext in dialplan.Extensions) {
+        if(!ext.isStart && !ext.isCatchAll && extension != ext) {
+          OptionElement opt = new OptionElement()
+            ..text = ext.name
+            ..value = ext.name;
+
+          if(ext.name == extension.failoverExtension) {
+            opt.selected = true;
+          }
+
+          failover.children.add(opt);
+        }
+      }
+      failover.onChange.listen((_) {
+        if(failover.selectedIndex == 0) {
+          extension.failoverExtension = '';
+        } else {
+          extension.failoverExtension = failover.options[failover.selectedIndex].value;
+        }
+      });
+
+      CheckboxInputElement catchInput = settingPanel.querySelector('#dialplan-setting-extensioncatch');
+      catchInput.onChange.listen((_) {
+         extension.isCatchAll = catchInput.checked;
+         renderExtensionList(dialplan);
+      });
 
       commentTextarea.value = extension.comment;
-
-      ButtonElement save = new ButtonElement()
-          ..text = 'Gem'
-          ..onClick.listen((_) {
-        extension.name = nameInput.value;
+      if(commentTextSubscription != null) {
+        commentTextSubscription.cancel();
+      }
+      commentTextSubscription = commentTextarea.onInput.listen((_) {
         extension.comment = commentTextarea.value;
-        extension.isStart = startInput.checked;
-        extension.isCatchAll = catchInput.checked;
-            //TODO save.
-          });
-
-      settingPanel.children.addAll([nameLabel, nameInput, startLabel, startInput, catchLabel, catchInput, save]);
+      });
     }
 
   void settingsConditionTime(Time condition) {
     settingPanel.children.clear();
-    InputElement timeOfDayInput = new InputElement()
-        ..id = 'extension-setting-timeofday'
-        ..placeholder = '08:00-17:00'
-        ..value = condition.timeOfDay;
-    LabelElement timeOfDayLabel = new LabelElement()
-        ..text = 'timeOfDay'
-        ..htmlFor = timeOfDayInput.id;
 
-    InputElement wdayInput = new InputElement()
-        ..id = 'extension-setting-wday'
-        ..placeholder = 'mon-tue, wed, thu, fri-sat, sun'
-        ..value = condition.timeOfDay;
-    LabelElement wdayLabel = new LabelElement()
-        ..text = 'wday'
-        ..htmlFor = wdayInput.id;
+    String html = '''
+    <ul class="dialplan-settingsList">
+      <li>
+          <label for="dialplan-setting-timeofday">Time Of day</label>
+          <input id="dialplan-setting-timeofday" type="text" value="${condition.timeOfDay != null ? condition.timeOfDay != null : ''}" placeholder="08:00-17:00">
+      </li>
+      <li>
+          <label for="dialplan-setting-wday">Ugedage</label>
+          <input id="dialplan-setting-wday" type="text" value="${condition.wday != null ? condition.wday : ''}" placeholder="mon-tue, wed, thu, fri-sat, sun">
+      </li>
+    </ul>
+    ''';
+    DocumentFragment fragment = new DocumentFragment.html(html);
+    settingPanel.children.addAll(fragment.children);
 
-    InputElement ydayInput = new InputElement()
-        ..id = 'extension-setting-yday'
-        ..placeholder = '2014-2020'
-        ..value = condition.timeOfDay;
-    LabelElement ydayLabel = new LabelElement()
-        ..text = 'yday'
-        ..htmlFor = ydayInput.id;
+    InputElement timeOfDayInput = settingPanel.querySelector('#dialplan-setting-timeofday');
+    timeOfDayInput
+      ..onInput.listen((_) {
+        condition.timeOfDay = timeOfDayInput.value.isEmpty ? null : timeOfDayInput.value;
+      });
 
-    commentTextarea.value = condition.timeOfDay;
+    InputElement wdayInput = settingPanel.querySelector('#dialplan-setting-wday');
+    wdayInput
+      ..onInput.listen((_) {
+        condition.wday = wdayInput.value;
+    });
 
-    ButtonElement save = new ButtonElement()
-        ..text = 'Gem'
-        ..onClick.listen((_) {
-          condition.timeOfDay = timeOfDayInput.value;
-          condition.comment = commentTextarea.value;
-          condition.wday = wdayInput.value;
-          condition.yday = ydayInput.value;
+    commentTextarea.value = condition.comment;
+    if(commentTextSubscription != null) {
+      commentTextSubscription.cancel();
+    }
+    commentTextSubscription = commentTextarea.onInput.listen((_) {
+      condition.comment = commentTextarea.value;
+    });
 
-          //TODO save.
-        });
+//    ButtonElement save = new ButtonElement()
+//        ..text = 'Gem'
+//        ..onClick.listen((_) {
+//          condition.timeOfDay = timeOfDayInput.value;
+//          condition.comment = commentTextarea.value;
+//          condition.wday = wdayInput.value;
+//
+//          updateDialplan();
+//        });
 
-    settingPanel.children.addAll([timeOfDayLabel, timeOfDayInput, wdayLabel,
-        wdayInput, ydayLabel, ydayInput, save]);
+//    settingPanel.children.addAll([timeOfDayLabel, timeOfDayInput, wdayLabel,
+//        wdayInput]);
   }
 
   void settingsActionPlayAudio(PlayAudio action) {
     settingPanel.children.clear();
-    InputElement numberInput = new InputElement()
+    //TODO Der skal være en liste af filer her.
+    InputElement numberInput = new InputElement();
+    numberInput
         ..id = 'extension-setting-audiofile'
-        ..value = action.filename;
+        ..value = action.filename
+        ..onInput.listen((_) {
+      action.filename = numberInput.value;
+    });
 
     LabelElement numberLabel = new LabelElement()
         ..text = 'Lydfil'
         ..htmlFor = numberInput.id;
 
     commentTextarea.value = action.comment;
+    if(commentTextSubscription != null) {
+      commentTextSubscription.cancel();
+    }
+    commentTextSubscription = commentTextarea.onInput.listen((_) {
+      action.comment = commentTextarea.value;
+    });
 
-    ButtonElement save = new ButtonElement()
-        ..text = 'Gem'
-        ..onClick.listen((_) {
-          action.filename = numberInput.value;
-          action.comment = commentTextarea.value;
-
-          //TODO save.
-        });
-
-    settingPanel.children.addAll([numberLabel, numberInput, save]);
+    settingPanel.children.addAll([numberLabel, numberInput]);
   }
 
   void settingsActionForward(Forward action) {
     settingPanel.children.clear();
-    InputElement numberInput = new InputElement()
-        ..id = 'extension-setting-number'
-        ..value = action.number;
 
+    InputElement numberInput = new InputElement();
+    numberInput
+        ..id = 'extension-setting-number'
+        ..value = action.number
+        ..onInput.listen((_) {
+      action.number = numberInput.value;
+    });
     LabelElement numberLabel = new LabelElement()
         ..text = 'Nummer'
         ..htmlFor = numberInput.id;
 
     commentTextarea.value = action.comment;
+    if(commentTextSubscription != null) {
+      commentTextSubscription.cancel();
+    }
+    commentTextSubscription = commentTextarea.onInput.listen((_) {
+      action.comment = commentTextarea.value;
+    });
 
-    ButtonElement save = new ButtonElement()
-        ..text = 'Gem'
-        ..onClick.listen((_) {
-          action.number = numberInput.value;
-          action.comment = commentTextarea.value;
-
-          //TODO save.
-        });
-
-    settingPanel.children.addAll([numberLabel, numberInput, save]);
+    settingPanel.children.addAll([numberLabel, numberInput]);
   }
 
   void settingsActionExecuteIvr(ExecuteIvr action) {
     settingPanel.children.clear();
-    InputElement ivrnameInput = new InputElement()
-        ..id = 'extension-setting-ivrname'
-        ..value = action.ivrname;
 
+    InputElement ivrnameInput = new InputElement();
+    ivrnameInput
+        ..id = 'extension-setting-ivrname'
+        ..value = action.ivrname
+        ..onInput.listen((_) {
+      action.ivrname = ivrnameInput.value;
+    });
     LabelElement ivrnameLabel = new LabelElement()
         ..text = 'Ivr navn'
         ..htmlFor = ivrnameInput.id;
 
     commentTextarea.value = action.comment;
+    if(commentTextSubscription != null) {
+      commentTextSubscription.cancel();
+    }
+    commentTextSubscription = commentTextarea.onInput.listen((_) {
+      action.comment = commentTextarea.value;
+    });
 
-    ButtonElement save = new ButtonElement()
-        ..text = 'Gem'
-        ..onClick.listen((_) {
-          action.ivrname = ivrnameInput.value;
-          action.comment = commentTextarea.value;
+//    ButtonElement save = new ButtonElement()
+//        ..text = 'Gem'
+//        ..onClick.listen((_) {
+//          action.ivrname = ivrnameInput.value;
+//          action.comment = commentTextarea.value;
+//
+//          updateDialplan();
+//        });
 
-          //TODO save.
-        });
-
-    settingPanel.children.addAll([ivrnameLabel, ivrnameInput, save]);
+    settingPanel.children.addAll([ivrnameLabel, ivrnameInput]);
   }
 
   void settingsActionReceptionists(Receptionists action) {
     settingPanel.children.clear();
 
-    NumberInputElement sleepTimeInput = new NumberInputElement()
+    NumberInputElement sleepTimeInput = new NumberInputElement();
+    sleepTimeInput
         ..id = 'extension-setting-sleepTime'
-        ..value = action.sleepTime.toString();
+        ..value = action.sleepTime.toString()
+        ..onInput.listen((_) {
+      try {
+        int sleepTime = int.parse(sleepTimeInput.value);
+        action.sleepTime = sleepTime;
+      } catch(_) {}
+    });
     LabelElement numberLabel = new LabelElement()
         ..text = 'Ventetid'
         ..htmlFor = sleepTimeInput.id;
 
-    InputElement musicInput = new InputElement()
+    InputElement musicInput = new InputElement();
+    musicInput
         ..id = 'extension-setting-music'
-        ..value = action.music;
+        ..value = action.music
+        ..onInput.listen((_) {
+      action.music = musicInput.value;
+    });
     LabelElement musicLabel = new LabelElement()
         ..text = 'Ventemusik'
         ..htmlFor = musicInput.id;
 
-    InputElement welcomeInput = new InputElement()
+    InputElement welcomeInput = new InputElement();
+    welcomeInput
         ..id = 'extension-setting-welcomefile'
-        ..value = action.welcomeFile;
+        ..value = action.welcomeFile
+        ..onInput.listen((_) {
+      action.welcomeFile = welcomeInput.value;
+    });
     LabelElement welcomeLabel = new LabelElement()
         ..text = 'Velkomst lydfil'
         ..htmlFor = musicInput.id;
 
     commentTextarea.value = action.comment;
+    if(commentTextSubscription != null) {
+      commentTextSubscription.cancel();
+    }
+    commentTextSubscription = commentTextarea.onInput.listen((_) {
+      action.comment = commentTextarea.value;
+    });
 
-    ButtonElement save = new ButtonElement()
-        ..text = 'Gem'
-        ..onClick.listen((_) {
-          action.sleepTime = int.parse(sleepTimeInput.value);
-          action.music = musicInput.value;
-          action.comment = commentTextarea.value;
-          action.welcomeFile = welcomeInput.value;
-
-          //TODO save.
-        });
+//    ButtonElement save = new ButtonElement()
+//        ..text = 'Gem'
+//        ..onClick.listen((_) {
+//          action.sleepTime = int.parse(sleepTimeInput.value);
+//          action.music = musicInput.value;
+//          action.comment = commentTextarea.value;
+//          action.welcomeFile = welcomeInput.value;
+//
+//          updateDialplan();
+//        });
 
     settingPanel.children.addAll([numberLabel, sleepTimeInput, musicLabel,
-        musicInput, welcomeLabel, welcomeInput, save]);
+        musicInput, welcomeLabel, welcomeInput]);
+  }
+
+  void settingsActionVoicemail(Voicemail action) {
+    settingPanel.children.clear();
+    InputElement emailInput = new InputElement();
+    emailInput
+        ..id = 'extension-setting-email'
+        ..value = action.email
+        ..onInput.listen((_) {
+        action.email = emailInput.value;
+    });
+    LabelElement emailLabel = new LabelElement()
+        ..text = 'email'
+        ..htmlFor = emailInput.id;
+
+    commentTextarea.value = action.comment;
+    if(commentTextSubscription != null) {
+      commentTextSubscription.cancel();
+    }
+    commentTextSubscription = commentTextarea.onInput.listen((_) {
+      action.comment = commentTextarea.value;
+    });
+
+//    ButtonElement save = new ButtonElement()
+//        ..text = 'Gem'
+//        ..onClick.listen((_) {
+//          action.email = emailInput.value;
+//          action.comment = commentTextarea.value;
+//
+//          updateDialplan();
+//        });
+
+    settingPanel.children.addAll([emailLabel, emailInput]);
   }
 }

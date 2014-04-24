@@ -5,6 +5,7 @@ class ReceptionContact_ReducedReception {
   bool wantsMessages;
   int distributionListId;
   bool contactEnabled;
+  List<Phone> phoneNumbers;
 
   int receptionId;
   bool receptionEnabled;
@@ -31,18 +32,19 @@ class ReceptionContact_ReducedReception {
   ReceptionContact_ReducedReception();
 
   factory ReceptionContact_ReducedReception.fromJson(Map json) {
-    ReceptionContact_ReducedReception object =
-        new ReceptionContact_ReducedReception();
-    object.contactId = json['contact_id'];
-    object.wantsMessages = json['contact_wants_messages'];
-    object.distributionListId = json['contact_distribution_list_id'];
-    object.contactEnabled = json['contact_enabled'];
-    object.receptionId = json['reception_id'];
-    object.receptionEnabled = json['reception_enabled'];
-    object.receptionName = json['reception_full_name'];
-    object.receptionUri = json['reception_uri'];
+    ReceptionContact_ReducedReception object = new ReceptionContact_ReducedReception()
+      ..contactId = json['contact_id']
+      ..wantsMessages = json['contact_wants_messages']
+      ..distributionListId = json['contact_distribution_list_id']
+      ..contactEnabled = json['contact_enabled']
+      ..receptionId = json['reception_id']
+      ..receptionEnabled = json['reception_enabled']
+      ..receptionName = json['reception_full_name']
+      ..receptionUri = json['reception_uri']
 
-    object.organizationId = json['organization_id'];
+      ..organizationId = json['organization_id']
+
+      ..phoneNumbers = (json['contact_phonenumbers'] as List<Map>).map((Map json) => new Phone.fromJson(json)).toList();
 
     if (json.containsKey('contact_attributes')) {
       Map attributes = json['contact_attributes'];

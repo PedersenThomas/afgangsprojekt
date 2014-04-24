@@ -16,7 +16,7 @@ typedef bool Filter<T>(T element);
 typedef bool SearchFilter<T>(T element, String searchText);
 typedef String ElementToString<T>(T element, String searchText);
 typedef void ElementInvokation<T>(T element);
-typedef bool Equality<T>(T x, T y);
+typedef bool Equality<T>(T element, T referenceElement);
 typedef void callback();
 
 class SearchComponent<T> {
