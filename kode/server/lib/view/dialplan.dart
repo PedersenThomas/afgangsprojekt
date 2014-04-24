@@ -13,6 +13,6 @@ Map _dialplanAsJsonMap(Dialplan dialplan) {
     json['receptionid'] = dialplan.receptionId;
     return json;
   } else {
-    return null;
+    return {};
   }
 }

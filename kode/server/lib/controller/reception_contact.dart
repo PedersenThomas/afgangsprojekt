@@ -48,7 +48,7 @@ class ReceptionContactController {
     .then((Map data) {
       int receptionId = pathParameter(request.uri, 'reception');
       int contactId = pathParameter(request.uri, 'contact');
-
+      //List phoneNumbers = data['phonenumbers']; //[{"phoneid": 1, "value": "12345678", "kind": "PSTN"}]
       return db.createReceptionContact(receptionId, contactId, data['wants_messages'], data['distribution_list_id'], data['attributes'], data['enabled']);
     })
     .then((int rowsAffected) => writeAndCloseJson(request, JSON.encode({})))

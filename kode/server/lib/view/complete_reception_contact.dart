@@ -3,6 +3,7 @@ library adaheads.server.view.receptionContact;
 import 'dart:convert';
 
 import '../model.dart';
+import 'phone.dart';
 
 String receptionContactAsJson(CompleteReceptionContact contact) => JSON.encode(_receptionContactAsJsonMap(contact));
 
@@ -18,7 +19,9 @@ Map _receptionContactAsJsonMap(CompleteReceptionContact contact) => contact == n
      'wants_messages': contact.wantsMessages,
      'distribution_list_id': contact.distributionListId,
      'attributes': contact.attributes,
-     'reception_enabled': contact.receptionEnabled};
+     'reception_enabled': contact.receptionEnabled,
+     'phonenumbers': listPhoneNumbersAsJsonMap(contact.phonenumbers)};
 
 List _listReceptionContactAsJsonMap(List<CompleteReceptionContact> contacts) =>
     contacts.map(_receptionContactAsJsonMap).toList();
+

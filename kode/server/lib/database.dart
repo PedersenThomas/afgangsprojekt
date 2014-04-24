@@ -15,6 +15,7 @@ part 'database/dialplan.dart';
 part 'database/organization.dart';
 part 'database/reception.dart';
 part 'database/reception_contact.dart';
+part 'database/phone.dart';
 part 'database/user.dart';
 
 Future<Database> setupDatabase(Configuration config) {
@@ -136,6 +137,19 @@ class Database {
 
   Future<Dialplan> updateDialplan(int receptionId, Map dialplan) =>
       _updateDialplan(pool, receptionId, dialplan);
+
+  /* ***********************************************
+     ******************** Phone ********************
+   */
+
+  Future<int> createPhoneNumber(int receptionId, int contactId, String value, String kind) =>
+      _createPhoneNumber(pool, receptionId, contactId, value, kind);
+
+  Future<int> deletePhoneNumber(int phonenumberId) =>
+      _deletePhoneNumber(pool, phonenumberId);
+
+  Future<List<model.Phone>> getPhoneNumbers(int receptionId, int contactId) =>
+      _getPhoneNumbers(pool, receptionId, contactId);
 
   /* ***********************************************
      ********************* User ********************

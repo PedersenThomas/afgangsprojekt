@@ -10,7 +10,14 @@ Future<model.CompleteReceptionContact> _getReceptionContact(Pool pool, int recep
           rc.wants_messages, 
           rc.distribution_list_id, 
           rc.attributes, 
-          rc.enabled as receptionenabled
+          rc.enabled as receptionenabled,
+          (SELECT array_to_json(array_agg(row_to_json(row)))
+           FROM (SELECT 
+           pn.id, pn.value, pn.kind
+           FROM contact_phone_numbers cpn
+             JOIN phone_numbers pn on cpn.phone_number_id = pn.id
+           WHERE cpn.reception_id = rc.reception_id AND cpn.contact_id = rc.contact_id
+           ) row) as phone
     FROM reception_contacts rc
       JOIN contacts c on rc.contact_id = c.id
     WHERE rc.reception_id = @reception_id AND rc.contact_id = @contact_id
@@ -25,6 +32,12 @@ Future<model.CompleteReceptionContact> _getReceptionContact(Pool pool, int recep
       return null;
     } else {
       Row row = rows.first;
+
+      List<model.Phone> phonenumbers = new List<model.Phone>();
+      if(row.phone != null) {
+        phonenumbers = (JSON.decode(row.phone) as List).map((Map obj) => new model.Phone(obj['id'], obj['value'], obj['kind'])).toList();
+      }
+
       return new model.CompleteReceptionContact(
           row.id,
           row.full_name,
@@ -34,7 +47,8 @@ Future<model.CompleteReceptionContact> _getReceptionContact(Pool pool, int recep
           row.wants_messages,
           row.distribution_list_id,
           row.attributes == null ? {} : JSON.decode(row.attributes),
-          row.receptionenabled);
+          row.receptionenabled,
+          phonenumbers);
     }
   });
 }
@@ -49,7 +63,14 @@ Future<List<model.CompleteReceptionContact>> _getReceptionContactList(Pool pool,
           rc.wants_messages, 
           rc.distribution_list_id, 
           rc.attributes, 
-          rc.enabled as receptionenabled
+          rc.enabled as receptionenabled,
+          (SELECT array_to_json(array_agg(row_to_json(row)))
+           FROM (SELECT 
+           pn.id, pn.value, pn.kind
+           FROM contact_phone_numbers cpn
+             JOIN phone_numbers pn on cpn.phone_number_id = pn.id
+           WHERE cpn.reception_id = rc.reception_id AND cpn.contact_id = rc.contact_id
+           ) row) as phone
     FROM reception_contacts rc
       JOIN contacts c on rc.contact_id = c.id
     WHERE rc.reception_id = @reception_id
@@ -60,6 +81,11 @@ Future<List<model.CompleteReceptionContact>> _getReceptionContactList(Pool pool,
   return query(pool, sql, parameters).then((rows) {
     List<model.CompleteReceptionContact> receptions = new List<model.CompleteReceptionContact>();
     for(var row in rows) {
+      List<model.Phone> phonenumbers = new List<model.Phone>();
+      if(row.phone != null) {
+        phonenumbers = (JSON.decode(row.phone) as List).map((Map obj) => new model.Phone(obj['id'], obj['value'], obj['kind'])).toList();
+      }
+
       receptions.add(new model.CompleteReceptionContact(
           row.id,
           row.full_name,
@@ -69,7 +95,8 @@ Future<List<model.CompleteReceptionContact>> _getReceptionContactList(Pool pool,
           row.wants_messages,
           row.distribution_list_id,
           row.attributes == null ? {} : JSON.decode(row.attributes),
-          row.receptionenabled));
+          row.receptionenabled,
+          phonenumbers));
     }
     return receptions;
   });
@@ -136,7 +163,14 @@ Future<List<model.ReceptionContact_ReducedReception>> _getAContactsReceptionCont
             r.full_name as receptionname,
             r.uri as receptionuri,
             r.enabled as receptionenabled,
-            r.organization_id
+            r.organization_id,
+          (SELECT array_to_json(array_agg(row_to_json(row)))
+           FROM (SELECT 
+           pn.id, pn.value, pn.kind
+           FROM contact_phone_numbers cpn
+             JOIN phone_numbers pn on cpn.phone_number_id = pn.id
+           WHERE cpn.reception_id = rc.reception_id AND cpn.contact_id = rc.contact_id
+           ) row) as phone
     FROM reception_contacts rc
       JOIN receptions r on rc.reception_id = r.id
     WHERE rc.contact_id = @contact_id
@@ -147,12 +181,18 @@ Future<List<model.ReceptionContact_ReducedReception>> _getAContactsReceptionCont
   return query(pool, sql, parameters).then((rows) {
     List<model.ReceptionContact_ReducedReception> contacts = new List<model.ReceptionContact_ReducedReception>();
     for(var row in rows) {
+      List<model.Phone> phonenumbers = new List<model.Phone>();
+      if(row.phone != null) {
+        phonenumbers = (JSON.decode(row.phone) as List).map((Map obj) => new model.Phone(obj['id'], obj['value'], obj['kind'])).toList();
+      }
+
       contacts.add(new model.ReceptionContact_ReducedReception(
         row.contact_id,
         row.wants_messages,
         row.distribution_list_id,
         row.attributes == null ? {} : JSON.decode(row.attributes),
         row.contactenabled,
+        phonenumbers,
         row.reception_id,
         row.receptionname,
         row.receptionuri,

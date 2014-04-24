@@ -112,7 +112,7 @@ class ReceptionController {
     extractContent(request)
       .then(JSON.decode)
       .then((Map data) => db.updateDialplan(receptionId, data))
-      .then((_) => writeAndCloseJson(request, ''))
+      .then((_) => writeAndCloseJson(request, JSON.encode({})))
       .catchError((error, stack) {
         logger.error('updateDialplan url: "${request.uri}" gave error "${error}" ${stack}');
         Internal_Error(request);

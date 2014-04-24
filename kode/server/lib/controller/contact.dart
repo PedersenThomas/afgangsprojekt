@@ -82,6 +82,7 @@ class ContactController {
 
   void getReceptionList(HttpRequest request) {
     int contactId = pathParameter(request.uri, 'contact');
+
     db.getAContactsReceptionContactList(contactId).then((List<ReceptionContact_ReducedReception> data) {
       writeAndCloseJson(request, listReceptionContact_ReducedReceptionAsJson(data));
     }).catchError((error) {
