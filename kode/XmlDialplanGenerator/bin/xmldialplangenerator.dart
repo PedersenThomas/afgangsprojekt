@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:async';
 
-import 'package:xml/xml.dart';
 import 'package:libdialplan/libdialplan.dart';
 
 import '../lib/generator.dart';

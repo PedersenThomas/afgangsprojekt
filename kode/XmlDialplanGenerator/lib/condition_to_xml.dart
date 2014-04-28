@@ -25,10 +25,6 @@ XmlElement timeCondition(dialplan.Time condition, [String failoverExtension = nu
     node.attributes['wday'] = dialplan.Time.transformWdayToFreeSwitchFormat(condition.wday);
   }
 
-  if(condition.yday != null && condition.yday.isNotEmpty) {
-    node.attributes['yday'] = condition.yday;
-  }
-
   if(failoverExtension != null && failoverExtension.isNotEmpty && receptionId != null) {
     XmlElement antiAction = FsTransfer(receptionExtensionName(receptionId, failoverExtension), contextName(receptionId), anti_action: true);
     node.children.add(antiAction);
