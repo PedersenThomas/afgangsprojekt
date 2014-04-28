@@ -14,14 +14,12 @@ String listReceptionContact_ReducedReceptionAsJson(List<ReceptionContact_Reduced
 Map _receptionContact_ReducedReceptionAsJsonMap(ReceptionContact_ReducedReception r) => r == null ? {} :
     {'contact_id': r.contactId,
      'contact_wants_messages': r.wantsMessages,
-     'contact_distribution_list_id': r.distributionListId,
      'contact_attributes': r.attributes,
      'contact_enabled': r.contactEnabled,
-     'contact_phonenumbers': listPhoneNumbersAsJsonMap(r.phoneNumbers),
+     'contact_phonenumbers': r.phoneNumbers,
 
      'reception_id': r.receptionId,
      'reception_full_name': r.receptionName,
-     'reception_uri': r.receptionUri,
      'reception_enabled': r.receptionEnabled,
 
      'organization_id': r.organizationId};

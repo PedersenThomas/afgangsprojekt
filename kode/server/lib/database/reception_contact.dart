@@ -7,17 +7,10 @@ Future<model.CompleteReceptionContact> _getReceptionContact(Pool pool, int recep
            c.contact_type, 
            c.enabled as contactenabled, 
           rc.reception_id, 
-          rc.wants_messages, 
-          rc.distribution_list_id, 
+          rc.wants_messages,
           rc.attributes, 
           rc.enabled as receptionenabled,
-          (SELECT array_to_json(array_agg(row_to_json(row)))
-           FROM (SELECT 
-           pn.id, pn.value, pn.kind
-           FROM contact_phone_numbers cpn
-             JOIN phone_numbers pn on cpn.phone_number_id = pn.id
-           WHERE cpn.reception_id = rc.reception_id AND cpn.contact_id = rc.contact_id
-           ) row) as phone
+          rc.phonenumbers
     FROM reception_contacts rc
       JOIN contacts c on rc.contact_id = c.id
     WHERE rc.reception_id = @reception_id AND rc.contact_id = @contact_id
@@ -33,11 +26,6 @@ Future<model.CompleteReceptionContact> _getReceptionContact(Pool pool, int recep
     } else {
       Row row = rows.first;
 
-      List<model.Phone> phonenumbers = new List<model.Phone>();
-      if(row.phone != null) {
-        phonenumbers = (JSON.decode(row.phone) as List).map((Map obj) => new model.Phone(obj['id'], obj['value'], obj['kind'])).toList();
-      }
-
       return new model.CompleteReceptionContact(
           row.id,
           row.full_name,
@@ -45,10 +33,9 @@ Future<model.CompleteReceptionContact> _getReceptionContact(Pool pool, int recep
           row.contactenabled,
           row.reception_id,
           row.wants_messages,
-          row.distribution_list_id,
           row.attributes == null ? {} : JSON.decode(row.attributes),
           row.receptionenabled,
-          phonenumbers);
+          row.phonenumbers == null ? [] : JSON.decode(row.phonenumbers));
     }
   });
 }
@@ -60,17 +47,10 @@ Future<List<model.CompleteReceptionContact>> _getReceptionContactList(Pool pool,
            c.contact_type, 
            c.enabled as contactenabled, 
           rc.reception_id, 
-          rc.wants_messages, 
-          rc.distribution_list_id, 
+          rc.wants_messages,
           rc.attributes, 
           rc.enabled as receptionenabled,
-          (SELECT array_to_json(array_agg(row_to_json(row)))
-           FROM (SELECT 
-           pn.id, pn.value, pn.kind
-           FROM contact_phone_numbers cpn
-             JOIN phone_numbers pn on cpn.phone_number_id = pn.id
-           WHERE cpn.reception_id = rc.reception_id AND cpn.contact_id = rc.contact_id
-           ) row) as phone
+          rc.phonenumbers
     FROM reception_contacts rc
       JOIN contacts c on rc.contact_id = c.id
     WHERE rc.reception_id = @reception_id
@@ -81,11 +61,6 @@ Future<List<model.CompleteReceptionContact>> _getReceptionContactList(Pool pool,
   return query(pool, sql, parameters).then((rows) {
     List<model.CompleteReceptionContact> receptions = new List<model.CompleteReceptionContact>();
     for(var row in rows) {
-      List<model.Phone> phonenumbers = new List<model.Phone>();
-      if(row.phone != null) {
-        phonenumbers = (JSON.decode(row.phone) as List).map((Map obj) => new model.Phone(obj['id'], obj['value'], obj['kind'])).toList();
-      }
-
       receptions.add(new model.CompleteReceptionContact(
           row.id,
           row.full_name,
@@ -93,26 +68,25 @@ Future<List<model.CompleteReceptionContact>> _getReceptionContactList(Pool pool,
           row.contactenabled,
           row.reception_id,
           row.wants_messages,
-          row.distribution_list_id,
           row.attributes == null ? {} : JSON.decode(row.attributes),
           row.receptionenabled,
-          phonenumbers));
+          row.phonenumbers == null ? [] : JSON.decode(row.phonenumbers)));
     }
     return receptions;
   });
 }
 
-Future<int> _createReceptionContact(Pool pool, int receptionId, int contactId, bool wantMessages, int distributionListId, Map attributes, bool enabled) {
+Future<int> _createReceptionContact(Pool pool, int receptionId, int contactId, bool wantMessages, List phonenumbers, Map attributes, bool enabled) {
   String sql = '''
-    INSERT INTO reception_contacts (reception_id, contact_id, wants_messages, distribution_list_id, attributes, enabled)
-    VALUES (@reception_id, @contact_id, @wants_messages, @distribution_list_id, @attributes, @enabled);
+    INSERT INTO reception_contacts (reception_id, contact_id, wants_messages, phonenumbers, attributes, enabled)
+    VALUES (@reception_id, @contact_id, @wants_messages, @distribution_list_id, @phonenumbers, @attributes, @enabled);
   ''';
 
   Map parameters =
     {'reception_id'         : receptionId,
      'contact_id'           : contactId,
      'wants_messages'       : wantMessages,
-     'distribution_list_id' : distributionListId,
+     'phonenumbers'         : phonenumbers == null ? '[]' : JSON.encode(phonenumbers),
      'attributes'           : attributes == null ? '{}' : JSON.encode(attributes),
      'enabled'              : enabled};
 
@@ -130,13 +104,13 @@ Future<int> _deleteReceptionContact(Pool pool, int receptionId, int contactId) {
   return execute(pool, sql, parameters);
 }
 
-Future<int> _updateReceptionContact(Pool pool, int receptionId, int contactId, bool wantMessages, int distributionListId, Map attributes, bool enabled) {
+Future<int> _updateReceptionContact(Pool pool, int receptionId, int contactId, bool wantMessages, List phonenumbers, Map attributes, bool enabled) {
   String sql = '''
     UPDATE reception_contacts
     SET wants_messages=@wants_messages,
-        distribution_list_id=@distribution_list_id,
         attributes=@attributes,
-        enabled=@enabled
+        enabled=@enabled,
+        phonenumbers=@phonenumbers
     WHERE reception_id=@reception_id AND contact_id=@contact_id;
   ''';
 
@@ -144,7 +118,7 @@ Future<int> _updateReceptionContact(Pool pool, int receptionId, int contactId, b
     {'reception_id'         : receptionId,
      'contact_id'           : contactId,
      'wants_messages'       : wantMessages,
-     'distribution_list_id' : distributionListId,
+     'phonenumbers'         : phonenumbers == null ? '[]' : JSON.encode(phonenumbers),
      'attributes'           : attributes == null ? '{}' : JSON.encode(attributes),
      'enabled'              : enabled};
 
@@ -155,22 +129,14 @@ Future<List<model.ReceptionContact_ReducedReception>> _getAContactsReceptionCont
   String sql = '''
     SELECT rc.contact_id,
            rc.wants_messages,
-           rc.distribution_list_id,
            rc.attributes,
            rc.enabled as contactenabled,
+           rc.phonenumbers,
             r.organization_id,
             r.id as reception_id,
             r.full_name as receptionname,
-            r.uri as receptionuri,
             r.enabled as receptionenabled,
-            r.organization_id,
-          (SELECT array_to_json(array_agg(row_to_json(row)))
-           FROM (SELECT 
-           pn.id, pn.value, pn.kind
-           FROM contact_phone_numbers cpn
-             JOIN phone_numbers pn on cpn.phone_number_id = pn.id
-           WHERE cpn.reception_id = rc.reception_id AND cpn.contact_id = rc.contact_id
-           ) row) as phone
+            r.organization_id
     FROM reception_contacts rc
       JOIN receptions r on rc.reception_id = r.id
     WHERE rc.contact_id = @contact_id
@@ -181,21 +147,14 @@ Future<List<model.ReceptionContact_ReducedReception>> _getAContactsReceptionCont
   return query(pool, sql, parameters).then((rows) {
     List<model.ReceptionContact_ReducedReception> contacts = new List<model.ReceptionContact_ReducedReception>();
     for(var row in rows) {
-      List<model.Phone> phonenumbers = new List<model.Phone>();
-      if(row.phone != null) {
-        phonenumbers = (JSON.decode(row.phone) as List).map((Map obj) => new model.Phone(obj['id'], obj['value'], obj['kind'])).toList();
-      }
-
       contacts.add(new model.ReceptionContact_ReducedReception(
         row.contact_id,
         row.wants_messages,
-        row.distribution_list_id,
         row.attributes == null ? {} : JSON.decode(row.attributes),
         row.contactenabled,
-        phonenumbers,
+        row.phonenumbers == null ? [] : JSON.decode(row.phonenumbers),
         row.reception_id,
         row.receptionname,
-        row.receptionuri,
         row.receptionenabled,
         row.organization_id));
     }

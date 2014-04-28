@@ -1,16 +1,15 @@
 part of adaheads_server_database;
 
-Future<int> _createReception(Pool pool, int organizationId, String fullName, String uri, Map attributes, String extradatauri, bool enabled, String number) {
+Future<int> _createReception(Pool pool, int organizationId, String fullName, Map attributes, String extradatauri, bool enabled, String number) {
   String sql = '''
-    INSERT INTO receptions (organization_id, full_name, uri, attributes, extradatauri, enabled, reception_telephonenumber)
-    VALUES (@organization_id, @full_name, @uri, @attributes, @extradatauri, @enabled, @reception_telephonenumber)
+    INSERT INTO receptions (organization_id, full_name, attributes, extradatauri, enabled, reception_telephonenumber)
+    VALUES (@organization_id, @full_name, @attributes, @extradatauri, @enabled, @reception_telephonenumber)
     RETURNING id;
   ''';
 
   Map parameters =
     {'organization_id': organizationId,
      'full_name'      : fullName,
-     'uri'            : uri,
      'attributes'     : attributes == null ? '{}' : JSON.encode(attributes),
      'extradatauri'   : extradatauri,
      'enabled'        : enabled,
@@ -33,7 +32,7 @@ Future<int> _deleteReception(Pool pool, int organizationId, int id) {
 
 Future<List<model.Reception>> _getOrganizationReceptionList(Pool pool, int organizationId) {
   String sql = '''
-    SELECT id, organization_id, full_name, uri, attributes, extradatauri, enabled, reception_telephonenumber
+    SELECT id, organization_id, full_name, attributes, extradatauri, enabled, reception_telephonenumber
     FROM receptions
     WHERE organization_id=@organization_id
   ''';
@@ -47,7 +46,6 @@ Future<List<model.Reception>> _getOrganizationReceptionList(Pool pool, int organ
           row.id,
           row.organization_id,
           row.full_name,
-          row.uri,
           JSON.decode(row.attributes != null ? row.attributes : '{}'),
           row.extradatauri,
           row.enabled,
@@ -59,7 +57,7 @@ Future<List<model.Reception>> _getOrganizationReceptionList(Pool pool, int organ
 
 Future<model.Reception> _getReception(Pool pool, int organizationId, int receptionId) {
   String sql = '''
-    SELECT id, organization_id, full_name, uri, attributes, extradatauri, enabled, reception_telephonenumber
+    SELECT id, organization_id, full_name, attributes, extradatauri, enabled, reception_telephonenumber
     FROM receptions
     WHERE id = @id AND organization_id=@organization_id
   ''';
@@ -77,7 +75,6 @@ Future<model.Reception> _getReception(Pool pool, int organizationId, int recepti
           row.id,
           row.organization_id,
           row.full_name,
-          row.uri,
           JSON.decode(row.attributes != null ? row.attributes : '{}'),
           row.extradatauri,
           row.enabled,
@@ -88,7 +85,7 @@ Future<model.Reception> _getReception(Pool pool, int organizationId, int recepti
 
 Future<List<model.Reception>> _getReceptionList(Pool pool) {
   String sql = '''
-    SELECT id, organization_id, full_name, uri, attributes, extradatauri, enabled, reception_telephonenumber
+    SELECT id, organization_id, full_name, attributes, extradatauri, enabled, reception_telephonenumber
     FROM receptions
   ''';
 
@@ -100,7 +97,6 @@ Future<List<model.Reception>> _getReceptionList(Pool pool) {
           row.id,
           row.organization_id,
           row.full_name,
-          row.uri,
           JSON.decode(row.attributes != null ? row.attributes : '{}'),
           row.extradatauri,
           row.enabled,
@@ -110,16 +106,15 @@ Future<List<model.Reception>> _getReceptionList(Pool pool) {
   });
 }
 
-Future<int> _updateReception(Pool pool, int organizationId, int id, String fullName, String uri, Map attributes, String extradatauri, bool enabled, String number) {
+Future<int> _updateReception(Pool pool, int organizationId, int id, String fullName, Map attributes, String extradatauri, bool enabled, String number) {
   String sql = '''
     UPDATE receptions
-    SET full_name=@full_name, uri=@uri, attributes=@attributes, extradatauri=@extradatauri, enabled=@enabled, reception_telephonenumber=@reception_telephonenumber
+    SET full_name=@full_name, attributes=@attributes, extradatauri=@extradatauri, enabled=@enabled, reception_telephonenumber=@reception_telephonenumber
     WHERE id=@id AND organization_id=@organization_id;
   ''';
 
   Map parameters =
     {'full_name'      : fullName,
-     'uri'            : uri,
      'attributes'     : attributes == null ? '{}' : JSON.encode(attributes),
      'extradatauri'   : extradatauri,
      'enabled'        : enabled,
@@ -132,7 +127,7 @@ Future<int> _updateReception(Pool pool, int organizationId, int id, String fullN
 
 Future<List<model.Reception>> _getContactReceptions(Pool pool, int contactId) {
   String sql = '''
-    SELECT r.id, r.organization_id, r.full_name, r.uri, r.attributes, r.extradatauri, r.enabled, r.reception_telephonenumber
+    SELECT r.id, r.organization_id, r.full_name, r.attributes, r.extradatauri, r.enabled, r.reception_telephonenumber
     FROM reception_contacts rc
       JOIN receptions r on rc.reception_id = r.id
     WHERE rc.contact_id=@contact_id
@@ -147,7 +142,6 @@ Future<List<model.Reception>> _getContactReceptions(Pool pool, int contactId) {
           row.id,
           row.organization_id,
           row.full_name,
-          row.uri,
           JSON.decode(row.attributes != null ? row.attributes : '{}'),
           row.extradatauri,
           row.enabled,

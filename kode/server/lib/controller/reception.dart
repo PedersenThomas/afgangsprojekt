@@ -60,8 +60,7 @@ class ReceptionController {
     int organizationId = pathParameter(request.uri, 'organization');
 
     extractContent(request).then(JSON.decode).then((Map data) =>
-        db.createReception(organizationId, data['full_name'], data['uri'],
-        data['attributes'], data['extradatauri'], data['enabled'], data['number'])
+        db.createReception(organizationId, data['full_name'], data['attributes'], data['extradatauri'], data['enabled'], data['number'])
         ).then((int id) => writeAndCloseJson(request, receptionIdAsJson(id))
         ).catchError((error) {
       logger.error(error);
@@ -74,7 +73,7 @@ class ReceptionController {
     int receptionId = pathParameter(request.uri, 'reception');
 
     extractContent(request).then(JSON.decode).then((Map data) =>
-        db.updateReception(organizationId, receptionId, data['full_name'], data['uri'],
+        db.updateReception(organizationId, receptionId, data['full_name'],
         data['attributes'], data['extradatauri'], data['enabled'], data['number'])
         ).then((int id) => writeAndCloseJson(request, receptionIdAsJson(id))
         ).catchError((error) {

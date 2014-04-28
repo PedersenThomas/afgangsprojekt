@@ -17,7 +17,6 @@ Map _receptionContactAsJsonMap(CompleteReceptionContact contact) => contact == n
      'contact_type': contact.contactType,
      'contact_enabled': contact.contactEnabled,
      'wants_messages': contact.wantsMessages,
-     'distribution_list_id': contact.distributionListId,
      'attributes': contact.attributes,
      'reception_enabled': contact.receptionEnabled,
      'phonenumbers': listPhoneNumbersAsJsonMap(contact.phonenumbers)};

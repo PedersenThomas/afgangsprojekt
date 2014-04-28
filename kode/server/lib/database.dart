@@ -43,8 +43,8 @@ class Database {
      ***************** Reception *******************
   */
 
-  Future<int> createReception(int organizationId, String fullName, String uri, Map attributes, String extradatauri, bool enabled, String number) =>
-      _createReception(pool, organizationId, fullName, uri, attributes, extradatauri, enabled, number);
+  Future<int> createReception(int organizationId, String fullName, Map attributes, String extradatauri, bool enabled, String number) =>
+      _createReception(pool, organizationId, fullName, attributes, extradatauri, enabled, number);
 
   Future<int> deleteReception(int organizationId, int id) =>
       _deleteReception(pool, organizationId, id);
@@ -57,8 +57,8 @@ class Database {
 
   Future<List<model.Reception>> getReceptionList() => _getReceptionList(pool);
 
-  Future<int> updateReception(int organizationId, int id, String fullName, String uri, Map attributes, String extradatauri, bool enabled, String number) =>
-      _updateReception(pool, organizationId, id, fullName, uri, attributes, extradatauri, enabled, number);
+  Future<int> updateReception(int organizationId, int id, String fullName, Map attributes, String extradatauri, bool enabled, String number) =>
+      _updateReception(pool, organizationId, id, fullName, attributes, extradatauri, enabled, number);
 
   Future<List<model.Reception>> getOrganizationReceptionList(int organizationId) =>
       _getOrganizationReceptionList(pool, organizationId);
@@ -88,8 +88,8 @@ class Database {
      ************ Reception Contacts ***************
    */
 
-  Future<int> createReceptionContact(int receptionId, int contactId, bool wantMessages, int distributionListId, Map attributes, bool enabled) =>
-      _createReceptionContact(pool, receptionId, contactId, wantMessages, distributionListId, attributes, enabled);
+  Future<int> createReceptionContact(int receptionId, int contactId, bool wantMessages, List phonenumbers, Map attributes, bool enabled) =>
+      _createReceptionContact(pool, receptionId, contactId, wantMessages, phonenumbers, attributes, enabled);
 
   Future<int> deleteReceptionContact(int receptionId, int contactId) =>
       _deleteReceptionContact(pool, receptionId, contactId);
@@ -106,8 +106,8 @@ class Database {
   Future<List<model.CompleteReceptionContact>> getReceptionContactList(int receptionId) =>
       _getReceptionContactList(pool, receptionId);
 
-  Future<int> updateReceptionContact(int receptionId, int contactId, bool wantMessages, int distributionListId, Map attributes, bool enabled) =>
-      _updateReceptionContact(pool, receptionId, contactId, wantMessages, distributionListId, attributes, enabled);
+  Future<int> updateReceptionContact(int receptionId, int contactId, bool wantMessages, List phonenumbers, Map attributes, bool enabled) =>
+      _updateReceptionContact(pool, receptionId, contactId, wantMessages, phonenumbers, attributes, enabled);
 
   /* ***********************************************
      *************** Organization ******************

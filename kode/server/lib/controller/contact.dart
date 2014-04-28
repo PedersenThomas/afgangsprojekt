@@ -75,7 +75,7 @@ class ContactController {
     db.getContactTypeList().then((List<String> data) {
       writeAndCloseJson(request, contactTypesAsJson(data));
     }).catchError((error) {
-      logger.error('contractController.getReceptionList url: "${request.uri}" gave error "${error}"');
+      logger.error('contractController.getContactTypeList url: "${request.uri}" gave error "${error}"');
       Internal_Error(request);
     });
   }

@@ -7,10 +7,9 @@ class CompleteReceptionContact {
   bool contactEnabled;
   int receptionId;
   bool wantsMessages;
-  int distributionListId;
   Map attributes;
   bool receptionEnabled;
-  List<Phone> phonenumbers;
+  List phonenumbers;
 
   CompleteReceptionContact (
     int this.id,
@@ -19,8 +18,7 @@ class CompleteReceptionContact {
     bool this.contactEnabled,
     int this.receptionId,
     bool this.wantsMessages,
-    int this.distributionListId,
     Map this.attributes,
     bool this.receptionEnabled,
-    List<Phone> this.phonenumbers);
+    List this.phonenumbers);
 }
