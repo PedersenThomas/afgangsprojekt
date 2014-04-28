@@ -7,7 +7,6 @@ class CustomReceptionContact {
   bool contactEnabled;
   int receptionId;
   bool wantsMessages;
-  int distributionListId;
   Map attributes;
   bool receptionEnabled;
 
@@ -21,7 +20,6 @@ class CustomReceptionContact {
     object.contactEnabled = json['contact_enabled'];
     object.receptionId = json['reception_id'];
     object.wantsMessages = json['wants_messages'];
-    object.distributionListId = json['distribution_list_id'];
     object.attributes = json['attributes'];
     object.receptionEnabled = json['reception_enabled'];
 
@@ -36,7 +34,6 @@ class CustomReceptionContact {
       'contact_enabled': contactEnabled,
       'reception_id': receptionId,
       'wants_messages': wantsMessages,
-      'distribution_list_id': distributionListId,
       'attributes': attributes,
       'reception_enabled': receptionEnabled
     };

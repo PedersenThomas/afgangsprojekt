@@ -75,7 +75,7 @@ class DialplanView {
     });
 
     controlList.children.forEach((LIElement li) {
-      li.onClick.listen((_) => hanleControlClick(li.value));
+      li.onClick.listen((_) => handleControlClick(li.value));
     });
 
     extensionAdd.onClick.listen((_) {
@@ -169,7 +169,7 @@ class DialplanView {
     return li;
   }
 
-  void hanleControlClick(int value) {
+  void handleControlClick(int value) {
     if (selectedExtension != null) {
       switch (value) {
         case _ControlLookUp.timeControl:

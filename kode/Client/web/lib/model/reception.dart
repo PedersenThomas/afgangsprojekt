@@ -4,7 +4,6 @@ class Reception {
   int id;
   int organization_id;
   String full_name;
-  String uri;
   String product;
   String other;
   String greeting;
@@ -34,7 +33,6 @@ class Reception {
         ..id = json['id']
         ..organization_id = json['organization_id']
         ..full_name = stringFromJson(json, 'full_name')
-        ..uri = stringFromJson(json, 'uri')
         ..enabled = json['enabled']
         ..number = json['number'];
 
@@ -49,17 +47,13 @@ class Reception {
 
           ..addresses = priorityListFromJson(attributes, 'addresses')
           ..alternatenames = priorityListFromJson(attributes, 'alternatenames')
-          ..bankinginformation = priorityListFromJson(attributes,
-              'bankinginformation')
-          ..crapcallhandling = priorityListFromJson(attributes,
-              'crapcallhandling')
+          ..bankinginformation = priorityListFromJson(attributes, 'bankinginformation')
+          ..crapcallhandling = priorityListFromJson(attributes, 'crapcallhandling')
           ..emailaddresses = priorityListFromJson(attributes, 'emailaddresses')
           ..handlings = priorityListFromJson(attributes, 'handlings')
           ..openinghours = priorityListFromJson(attributes, 'openinghours')
-          ..registrationnumbers = priorityListFromJson(attributes,
-              'registrationnumbers')
-          ..telephonenumbers = priorityListFromJson(attributes,
-              'telephonenumbers')
+          ..registrationnumbers = priorityListFromJson(attributes, 'registrationnumbers')
+          ..telephonenumbers = priorityListFromJson(attributes, 'telephonenumbers')
           ..websites = priorityListFromJson(attributes, 'websites');
     }
 
@@ -88,7 +82,6 @@ class Reception {
       'id': id,
       'orgaanization_id': organization_id,
       'full_name': full_name,
-      'uri': uri,
       'enabled': enabled,
       'attributes': attributes,
       'number': number

@@ -3,6 +3,8 @@ library contact_view;
 import 'dart:async';
 import 'dart:html';
 
+import 'package:html5_dnd/html5_dnd.dart';
+
 import 'lib/eventbus.dart';
 import 'lib/logger.dart' as log;
 import 'lib/model.dart';
@@ -36,6 +38,7 @@ class ContactView {
   bool createNew = false;
 
   Map<int, LazyFuture> saveList = new Map<int, LazyFuture>();
+  List<String> phonenumberTypes = ['PSTN', 'TheOtherOne'];
 
   ContactView(DivElement this.element) {
     ulContactList = element.querySelector('#contact-list');
@@ -152,8 +155,7 @@ class ContactView {
           contacts.sort((a, b) => a.receptionName.compareTo(b.receptionName));
           ulReceptionContacts.children
               ..clear()
-              ..addAll(contacts.map((receptioncontact) => receptionContactBox(
-                  receptioncontact, receptionContactUpdate)));
+              ..addAll(contacts.map((receptioncontact) => receptionContactBox(receptioncontact, receptionContactUpdate)));
 
           //Rightbar
           ulReceptionList.children
@@ -182,10 +184,8 @@ class ContactView {
   }
 
   Future receptionContactUpdate(ReceptionContact RC) {
-    return request.updateReceptionContact(RC.receptionId, RC.contactId,
-        RC.toJson()).catchError((error) {
-      log.error('Tried to update a Reception Contact, but failed with "$error"'
-          );
+    return request.updateReceptionContact(RC.receptionId, RC.contactId, RC.toJson()).catchError((error) {
+      log.error('Tried to update a Reception Contact, but failed with "$error"');
     });
   }
 
@@ -208,9 +208,8 @@ class ContactView {
    * If any of the fields changes, save to [saveList] a function that calls [receptionContactHandler] with the changed [ReceptionContact]
    * If you want there to always be this function in [saveList] set alwaysAddToSaveList to true.
    */
-  LIElement receptionContactBox(ReceptionContact_ReducedReception
-      contact, HandleReceptionContact receptionContactHandler, [bool
-      alwaysAddToSaveList = false]) {
+  LIElement receptionContactBox(ReceptionContact_ReducedReception contact, HandleReceptionContact receptionContactHandler,
+                                [bool alwaysAddToSaveList = false]) {
     DivElement div = new DivElement()..classes.add('contact-reception');
     LIElement li = new LIElement();
     SpanElement header = new SpanElement()
@@ -240,7 +239,7 @@ class ContactView {
 
     InputElement wantMessage, enabled, department, info, position, relations,
         responsibility;
-    UListElement backupList, emailList, handlingList, telephoneNumbersList,
+    UListElement backupList, emailList, handlingList, phoneNumbersList,
         workhoursList, tagsList;
 
     Function onChange = () {
@@ -249,14 +248,14 @@ class ContactView {
           ReceptionContact RC = new ReceptionContact()
               ..contactId = contact.contactId
               ..receptionId = contact.receptionId
-              ..distributionListId = contact.distributionListId
               ..contactEnabled = enabled.checked
               ..wantsMessages = wantMessage.checked
+              ..phoneNumbers = getPhoneNumbersFromDOM(phoneNumbersList)
 
               ..backup = getListValues(backupList)
               ..emailaddresses = getListValues(emailList)
               ..handling = getListValues(handlingList)
-              ..telephonenumbers = getListValues(telephoneNumbersList)
+              //..telephonenumbers = getListValues(telephoneNumbersList)
               ..workhours = getListValues(workhoursList)
               ..tags = getListValues(tagsList)
 
@@ -323,8 +322,10 @@ class ContactView {
     rightCell = makeTableCellInsertInRow(row);
     handlingList = makeListBox(leftCell, 'Håndtering', contact.handling,
         onChange: onChange);
-    telephoneNumbersList = makeListBox(rightCell, 'Telefonnumre',
-        contact.telephonenumbers, onChange: onChange);
+    phoneNumbersList = makePhoneNumbersList(rightCell, contact.phoneNumbers, onChange: onChange);
+
+//      telephoneNumbersList =  makeListBox(rightCell, 'Telefonnumre',
+//        contact.telephonenumbers, onChange: onChange);
 
     row = makeTableRowInsertInTable(tableBody);
     leftCell = makeTableCellInsertInRow(row);
@@ -355,8 +356,93 @@ class ContactView {
     return row;
   }
 
-  UListElement makeListBox(Element container, String labelText, List<String>
-      dataList, {Function onChange}) {
+  UListElement makePhoneNumbersList(Element container, List<Phone> phonenumbers, {Function onChange}) {
+    LabelElement label = new LabelElement();
+    UListElement ul = new UListElement()..classes.add('content-list');
+
+    label.text = 'Telefonnumre';
+
+    /////
+    List<LIElement> children = new List<LIElement>();
+      if (phonenumbers != null) {
+        for (Phone number in phonenumbers) {
+          LIElement li = simpleListElement(number.value, onChange: onChange);
+          li.value = number.id;
+          SelectElement kindpicker = new SelectElement()
+            ..children.addAll(phonenumberTypes.map((String kind) => new OptionElement(data: kind, value: kind, selected: kind == number.kind)))
+            ..onChange.listen((_) => onChange());
+          li.children.add(kindpicker);
+          children.add(li);
+        }
+      }
+
+      SortableGroup sortGroup = new SortableGroup()..installAll(children);
+
+      if (onChange != null) {
+        sortGroup.onSortUpdate.listen((SortableEvent event) => onChange());
+      }
+
+      // Only accept elements from this section.
+      sortGroup.accept.add(sortGroup);
+
+      InputElement inputNewItem = new InputElement();
+      inputNewItem
+          ..classes.add(addNewLiClass)
+          ..placeholder = 'Tilføj ny...'
+          ..onKeyPress.listen((KeyboardEvent event) {
+            KeyEvent key = new KeyEvent.wrap(event);
+            if (key.keyCode == Keys.ENTER) {
+              String item = inputNewItem.value;
+              inputNewItem.value = '';
+
+              LIElement li = simpleListElement(item);
+              SelectElement kindpicker = new SelectElement()
+                ..children.addAll(phonenumberTypes.map((String kind) => new OptionElement(data: kind, value: kind)))
+                ..onChange.listen((_) => onChange());
+              li.children.add(kindpicker);
+              int index = ul.children.length - 1;
+              sortGroup.install(li);
+              ul.children.insert(index, li);
+
+              if (onChange != null) {
+                onChange();
+              }
+            } else if (key.keyCode == Keys.ESCAPE) {
+              inputNewItem.value = '';
+            }
+          });
+
+      children.add(new LIElement()..children.add(inputNewItem));
+
+      ul.children
+          ..clear()
+          ..addAll(children);
+    /////
+
+    container.children.addAll([label, ul]);
+
+    return ul;
+  }
+
+  List<Phone> getPhoneNumbersFromDOM(UListElement element) {
+    List<Phone> phonenumbers = new List<Phone>();
+
+    for (LIElement li in element.children) {
+      if (!li.classes.contains(addNewLiClass)) {
+        SpanElement content = li.children.firstWhere((elem) => elem is SpanElement, orElse: () => null);
+        SelectElement kindpicker = li.children.firstWhere((elem) => elem is SelectElement, orElse: () => null);
+        if (content != null && kindpicker != null) {
+          phonenumbers.add(new Phone()
+            ..id = li.value
+            ..kind = kindpicker.options[kindpicker.selectedIndex].value
+            ..value = content.text);
+        }
+      }
+    }
+    return phonenumbers;
+  }
+
+  UListElement makeListBox(Element container, String labelText, List<String> dataList, {Function onChange}) {
     LabelElement label = new LabelElement();
     UListElement ul = new UListElement()..classes.add('content-list');
 
@@ -458,7 +544,7 @@ class ContactView {
     }
   }
 
-  clearContent() {
+  void clearContent() {
     inputName.value = '';
     inputType.selectedIndex = 0;
     inputEnabled.checked = true;
@@ -486,9 +572,7 @@ class ContactView {
 
           ..receptionId = reception.id
           ..receptionName = reception.full_name
-          ..receptionUri = reception.uri
           ..receptionEnabled = reception.enabled
-
           ..contactId = selectedContactId
           ..wantsMessages = true
           ..contactEnabled = true
@@ -502,7 +586,7 @@ class ContactView {
           ..backup = []
           ..emailaddresses = []
           ..handling = []
-          ..telephonenumbers = []
+          //..telephonenumbers = []
           ..workhours = []
           ..tags = [];
 

@@ -6,7 +6,7 @@ import 'package:html5_dnd/html5_dnd.dart';
 
 String addNewLiClass = 'addnew';
 
-class _Key {
+class Keys {
   static const int ESCAPE = 27;
   static const int ENTER = 13;
 }
@@ -15,7 +15,7 @@ void fillList(UListElement element, List<String> items, {Function onChange}) {
   List<LIElement> children = new List<LIElement>();
   if (items != null) {
     for (String item in items) {
-      LIElement li = simpleListElement(item);
+      LIElement li = simpleListElement(item, onChange: onChange);
       children.add(li);
     }
   }
@@ -36,7 +36,7 @@ void fillList(UListElement element, List<String> items, {Function onChange}) {
       ..placeholder = 'Tilføj ny...'
       ..onKeyPress.listen((KeyboardEvent event) {
         KeyEvent key = new KeyEvent.wrap(event);
-        if (key.keyCode == _Key.ENTER) {
+        if (key.keyCode == Keys.ENTER) {
           String item = inputNewItem.value;
           inputNewItem.value = '';
 
@@ -48,7 +48,7 @@ void fillList(UListElement element, List<String> items, {Function onChange}) {
           if (onChange != null) {
             onChange();
           }
-        } else if (key.keyCode == _Key.ESCAPE) {
+        } else if (key.keyCode == Keys.ESCAPE) {
           inputNewItem.value = '';
         }
       });
@@ -72,35 +72,38 @@ LIElement simpleListElement(String item, {Function onChange}) {
         }
       });
   SpanElement content = new SpanElement()..text = item;
-
-  li..children.addAll([deleteButton, content]);
+  InputElement editBox = new InputElement(type: 'text');
 
   bool activeEdit = false;
-  li.onClick.listen((_) {
+  String oldDisplay = content.style.display;
+  editBox
+    ..style.display = 'none'
+    ..onKeyDown.listen((KeyboardEvent event) {
+          KeyEvent key = new KeyEvent.wrap(event);
+          if (key.keyCode == Keys.ENTER || key.keyCode == Keys.ESCAPE) {
+            if (key.keyCode == Keys.ENTER) {
+              content.text = editBox.value;
+
+              if (onChange != null) {
+                onChange();
+              }
+            }
+            content.style.display = oldDisplay;
+            editBox.style.display = 'none';
+            activeEdit = false;
+          }
+        });
+  li.children.addAll([deleteButton, content, editBox]);
+
+  content.onClick.listen((MouseEvent event) {
     if (!activeEdit) {
       activeEdit = true;
-      String oldDisplay = content.style.display;
       content.style.display = 'none';
-      InputElement editBox = new InputElement(type: 'text');
-      li.children.add(editBox);
+      editBox.style.display = 'inline';
+
       editBox
           ..focus()
-          ..value = content.text
-          ..onKeyDown.listen((KeyboardEvent event) {
-            KeyEvent key = new KeyEvent.wrap(event);
-            if (key.keyCode == _Key.ENTER || key.keyCode == _Key.ESCAPE) {
-              if (key.keyCode == _Key.ENTER) {
-                content.text = editBox.value;
-
-                if (onChange != null) {
-                  onChange();
-                }
-              }
-              content.style.display = oldDisplay;
-              li.children.remove(editBox);
-              activeEdit = false;
-            }
-          });
+          ..value = content.text;
     }
   });
   return li;

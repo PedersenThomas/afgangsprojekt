@@ -3,7 +3,6 @@ part of model;
 class ReceptionContact_ReducedReception {
   int contactId;
   bool wantsMessages;
-  int distributionListId;
   bool contactEnabled;
   List<Phone> phoneNumbers;
 
@@ -17,7 +16,7 @@ class ReceptionContact_ReducedReception {
   List<String> backup;
   List<String> emailaddresses;
   List<String> handling;
-  List<String> telephonenumbers;
+  //List<String> telephonenumbers;
   List<String> workhours;
   List<String> tags;
 
@@ -35,7 +34,6 @@ class ReceptionContact_ReducedReception {
     ReceptionContact_ReducedReception object = new ReceptionContact_ReducedReception()
       ..contactId = json['contact_id']
       ..wantsMessages = json['contact_wants_messages']
-      ..distributionListId = json['contact_distribution_list_id']
       ..contactEnabled = json['contact_enabled']
       ..receptionId = json['reception_id']
       ..receptionEnabled = json['reception_enabled']
@@ -44,7 +42,7 @@ class ReceptionContact_ReducedReception {
 
       ..organizationId = json['organization_id']
 
-      ..phoneNumbers = (json['contact_phonenumbers'] as List<Map>).map((Map json) => new Phone.fromJson(json)).toList();
+      ..phoneNumbers = (json['contact_phonenumbers'] as List<Map>).map((Map phonenumber) => new Phone.fromJson(phonenumber)).toList();
 
     if (json.containsKey('contact_attributes')) {
       Map attributes = json['contact_attributes'];
@@ -53,8 +51,7 @@ class ReceptionContact_ReducedReception {
           ..backup = priorityListFromJson(attributes, 'backup')
           ..emailaddresses = priorityListFromJson(attributes, 'emailaddresses')
           ..handling = priorityListFromJson(attributes, 'handling')
-          ..telephonenumbers = priorityListFromJson(attributes,
-              'telephonenumbers')
+          //..telephonenumbers = priorityListFromJson(attributes,'telephonenumbers')
           ..workhours = priorityListFromJson(attributes, 'workhours')
 
           ..tags = attributes['tags']

@@ -6,6 +6,7 @@ class ReceptionContact {
   int receptionId;
   bool wantsMessages;
   int distributionListId;
+  List<Phone> phoneNumbers;
 
   Map get attributes {
     return {
@@ -17,7 +18,7 @@ class ReceptionContact {
       'backup': priorityListToJson(backup),
       'emailaddresses': priorityListToJson(emailaddresses),
       'handling': priorityListToJson(handling),
-      'telephonenumbers': priorityListToJson(emailaddresses),
+      //'telephonenumbers': priorityListToJson(telephonenumbers),
       'workhours': priorityListToJson(workhours),
       'tags': tags
     };
@@ -26,7 +27,7 @@ class ReceptionContact {
   List<String> backup;
   List<String> emailaddresses;
   List<String> handling;
-  List<String> telephonenumbers;
+  //List<String> telephonenumbers;
   List<String> workhours;
   List<String> tags;
 
@@ -39,12 +40,13 @@ class ReceptionContact {
   ReceptionContact();
 
   factory ReceptionContact.fromJson(Map json) {
-    ReceptionContact object = new ReceptionContact();
-    object.contactId = json['contact_id'];
-    object.contactEnabled = json['contact_enabled'];
-    object.receptionId = json['reception_id'];
-    object.wantsMessages = json['wants_messages'];
-    object.distributionListId = json['distribution_list_id'];
+    ReceptionContact object = new ReceptionContact()
+      ..contactId = json['contact_id']
+      ..contactEnabled = json['contact_enabled']
+      ..receptionId = json['reception_id']
+      ..wantsMessages = json['wants_messages']
+      ..distributionListId = json['distribution_list_id']
+      ..phoneNumbers = (json['contact_phonenumbers'] as List<Map>).map((Map json) => new Phone.fromJson(json)).toList();
 
     if (json.containsKey('attributes')) {
       Map attributes = json['attributes'];
@@ -53,8 +55,7 @@ class ReceptionContact {
           ..backup = priorityListFromJson(attributes, 'backup')
           ..emailaddresses = priorityListFromJson(attributes, 'emailaddresses')
           ..handling = priorityListFromJson(attributes, 'handling')
-          ..telephonenumbers = priorityListFromJson(attributes,
-              'telephonenumbers')
+//          ..telephonenumbers = priorityListFromJson(attributes, 'telephonenumbers')
           ..workhours = priorityListFromJson(attributes, 'workhours')
           ..tags = attributes['tags']
 
@@ -73,8 +74,8 @@ class ReceptionContact {
       'contact_id': contactId,
       'reception_id': receptionId,
       'wants_messages': wantsMessages,
-      'distribution_list_id': distributionListId,
       'enabled': contactEnabled,
+      'phonenumbers' : phoneNumbers,
       'attributes': attributes
     };
 

@@ -16,13 +16,9 @@ class Phone {
     return object;
   }
 
-  String toJson() {
-    Map data = {
+  Map toJson() => {
       'id': id,
       'value': value,
-      'kind': kind
-    };
+      'kind': kind};
 
-    return JSON.encode(data);
-  }
 }

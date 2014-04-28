@@ -15,7 +15,7 @@ class ReceptionView {
   String addNewLiClass = 'addnew';
   String viewName = 'reception';
   DivElement element;
-  InputElement inputFullName, inputUri, inputProduct, inputGreeting, inputOther,
+  InputElement inputFullName, inputProduct, inputGreeting, inputOther,
       inputCostumerstype, inputReceptionNumber;
   ButtonElement buttonDialplan;
   CheckboxInputElement inputEnabled;
@@ -40,7 +40,6 @@ class ReceptionView {
     ulContactList = element.querySelector('#reception-contact-list');
 
     inputFullName = element.querySelector('#reception-input-name');
-    inputUri = element.querySelector('#reception-input-uri');
     inputProduct = element.querySelector('#reception-input-product');
     inputOther = element.querySelector('#reception-input-other');
     inputCostumerstype = element.querySelector('#reception-input-customertype');
@@ -177,7 +176,6 @@ class ReceptionView {
   void clearContent() {
     buttonDialplan.disabled = true;
     inputFullName.value = '';
-    inputUri.value = '';
     inputEnabled.checked = true;
     inputReceptionNumber.value = '';
     inputCostumerstype.value = '';
@@ -256,7 +254,6 @@ class ReceptionView {
     return new Reception()
         ..organization_id = currentOrganizationId
         ..full_name = inputFullName.value
-        ..uri = inputUri.value
         ..enabled = inputEnabled.checked
         ..number = inputReceptionNumber.value
 
@@ -273,7 +270,7 @@ class ReceptionView {
         ..handlings = getListValues(ulHandlings)
         ..openinghours = getListValues(ulOpeninghours)
         ..registrationnumbers = getListValues(ulRegistrationnumbers)
-        ..telephonenumbers = getListValues(ulTelephonenumbers)
+        //..telephonenumbers = getListValues(ulTelephonenumbers)
         ..websites = getListValues(ulWebsites);
   }
 
@@ -316,7 +313,6 @@ class ReceptionView {
         buttonDialplan.disabled = false;
 
         inputFullName.value = response.full_name;
-        inputUri.value = response.uri;
         inputEnabled.checked = response.enabled;
         inputReceptionNumber.value = response.number;
 
@@ -339,7 +335,6 @@ class ReceptionView {
       updateContactList(receptionId);
     } else {
       inputFullName.value = '';
-      inputUri.value = '';
       inputEnabled.checked = false;
 
       inputCostumerstype.value = '';
