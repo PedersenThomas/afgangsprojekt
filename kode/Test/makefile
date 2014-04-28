@@ -1,6 +1,6 @@
 AUTH_CACHE_STORAGE=/dev/shm/auth/
 
-tests: 
+tests: install_dummy_tokens
 	@py.test --junitxml results.xml src/*tests.py
 
 install_dummy_tokens:
