@@ -53,7 +53,23 @@ Uge 4
    --Note
      Jeg håbede på at være færdig med organizationer, receptioner og kontakter i uge 4, men det har vist sig at jeg kommer til at bruge mere tid. Jeg skal være færdig med det i uge 5, eller så løber al tidsplan.
 
-Uge 5
+Uge 5,6
+???
+
+uge 7
+    Ferie
+
+Uge 8
+    Raport: lidt om design.
+    
+    Måden man gemmer dialplans er blevet ændret lidt i forhold til før ferien.
+    Masse af fejl rettelser.
+
+Uge 9
+    Raport: Design
+
+    Telefonnumre er blevet implementeret.
+    I Dialplan når man skal vælge en lydfile der skal afspilles, så er det nu fra en liste.
   
 
 -- Forvented --
