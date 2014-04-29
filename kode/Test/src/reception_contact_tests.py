@@ -61,11 +61,6 @@ class ReceptionContactTests(unittest.TestCase):
                                 "required": True,
                                 "items": priorityListSchema
                             },
-                            "telephonenumbers": {
-                                "type": "array",
-                                "required": True,
-                                "items": priorityListSchema
-                            },
                             "workhours": {
                                 "type": "array",
                                 "required": True,
@@ -110,13 +105,21 @@ class ReceptionContactTests(unittest.TestCase):
                             "type": "boolean",
                             "required": True
                         },
-                        "distribution_list_id": {
-                            "type": ["null", "integer"],
-                            "required": True
-                        },
                         "reception_enabled": {
                             "type": "boolean",
                             "required": True
+                        },
+                        "phonenumbers": {
+                            "type": "array",
+                            "required": True,
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {"type": "object"},
+                                    "kind": {"type": "object"},
+                                    "value": {"type": "object"}
+                                }
+                            }
                         },
                         "attributes": {
                         "type": "object",
@@ -125,7 +128,6 @@ class ReceptionContactTests(unittest.TestCase):
                         }
                     }
                 }
-
 
     receptionContactListSchema = {'type': 'object',
                                   'properties':
@@ -156,11 +158,6 @@ class ReceptionContactTests(unittest.TestCase):
             "type": "boolean",
             "required": True
           },
-          "contact_distribution_list_id": {
-            "id": "#contact_distribution_list_id",
-            "type": ["null", "integer"],
-            "required": True
-          },
           "contact_attributes": {
             "id": "#contact_attributes",
             "type": "object",
@@ -179,11 +176,6 @@ class ReceptionContactTests(unittest.TestCase):
           },
           "reception_full_name": {
             "id": "#reception_full_name",
-            "type": "string",
-            "required": True
-          },
-          "reception_uri": {
-            "id": "#reception_uri",
             "type": "string",
             "required": True
           },
@@ -225,7 +217,6 @@ class ReceptionContactTests(unittest.TestCase):
     def test_createNewReceptionContact(self):
         receptionContact = {
             'wants_messages': True,
-            'distribution_list_id': 1,
             'attributes': {
                 "backup": [],
                 "department": "",
@@ -254,7 +245,6 @@ class ReceptionContactTests(unittest.TestCase):
             utilities.verifySchema(schema, jsonBody)
 
             assert receptionContact['wants_messages'] == jsonBody['wants_messages'], 'wants_messages in ReceptionContact and response is not equal'
-            assert receptionContact['distribution_list_id'] == jsonBody['distribution_list_id'], 'distribution_list_id in ReceptionContact and response is not equal.'
             assert receptionContact['attributes'] == jsonBody['attributes'], 'attributes in ReceptionContact and response is not equal'
             assert receptionContact['enabled'] == jsonBody['reception_enabled'], 'enabled in ReceptionContact and response is not equal. ' + jsonBody
         except Exception as e:
@@ -267,7 +257,6 @@ class ReceptionContactTests(unittest.TestCase):
     def test_updateNewReceptionContact(self):
         receptionContact = {
             'wants_messages': True,
-            'distribution_list_id': 1,
             'attributes': {},
             'enabled': False
         }

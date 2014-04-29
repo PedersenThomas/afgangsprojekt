@@ -52,7 +52,6 @@ class ReceptionTests(unittest.TestCase):
         organizationId = 1
         reception = {
             'full_name': 'TestMania',
-            'uri': utilities.randomLetters(10),
             'attributes': {},
             'enabled': False
         }
@@ -70,7 +69,6 @@ class ReceptionTests(unittest.TestCase):
         organizationId = 1
         reception = {
             'full_name': 'TestMania',
-            'uri': utilities.randomLetters(10),
             'attributes': {},
             'enabled': False
         }

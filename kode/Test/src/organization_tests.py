@@ -53,7 +53,9 @@ class OrganizationTests(unittest.TestCase):
 
     def test_createNewOrganization(self):
         organization = {
-            'full_name': 'TestMania'
+            'full_name': 'TestMania',
+            'bill_type': 'email',
+            'flag': 'non-VIP'
         }
         headers, body = self.adminServer.createOrganization(organization)
         jsonBody = json.loads(body)
@@ -67,7 +69,9 @@ class OrganizationTests(unittest.TestCase):
 
     def test_updateNewOrganization(self):
         organization = {
-            'full_name': 'TestMania'
+            'full_name': 'TestMania',
+            'bill_type': 'email',
+            'flag': 'non-VIP'
         }
 
         jsonBody = {'Status': 'Uninitialized'}
