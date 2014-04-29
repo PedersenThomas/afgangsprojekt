@@ -537,9 +537,7 @@ class ContactView {
         refreshList();
         activateContact(response['id']);
       }).catchError((error) {
-        log.error(
-            'Tried to make a new contact but failed with error "${error}" from body: "${newContact.toJson()}"'
-            );
+        log.error('Tried to make a new contact but failed with error "${error}" from body: "${newContact.toJson()}"');
       });
     }
   }

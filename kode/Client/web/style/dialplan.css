@@ -56,9 +56,16 @@ img.dialplan-controlitem-img {
   height: 80px;
 }
 
+.dialplan-controlremove {
+  width: 16px;
+  height: 16px;
+}
+
 .dialplan-controlitem-nametag {
   display: block;
 }
+
+
 
 /**
  * MIDDEL PANEL

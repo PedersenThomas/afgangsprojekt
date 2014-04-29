@@ -80,6 +80,7 @@ class DialplanView {
 
     extensionAdd.onClick.listen((_) {
       if (dialplan != null) {
+        enabledSaveButton();
         Extension newExtension = new Extension();
 
         //Find a new extension name that is not taken.
@@ -95,8 +96,6 @@ class DialplanView {
         dialplan.Extensions.add(newExtension);
         renderExtensionList(dialplan);
         activateExtension(newExtension);
-
-        saveDialplan();
       }
     });
   }
@@ -120,10 +119,19 @@ class DialplanView {
     });
   }
 
+  void enabledSaveButton() {
+    saveButton.disabled = false;
+  }
+
+  void disableSaveButton() {
+    saveButton.disabled = true;
+  }
+
   void activateDialplan(int receptionId) {
     SC.selectElement(null, (Reception a,_) => a.id == receptionId);
 
     request.getDialplan(receptionId).then((Dialplan value) {
+      disableSaveButton();
       dialplan = value;
       selectedReceptionId = receptionId;
       renderExtensionList(value);
@@ -143,8 +151,10 @@ class DialplanView {
 
   Future saveDialplan() {
     if (selectedReceptionId != null && selectedReceptionId > 0) {
-      return request.updateDialplan(selectedReceptionId, JSON.encode(
-          dialplan.toJson())).catchError((error) {
+      return request.updateDialplan(selectedReceptionId, JSON.encode(dialplan.toJson()))
+          .then((_) {
+        disableSaveButton();
+      }).catchError((error) {
         log.error('Update Dialplan gave ${error}');
       });
     } else {
@@ -159,12 +169,19 @@ class DialplanView {
       ..text = 'Slet'
       ..onClick.listen((_) {
       dialplan.Extensions.remove(extension);
+      renderExtensionList(dialplan);
+      if(dialplan.Extensions.isNotEmpty) {
+        activateExtension(dialplan.Extensions.first);
+      } else {
+        clearSettingsPanel();
+      }
+      enabledSaveButton();
     });
     SpanElement text = new SpanElement()
-        ..text = '${extension.name}${extension.isStart ? '(s)' : ''}${extension.isCatchAll ? '(c)' : ''}'
-        ..onClick.listen((_) {
-          activateExtension(extension);
-        });
+      ..text = '${extension.name}${extension.isStart ? '(s)' : ''}${extension.isCatchAll ? '(c)' : ''}'
+      ..onClick.listen((_) {
+        activateExtension(extension);
+      });
     li.children.addAll([deleteButton, text]);
     return li;
   }
@@ -219,9 +236,19 @@ class DialplanView {
         LIElement li = new LIElement();
         ImageElement image = new ImageElement()
           ..classes.add('dialplan-controlitem-img');
+        ImageElement remove = new ImageElement(src: 'image/cross.png')
+          ..classes.add('dialplan-controlremove')
+          ..title = 'Fjern'
+          ..onClick.listen((MouseEvent event) {
+          event.stopPropagation();
+          selectedExtension.actions.remove(action);
+          clearSettingsPanel();
+          activateExtension(selectedExtension);
+          enabledSaveButton();
+        });
         SpanElement nameTag = new SpanElement()
           ..classes.add('dialplan-controlitem-nametag');
-        li.children.addAll([image, nameTag]);
+        li.children.addAll([image, remove, nameTag]);
 
         if (action is Forward) {
           image.src = 'image/tp/bendedarrow.svg';
@@ -273,15 +300,27 @@ class DialplanView {
         if (condition is Time) {
           ImageElement image = new ImageElement(src: 'image/tp/time.svg')
             ..classes.add('dialplan-controlitem-img');
+
           SpanElement nameTag = new SpanElement()
             ..text = 'Tidsstyring'
             ..classes.add('dialplan-controlitem-nametag');
 
+          ImageElement remove = new ImageElement(src: 'image/cross.png')
+            ..classes.add('dialplan-controlremove')
+            ..title = 'Fjern'
+            ..onClick.listen((MouseEvent event) {
+            event.stopPropagation();
+            selectedExtension.conditions.remove(condition);
+            clearSettingsPanel();
+            activateExtension(selectedExtension);
+            enabledSaveButton();
+          });
+
           itemsList.children.add(new LIElement()
-              ..children.addAll([image, nameTag])
-              ..onClick.listen((_) {
-                settingsConditionTime(condition);
-              }));
+            ..children.addAll([image, remove, nameTag])
+            ..onClick.listen((_) {
+              settingsConditionTime(condition);
+          }));
         }
       }
     }
@@ -299,6 +338,10 @@ class DialplanView {
     itemsList.children.clear();
     renderSelectedExtensionCondition();
     renderSelectedExtensionActions();
+  }
+
+  void clearSettingsPanel() {
+    settingPanel.children.clear();
   }
 
   void settingsExtension(Extension extension) {
@@ -334,6 +377,7 @@ class DialplanView {
         ..onInput.listen((_) {
         extension.name = nameInput.value;
         renderExtensionList(dialplan);
+        enabledSaveButton();
       })
       ..onInvalid.listen((_) {
         nameInput.title = nameInput.validationMessage;
@@ -343,6 +387,7 @@ class DialplanView {
       startInput.onChange.listen((_) {
          extension.isStart = startInput.checked;
          renderExtensionList(dialplan);
+         enabledSaveButton();
       });
 
       SelectElement failover = settingPanel.querySelector('#dialplan-setting-extensionfailover');
@@ -360,6 +405,7 @@ class DialplanView {
         }
       }
       failover.onChange.listen((_) {
+        enabledSaveButton();
         if(failover.selectedIndex == 0) {
           extension.failoverExtension = '';
         } else {
@@ -369,8 +415,9 @@ class DialplanView {
 
       CheckboxInputElement catchInput = settingPanel.querySelector('#dialplan-setting-extensioncatch');
       catchInput.onChange.listen((_) {
-         extension.isCatchAll = catchInput.checked;
-         renderExtensionList(dialplan);
+        enabledSaveButton();
+        extension.isCatchAll = catchInput.checked;
+        renderExtensionList(dialplan);
       });
 
       commentTextarea.value = extension.comment;
@@ -379,6 +426,7 @@ class DialplanView {
       }
       commentTextSubscription = commentTextarea.onInput.listen((_) {
         extension.comment = commentTextarea.value;
+        enabledSaveButton();
       });
     }
 
@@ -389,7 +437,7 @@ class DialplanView {
     <ul class="dialplan-settingsList">
       <li>
           <label for="dialplan-setting-timeofday">Time Of day</label>
-          <input id="dialplan-setting-timeofday" type="text" value="${condition.timeOfDay != null ? condition.timeOfDay != null : ''}" placeholder="08:00-17:00">
+          <input id="dialplan-setting-timeofday" type="text" value="${condition.timeOfDay != null ? condition.timeOfDay : ''}" placeholder="08:00-17:00">
       </li>
       <li>
           <label for="dialplan-setting-wday">Ugedage</label>
@@ -404,12 +452,14 @@ class DialplanView {
     timeOfDayInput
       ..onInput.listen((_) {
         condition.timeOfDay = timeOfDayInput.value.isEmpty ? null : timeOfDayInput.value;
+        enabledSaveButton();
       });
 
     InputElement wdayInput = settingPanel.querySelector('#dialplan-setting-wday');
     wdayInput
       ..onInput.listen((_) {
         condition.wday = wdayInput.value;
+        enabledSaveButton();
     });
 
     commentTextarea.value = condition.comment;
@@ -418,36 +468,42 @@ class DialplanView {
     }
     commentTextSubscription = commentTextarea.onInput.listen((_) {
       condition.comment = commentTextarea.value;
+      enabledSaveButton();
     });
-
-//    ButtonElement save = new ButtonElement()
-//        ..text = 'Gem'
-//        ..onClick.listen((_) {
-//          condition.timeOfDay = timeOfDayInput.value;
-//          condition.comment = commentTextarea.value;
-//          condition.wday = wdayInput.value;
-//
-//          updateDialplan();
-//        });
-
-//    settingPanel.children.addAll([timeOfDayLabel, timeOfDayInput, wdayLabel,
-//        wdayInput]);
   }
 
   void settingsActionPlayAudio(PlayAudio action) {
     settingPanel.children.clear();
-    //TODO Der skal være en liste af filer her.
-    InputElement numberInput = new InputElement();
-    numberInput
-        ..id = 'extension-setting-audiofile'
-        ..value = action.filename
-        ..onInput.listen((_) {
-      action.filename = numberInput.value;
-    });
 
-    LabelElement numberLabel = new LabelElement()
-        ..text = 'Lydfil'
-        ..htmlFor = numberInput.id;
+    String html = '''
+    <ul class="dialplan-settingsList">
+      <li>
+          <label>Lydfil</label>
+          <select id="audiofilelist"></select>
+      </li>
+    </ul>
+    ''';
+    DocumentFragment fragment = new DocumentFragment.html(html);
+    settingPanel.children.addAll(fragment.children);
+
+    SelectElement audiofiledropdown = settingPanel.querySelector('#audiofilelist');
+    audiofiledropdown
+        ..id = 'extension-setting-audiofile'
+        ..onChange.listen((_) {
+      action.filename = audiofiledropdown.value;
+      enabledSaveButton();
+    });
+    request.getAudiofileList().then((List<Audiofile> files) {
+      for(Audiofile file in files) {
+        OptionElement option = new OptionElement()
+          ..value = file.filepath
+          ..text = file.shortname;
+        if(action.filename == file.filepath) {
+          option.selected = true;
+        }
+        audiofiledropdown.children.add(option);
+      }
+    });
 
     commentTextarea.value = action.comment;
     if(commentTextSubscription != null) {
@@ -455,9 +511,8 @@ class DialplanView {
     }
     commentTextSubscription = commentTextarea.onInput.listen((_) {
       action.comment = commentTextarea.value;
+      enabledSaveButton();
     });
-
-    settingPanel.children.addAll([numberLabel, numberInput]);
   }
 
   void settingsActionForward(Forward action) {
@@ -469,6 +524,7 @@ class DialplanView {
         ..value = action.number
         ..onInput.listen((_) {
       action.number = numberInput.value;
+      enabledSaveButton();
     });
     LabelElement numberLabel = new LabelElement()
         ..text = 'Nummer'
@@ -480,6 +536,7 @@ class DialplanView {
     }
     commentTextSubscription = commentTextarea.onInput.listen((_) {
       action.comment = commentTextarea.value;
+      enabledSaveButton();
     });
 
     settingPanel.children.addAll([numberLabel, numberInput]);
@@ -494,6 +551,7 @@ class DialplanView {
         ..value = action.ivrname
         ..onInput.listen((_) {
       action.ivrname = ivrnameInput.value;
+      enabledSaveButton();
     });
     LabelElement ivrnameLabel = new LabelElement()
         ..text = 'Ivr navn'
@@ -505,6 +563,7 @@ class DialplanView {
     }
     commentTextSubscription = commentTextarea.onInput.listen((_) {
       action.comment = commentTextarea.value;
+      enabledSaveButton();
     });
 
 //    ButtonElement save = new ButtonElement()
@@ -527,6 +586,7 @@ class DialplanView {
         ..id = 'extension-setting-sleepTime'
         ..value = action.sleepTime.toString()
         ..onInput.listen((_) {
+      enabledSaveButton();
       try {
         int sleepTime = int.parse(sleepTimeInput.value);
         action.sleepTime = sleepTime;
@@ -542,6 +602,7 @@ class DialplanView {
         ..value = action.music
         ..onInput.listen((_) {
       action.music = musicInput.value;
+      enabledSaveButton();
     });
     LabelElement musicLabel = new LabelElement()
         ..text = 'Ventemusik'
@@ -553,6 +614,7 @@ class DialplanView {
         ..value = action.welcomeFile
         ..onInput.listen((_) {
       action.welcomeFile = welcomeInput.value;
+      enabledSaveButton();
     });
     LabelElement welcomeLabel = new LabelElement()
         ..text = 'Velkomst lydfil'
@@ -564,6 +626,7 @@ class DialplanView {
     }
     commentTextSubscription = commentTextarea.onInput.listen((_) {
       action.comment = commentTextarea.value;
+      enabledSaveButton();
     });
 
 //    ButtonElement save = new ButtonElement()
@@ -589,6 +652,7 @@ class DialplanView {
         ..value = action.email
         ..onInput.listen((_) {
         action.email = emailInput.value;
+        enabledSaveButton();
     });
     LabelElement emailLabel = new LabelElement()
         ..text = 'email'
@@ -600,6 +664,7 @@ class DialplanView {
     }
     commentTextSubscription = commentTextarea.onInput.listen((_) {
       action.comment = commentTextarea.value;
+      enabledSaveButton();
     });
 
 //    ButtonElement save = new ButtonElement()

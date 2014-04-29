@@ -54,3 +54,29 @@ Future updateDialplan(int receptionId, String dialplan) {
 
   return completer.future;
 }
+
+Future<List<Audiofile>> getAudiofileList() {
+  final Completer completer = new Completer();
+
+  HttpRequest request;
+  String url = '${config.serverUrl}/audiofiles?token=${config.token}';
+
+  request = new HttpRequest()
+    ..open(HttpMethod.GET, url)
+    ..onLoad.listen((_) {
+      if (request.status == 200) {
+        Map rawData = JSON.decode(request.responseText);
+        List<Map> rawAudiofiles = rawData['audiofiles'];
+        completer.complete(rawAudiofiles.map((file) => new Audiofile.fromJson(file)).toList());
+      } else {
+        completer.completeError('Bad status code. ${request.status}');
+      }
+    })
+    ..onError.listen((e) {
+      //TODO logging.
+      completer.completeError(e.toString());
+    })
+    ..send();
+
+  return completer.future;
+}

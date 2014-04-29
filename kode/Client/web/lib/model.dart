@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'logger.dart' as log;
 
+part 'model/audiofile.dart';
 part 'model/contact.dart';
 part 'model/organization.dart';
 part 'model/reception.dart';
