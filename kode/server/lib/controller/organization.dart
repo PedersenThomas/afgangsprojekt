@@ -43,7 +43,7 @@ class OrganizationController {
   void createOrganization(HttpRequest request) {
     extractContent(request)
     .then(JSON.decode)
-    .then((Map data) => db.createOrganization(data['full_name']))
+    .then((Map data) => db.createOrganization(data['full_name'], data['bill_type'], data['flag']))
     .then((int id) => writeAndCloseJson(request, organizationIdAsJson(id)))
     .catchError((error) {
       logger.error(error);
@@ -54,7 +54,7 @@ class OrganizationController {
   void updateOrganization(HttpRequest request) {
     extractContent(request)
     .then(JSON.decode)
-    .then((Map data) => db.updateOrganization(pathParameter(request.uri, 'organization'), data['full_name']))
+    .then((Map data) => db.updateOrganization(pathParameter(request.uri, 'organization'), data['full_name'], data['bill_type'], data['flag']))
     .then((int id) => writeAndCloseJson(request, organizationIdAsJson(id)))
     .catchError((error) {
       logger.error('updateOrganization url: "${request.uri}" gave error "${error}"');

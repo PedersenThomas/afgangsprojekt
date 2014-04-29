@@ -113,8 +113,8 @@ class Database {
      *************** Organization ******************
    */
 
-  Future<int> createOrganization(String fullName) =>
-      _createOrganization(pool, fullName);
+  Future<int> createOrganization(String fullName, String bill_type, String flag) =>
+      _createOrganization(pool, fullName, bill_type, flag);
 
   Future<int> deleteOrganization(int organizationId) =>
       _deleteOrganization(pool, organizationId);
@@ -125,8 +125,8 @@ class Database {
   Future<List<model.Organization>> getOrganizationList() =>
       _getOrganizationList(pool);
 
-  Future<int> updateOrganization(int organizationId, String fullName) =>
-      _updateOrganization(pool, organizationId, fullName);
+  Future<int> updateOrganization(int organizationId, String fullName, String billType, String flag) =>
+      _updateOrganization(pool, organizationId, fullName, billType, flag);
 
   /* ***********************************************
      ****************** Dialplan *******************

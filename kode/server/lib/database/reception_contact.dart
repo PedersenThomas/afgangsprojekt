@@ -79,7 +79,7 @@ Future<List<model.CompleteReceptionContact>> _getReceptionContactList(Pool pool,
 Future<int> _createReceptionContact(Pool pool, int receptionId, int contactId, bool wantMessages, List phonenumbers, Map attributes, bool enabled) {
   String sql = '''
     INSERT INTO reception_contacts (reception_id, contact_id, wants_messages, phonenumbers, attributes, enabled)
-    VALUES (@reception_id, @contact_id, @wants_messages, @distribution_list_id, @phonenumbers, @attributes, @enabled);
+    VALUES (@reception_id, @contact_id, @wants_messages, @phonenumbers, @attributes, @enabled);
   ''';
 
   Map parameters =
@@ -164,7 +164,7 @@ Future<List<model.ReceptionContact_ReducedReception>> _getAContactsReceptionCont
 
 Future<List<model.Organization>> _getAContactsOrganizationList(Pool pool, int contactId) {
   String sql = '''
-    SELECT DISTINCT o.id, o.full_name
+    SELECT DISTINCT o.id, o.full_name, o.bill_type, o.flag
     FROM reception_contacts rc
     JOIN receptions r on rc.reception_id = r.id
     JOIN organizations o on r.organization_id = o.id
@@ -176,7 +176,7 @@ Future<List<model.Organization>> _getAContactsOrganizationList(Pool pool, int co
   return query(pool, sql, parameters).then((rows) {
     List<model.Organization> organizations = new List<model.Organization>();
     for(var row in rows) {
-      organizations.add(new model.Organization(row.id, row.full_name));
+      organizations.add(new model.Organization(row.id, row.full_name, row.bill_type, row.flag));
     }
     return organizations;
   });
