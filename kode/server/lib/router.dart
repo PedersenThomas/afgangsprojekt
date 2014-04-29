@@ -38,8 +38,9 @@ final Pattern UserIdUrl = new UrlPattern(r'/user/(\d+)');
 final Pattern AudioFilelistUrl = new UrlPattern(r'/audiofiles(/?)');
 
 final List<Pattern> Serviceagents =
-[organizationReceptionIdUrl, organizationReceptionUrl, organizationContactUrl, organizationIdUrl, organizationUrl,
- contactIdUrl, contactUrl, receptionUrl, receptionContactIdUrl, receptionContactUrl, ContactOrganizationUrl, UserUrl, UserIdUrl];
+[organizationIdUrl, organizationUrl,organizationReceptionIdUrl, organizationReceptionUrl, receptionUrl, contactIdUrl, contactUrl,
+ receptionContactIdUrl, receptionContactUrl, dialplanUrl, organizationContactUrl, ContactReceptionUrl, ContactOrganizationUrl,
+ UserUrl, UserIdUrl ];
 
 ContactController contact;
 DialplanController dialplan;
@@ -55,6 +56,7 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
 
     ..serve(organizationReceptionUrl, method: HttpMethod.GET).listen(reception.getOrganizationReceptionList)
     ..serve(receptionUrl, method: HttpMethod.GET).listen(reception.getReceptionList)
+
     ..serve(organizationReceptionUrl, method: HttpMethod.PUT).listen(reception.createReception)
     ..serve(organizationReceptionIdUrl, method: HttpMethod.GET)   .listen(reception.getReception)
     ..serve(organizationReceptionIdUrl, method: HttpMethod.POST)  .listen(reception.updateReception)
