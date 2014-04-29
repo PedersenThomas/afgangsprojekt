@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:html';
 
 import 'contact-view.dart' as conView;
@@ -6,9 +7,12 @@ import 'organization-view.dart' as orgView;
 import 'reception-view.dart' as recView;
 import 'menu.dart';
 import 'lib/auth.dart';
+import 'notification.dart' as notify;
 
 void main() {
-  if (handleToken()) {
+  if(handleToken()) {
+    notify.initialize();
+    new Future.delayed(new Duration(seconds: 2),() => notify.info('Hello World'));
     new orgView.OrganizationView(querySelector('#organization-page'));
     new recView.ReceptionView(querySelector('#reception-page'));
     new conView.ContactView(querySelector('#contact-page'));
