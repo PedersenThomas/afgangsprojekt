@@ -3,6 +3,8 @@ part of model;
 class Organization {
   int id;
   String full_name;
+  String bill_type;
+  String flag;
 
   Organization();
 
@@ -10,16 +12,20 @@ class Organization {
     Organization object = new Organization();
     object.id = json['id'];
     object.full_name = json['full_name'];
+    object.bill_type = json['bill_type'];
+    object.flag = json['flag'];
 
     return object;
   }
 
-  String toJson() {
+  Map toJson() {
     Map data = {
       'id': id,
-      'full_name': full_name
+      'full_name': full_name,
+      'bill_type': bill_type,
+      'flag': flag
     };
 
-    return JSON.encode(data);
+    return data;
   }
 }

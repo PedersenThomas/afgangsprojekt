@@ -13,7 +13,7 @@ class OrganizationView {
   String viewName = 'organization';
   DivElement element;
   UListElement uiList;
-  InputElement inputName;
+  InputElement inputName, inputBilltype, inputFlag;
   ButtonElement buttonCreate, buttonSave, buttonDelete;
   SearchInputElement searchBox;
   UListElement ulReceptionList;
@@ -31,6 +31,8 @@ class OrganizationView {
     searchBox = element.querySelector('#organization-search-box');
     uiList = element.querySelector('#organization-list');
     inputName = element.querySelector('#organization-input-name');
+    inputBilltype = element.querySelector('#organization-input-billtype');
+    inputFlag = element.querySelector('#organization-input-flag');
     buttonSave = element.querySelector('#organization-save');
     buttonCreate = element.querySelector('#organization-create');
     buttonDelete = element.querySelector('#organization-delete');
@@ -134,6 +136,8 @@ class OrganizationView {
 
   void clearContent() {
     inputName.value = '';
+    inputBilltype.value = '';
+    inputFlag.value = '';
   }
 
   void performSearch() {
@@ -148,7 +152,9 @@ class OrganizationView {
     if (selectedOrganizationId > 0) {
       Map organization = {
         'id': selectedOrganizationId,
-        'full_name': inputName.value
+        'full_name': inputName.value,
+        'bill_type': inputBilltype.value,
+        'flag': inputFlag.value
       };
       String newOrganization = JSON.encode(organization);
       updateOrganization(selectedOrganizationId, newOrganization).then((_) {
@@ -157,7 +163,9 @@ class OrganizationView {
       });
     } else if (createNew) {
       Map organization = {
-        'full_name': inputName.value
+        'full_name': inputName.value,
+        'bill_type': inputBilltype.value,
+        'flag': inputFlag.value
       };
       String newOrganization = JSON.encode(organization);
       createOrganization(newOrganization).then((Map response) {
@@ -207,6 +215,9 @@ class OrganizationView {
       buttonSave.text = 'Gem';
       buttonDelete.disabled = false;
       inputName.value = organization.full_name;
+      inputBilltype.value = organization.bill_type;
+      inputFlag.value = organization.flag;
+
       updateReceptionList(selectedOrganizationId);
       updateContactList(selectedOrganizationId);
     }).catchError((error) {
@@ -216,8 +227,7 @@ class OrganizationView {
   }
 
   void updateReceptionList(int organizationId) {
-    getAnOrganizationsReceptionList(organizationId).then((List<Reception>
-        receptions) {
+    getAnOrganizationsReceptionList(organizationId).then((List<Reception> receptions) {
       receptions.sort((a, b) => a.full_name.compareTo(b.full_name));
       currentReceptionList = receptions;
       ulReceptionList.children
