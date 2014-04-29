@@ -12,7 +12,6 @@ import 'notification.dart' as notify;
 void main() {
   if(handleToken()) {
     notify.initialize();
-    new Future.delayed(new Duration(seconds: 2),() => notify.info('Hello World'));
     new orgView.OrganizationView(querySelector('#organization-page'));
     new recView.ReceptionView(querySelector('#reception-page'));
     new conView.ContactView(querySelector('#contact-page'));

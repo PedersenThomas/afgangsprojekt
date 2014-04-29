@@ -7,6 +7,7 @@ import 'lib/eventbus.dart';
 import 'lib/logger.dart' as log;
 import 'lib/model.dart';
 import 'lib/request.dart';
+import 'notification.dart' as notify;
 
 class OrganizationView {
   String viewName = 'organization';
@@ -56,6 +57,8 @@ class OrganizationView {
     buttonDelete.onClick.listen((_) {
       if (!createNew && selectedOrganizationId > 0) {
         deleteOrganization(selectedOrganizationId).then((_) {
+          notify.info('Organisation blev slettet.');
+
           currentContactList.clear();
           currentReceptionList.clear();
           bus.fire(Invalidate.organizationRemoved, selectedOrganizationId);
@@ -65,8 +68,8 @@ class OrganizationView {
           buttonDelete.disabled = true;
           selectedOrganizationId = 0;
         }).catchError((error) {
-          log.error(
-              'Failed to delete organization "${selectedOrganizationId}", got "${error}"');
+          notify.error('Der skete en fejl i forbindelsen med sletningen.');
+          log.error('Failed to delete organization "${selectedOrganizationId}", got "${error}"');
         });
       }
     });

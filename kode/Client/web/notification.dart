@@ -14,7 +14,26 @@ void initialize() {
 
 void info(String text) {
   _box.text = text;
-  _box.classes.add('notifyActivate');
+  _box.classes
+    ..add('notifyActivate')
+    ..add('notificationboxinfo');
 
-  new Future.delayed(new Duration(milliseconds: 5000), () {_box.classes.add('notifyDeActivate');});
+  new Future.delayed(new Duration(milliseconds: 5000), () {
+    _box.classes
+      ..remove('notifyActivate')
+      ..remove('notificationboxinfo');
+  });
+}
+
+void error (String text) {
+  _box.text = text;
+  _box.classes
+    ..add('notifyActivate')
+    ..add('notificationboxerror');
+
+  new Future.delayed(new Duration(milliseconds: 5000), () {
+    _box.classes
+      ..remove('notifyActivate')
+      ..remove('notificationboxerror');
+  });
 }
