@@ -5,6 +5,7 @@ import 'package:route/server.dart';
 
 import 'configuration.dart';
 import 'controller/contact.dart';
+import 'controller/dialplan.dart';
 import 'controller/organization.dart';
 import 'controller/reception.dart';
 import 'controller/reception_contact.dart';
@@ -34,11 +35,14 @@ final Pattern contactypestUrl = new UrlPattern(r'/contacttypes(/?)');
 final Pattern UserUrl = new UrlPattern(r'/user(/?)');
 final Pattern UserIdUrl = new UrlPattern(r'/user/(\d+)');
 
+final Pattern AudioFilelistUrl = new UrlPattern(r'/audiofiles(/?)');
+
 final List<Pattern> Serviceagents =
 [organizationReceptionIdUrl, organizationReceptionUrl, organizationContactUrl, organizationIdUrl, organizationUrl,
  contactIdUrl, contactUrl, receptionUrl, receptionContactIdUrl, receptionContactUrl, ContactOrganizationUrl, UserUrl, UserIdUrl];
 
 ContactController contact;
+DialplanController dialplan;
 OrganizationController organization;
 ReceptionController reception;
 ReceptionContactController receptionContact;
@@ -91,6 +95,8 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     ..serve(UserIdUrl, method: HttpMethod.POST)  .listen(user.updateUser)
     ..serve(UserIdUrl, method: HttpMethod.DELETE).listen(user.deleteUser)
 
+    ..serve(AudioFilelistUrl, method: HttpMethod.GET).listen(dialplan.getAudiofileList)
+
     ..serve(anyThing, method: HttpMethod.OPTIONS).listen(PreFlight)
 
     ..defaultStream.listen(NOTFOUND);
@@ -98,6 +104,7 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
 
 void setupControllers(Database db) {
   contact = new ContactController(db);
+  dialplan = new DialplanController(db);
   organization = new OrganizationController(db);
   reception = new ReceptionController(db);
   receptionContact = new ReceptionContactController(db);

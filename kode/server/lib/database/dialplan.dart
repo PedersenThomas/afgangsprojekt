@@ -43,3 +43,18 @@ Future _updateDialplan(Pool pool, int receptionId, Map dialplan) {
 
   return execute(pool, sql, parameters);
 }
+
+Future<List<model.Audiofile>> _getAudiofileList(Pool pool) {
+  String sql = '''
+    SELECT filepath, shortname
+    FROM audiofiles;
+  ''';
+
+  return query(pool, sql).then((rows) {
+    List<model.Audiofile> audiofiles = new List<model.Audiofile>();
+    for(var row in rows) {
+      audiofiles.add(new model.Audiofile(row.filepath, row.shortname));
+    }
+    return audiofiles;
+  });
+}

@@ -1,5 +1,6 @@
 library adaheads_server_model;
 
+part 'model/audiofile.dart';
 part 'model/contact.dart';
 part 'model/organization.dart';
 part 'model/reception.dart';

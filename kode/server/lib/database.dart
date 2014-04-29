@@ -138,6 +138,9 @@ class Database {
   Future<Dialplan> updateDialplan(int receptionId, Map dialplan) =>
       _updateDialplan(pool, receptionId, dialplan);
 
+  Future<List<model.Audiofile>> getAudiofileList() =>
+      _getAudiofileList(pool);
+
   /* ***********************************************
      ******************** Phone ********************
    */

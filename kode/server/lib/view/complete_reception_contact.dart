@@ -19,7 +19,7 @@ Map _receptionContactAsJsonMap(CompleteReceptionContact contact) => contact == n
      'wants_messages': contact.wantsMessages,
      'attributes': contact.attributes,
      'reception_enabled': contact.receptionEnabled,
-     'phonenumbers': listPhoneNumbersAsJsonMap(contact.phonenumbers)};
+     'phonenumbers': contact.phonenumbers};
 
 List _listReceptionContactAsJsonMap(List<CompleteReceptionContact> contacts) =>
     contacts.map(_receptionContactAsJsonMap).toList();
