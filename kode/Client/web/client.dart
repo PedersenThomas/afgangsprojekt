@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:html';
 
 import 'contact-view.dart' as conView;

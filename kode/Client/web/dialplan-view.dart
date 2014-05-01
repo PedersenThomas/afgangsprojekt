@@ -273,7 +273,7 @@ class DialplanView {
 
         } else if (action is Receptionists) {
           image.src = 'image/tp/multiplemen.svg';
-          nameTag.text = 'Reception';
+          nameTag.text = 'Receptionisterne';
           li.onClick.listen((_) {
             settingsActionReceptionists(action);
           });
@@ -441,7 +441,10 @@ class DialplanView {
       </li>
       <li>
           <label for="dialplan-setting-wday">Ugedage</label>
-          <input id="dialplan-setting-wday" type="text" value="${condition.wday != null ? condition.wday : ''}" placeholder="mon-tue, wed, thu, fri-sat, sun">
+          <input id="dialplan-setting-wday" type="text" 
+                 value="${condition.wday != null ? condition.wday : ''}" 
+                 placeholder="mon-tue, wed, thu, fri-sat, sun" 
+                 title="mon, tue, wed, thu, fri, sat, sun">
       </li>
     </ul>
     ''';
@@ -494,6 +497,10 @@ class DialplanView {
       enabledSaveButton();
     });
     request.getAudiofileList().then((List<Audiofile> files) {
+      //Give it the first as default.
+      if((action.filename == null || action.filename.isEmpty) && files.isNotEmpty) {
+        action.filename = files.first.filepath;
+      }
       for(Audiofile file in files) {
         OptionElement option = new OptionElement()
           ..value = file.filepath

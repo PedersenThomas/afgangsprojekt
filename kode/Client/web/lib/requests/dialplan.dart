@@ -34,7 +34,7 @@ Future updateDialplan(int receptionId, String dialplan) {
       '${config.serverUrl}/reception/$receptionId/dialplan?token=${config.token}';
 
   request = new HttpRequest()
-      ..open(HttpMethod.PUT, url)
+      ..open(HttpMethod.POST, url)
       ..onLoad.listen((_) {
         try {
           if (request.status == 200) {
