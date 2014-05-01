@@ -1,4 +1,4 @@
-library adaheads_server_database;
+library adaheads.server.database;
 
 import 'dart:async';
 import 'dart:convert';

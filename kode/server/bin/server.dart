@@ -6,26 +6,27 @@ import 'package:args/args.dart';
 import '../lib/configuration.dart';
 import '../lib/database.dart';
 import '../lib/router.dart';
+import '../lib/utilities/http.dart';
 import '../lib/utilities/logger.dart';
 
-void main(List<String> args) {  
+void main(List<String> args) {
   ArgParser parser = new ArgParser();
   ArgResults parsedArgs = registerAndParseCommandlineArguments(parser, args);
-    
+
   if(parsedArgs['help']) {
     print(parser.getUsage());
   }
-  
+
   Configuration config = new Configuration(parsedArgs)
     ..parse();
   logger.debug(config);
-  
+
   setupDatabase(config)
     .then((db) => setupControllers(db))
     .then((_) => makeServer(config.httpport))
     .then((HttpServer server) {
       setupRoutes(server, config, logger);
-    
+
       logger.debug('Server started up!');
     });
 }
@@ -41,8 +42,7 @@ ArgResults registerAndParseCommandlineArguments(ArgParser parser, List<String> a
       ..addOption('dbhost',          help: 'The database host. Defaults to localhost')
       ..addOption('dbport',          help: 'The database port. Defaults to 5432')
       ..addOption('dbname',          help: 'The database name');
-  
+
   return parser.parse(arguments);
 }
 
-Future<HttpServer> makeServer(int port) => HttpServer.bind(InternetAddress.ANY_IP_V4, port);

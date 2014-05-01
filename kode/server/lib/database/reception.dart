@@ -1,4 +1,4 @@
-part of adaheads_server_database;
+part of adaheads.server.database;
 
 Future<int> _createReception(Pool pool, int organizationId, String fullName, Map attributes, String extradatauri, bool enabled, String number) {
   String sql = '''

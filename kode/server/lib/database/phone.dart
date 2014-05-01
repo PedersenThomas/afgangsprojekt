@@ -1,4 +1,4 @@
-part of adaheads_server_database;
+part of adaheads.server.database;
 
 Future<int> _createPhoneNumber(Pool pool, int receptionId, int contactId, String value, String kind) {
   String sql = '''

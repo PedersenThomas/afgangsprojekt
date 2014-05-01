@@ -1,4 +1,4 @@
-part of adaheads_server_database;
+part of adaheads.server.database;
 
 Future<int> _createContact(Pool pool, String fullName, String contact_type, bool enabled) {
   String sql = '''

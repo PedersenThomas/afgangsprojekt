@@ -1,4 +1,4 @@
-part of adaheads_server_database;
+part of adaheads.server.database;
 
 Future<model.CompleteReceptionContact> _getReceptionContact(Pool pool, int receptionId, int contactId) {
   String sql = '''

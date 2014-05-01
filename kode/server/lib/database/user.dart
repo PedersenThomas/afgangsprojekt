@@ -1,4 +1,4 @@
-part of adaheads_server_database;
+part of adaheads.server.database;
 
 Future<int> _createUser(Pool pool, String name, String extension) {
   String sql = '''

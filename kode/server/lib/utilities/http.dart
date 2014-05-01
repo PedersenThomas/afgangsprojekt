@@ -27,7 +27,7 @@ void addCorsHeaders(HttpResponse res) {
 
 Future<bool> authorized(HttpRequest request, Uri authUrl, {String groupName}) {
   try {
-    if(request.uri.queryParameters.containsKey('token')) {      
+    if(request.uri.queryParameters.containsKey('token')) {
       String token = request.uri.queryParameters['token'];
       Uri url = new Uri(scheme: authUrl.scheme, host: authUrl.host, port: authUrl.port, path: 'token/${token}');
       return http.get(url).then((http.Response response) {
@@ -54,13 +54,13 @@ Future<bool> authorized(HttpRequest request, Uri authUrl, {String groupName}) {
         logger.debug('Auth return with code "${response.statusCode}" on url "${url}"');
         Forbidden(request);
         return false;
-        
+
       }).catchError((error) {
         logger.error('authorized() Url: "${request.uri}" authUrl: "${url}" Error: $error');
         Internal_Error(request);
         return false;
       });
-      
+
     } else {
       Unauthorized(request);
       return new Future.value(false);
@@ -106,7 +106,9 @@ Future<bool> logHit(HttpRequest request, Logger logger) {
   return new Future.value(true);
 }
 
-Future NOTFOUND(HttpRequest request) {  
+Future<HttpServer> makeServer(int port) => HttpServer.bind(InternetAddress.ANY_IP_V4, port);
+
+Future NOTFOUND(HttpRequest request) {
   request.response.statusCode = HttpStatus.NOT_FOUND;
   return writeAndCloseJson(request, JSON.encode({'status': 'Not found'}));
 }
@@ -133,7 +135,7 @@ Future Unauthorized(HttpRequest request) {
 Future writeAndCloseJson(HttpRequest request, String body) {
   //TODO Timestamp
   logger.debug('${request.response.statusCode} ${request.method} ${request.uri}');
-  
+
   addCorsHeaders(request.response);
   request.response.headers.contentType = JSON_MIME_TYPE;
 

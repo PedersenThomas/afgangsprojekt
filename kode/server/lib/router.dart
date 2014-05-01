@@ -89,7 +89,7 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     ..serve(organizationIdUrl, method: HttpMethod.DELETE).listen(organization.deleteOrganization)
 
     ..serve(dialplanUrl, method: HttpMethod.GET).listen(reception.getDialplan)
-    ..serve(dialplanUrl, method: HttpMethod.PUT).listen(reception.updateDialplan)
+    ..serve(dialplanUrl, method: HttpMethod.POST).listen(reception.updateDialplan)
 
     ..serve(UserUrl, method: HttpMethod.GET).listen(user.getUserList)
     ..serve(UserUrl, method: HttpMethod.PUT).listen(user.createUser)

@@ -1,4 +1,4 @@
-part of adaheads_server_database;
+part of adaheads.server.database;
 
 Future<model.Organization> _getOrganization(Pool pool, int organizationId) {
   String sql = '''

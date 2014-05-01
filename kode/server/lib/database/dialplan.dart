@@ -1,4 +1,4 @@
-part of adaheads_server_database;
+part of adaheads.server.database;
 
 Future<Dialplan> _getDialplan(Pool pool, int receptionId) {
   String sql = '''
