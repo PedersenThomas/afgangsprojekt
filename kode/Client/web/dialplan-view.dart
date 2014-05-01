@@ -345,7 +345,7 @@ class DialplanView {
   }
 
   void settingsExtension(Extension extension) {
-      settingPanel.children.clear();
+    clearSettingsPanel();
       String html = '''
       <ul class="dialplan-settingsList">
         <li>
@@ -431,7 +431,7 @@ class DialplanView {
     }
 
   void settingsConditionTime(Time condition) {
-    settingPanel.children.clear();
+    clearSettingsPanel();
 
     String html = '''
     <ul class="dialplan-settingsList">
@@ -476,22 +476,20 @@ class DialplanView {
   }
 
   void settingsActionPlayAudio(PlayAudio action) {
-    settingPanel.children.clear();
-
+    clearSettingsPanel();
     String html = '''
     <ul class="dialplan-settingsList">
       <li>
           <label>Lydfil</label>
-          <select id="audiofilelist"></select>
+          <select id="dialplan-setting-audiofilelist"></select>
       </li>
     </ul>
     ''';
     DocumentFragment fragment = new DocumentFragment.html(html);
     settingPanel.children.addAll(fragment.children);
 
-    SelectElement audiofiledropdown = settingPanel.querySelector('#audiofilelist');
+    SelectElement audiofiledropdown = settingPanel.querySelector('#dialplan-setting-audiofilelist');
     audiofiledropdown
-        ..id = 'extension-setting-audiofile'
         ..onChange.listen((_) {
       action.filename = audiofiledropdown.value;
       enabledSaveButton();
@@ -523,19 +521,24 @@ class DialplanView {
   }
 
   void settingsActionForward(Forward action) {
-    settingPanel.children.clear();
+    clearSettingsPanel();
+    String html = '''
+    <ul class="dialplan-settingsList">
+      <li>
+          <label for="dialplan-setting-number">Nummer</label>
+          <input id="dialplan-setting-number" type="text" value="${action.number != null ? action.number : ''}"/>
+      </li>
+    </ul>
+    ''';
+    DocumentFragment fragment = new DocumentFragment.html(html);
+    settingPanel.children.addAll(fragment.children);
 
-    InputElement numberInput = new InputElement();
+    InputElement numberInput = settingPanel.querySelector('#dialplan-setting-number');
     numberInput
-        ..id = 'extension-setting-number'
-        ..value = action.number
         ..onInput.listen((_) {
       action.number = numberInput.value;
       enabledSaveButton();
     });
-    LabelElement numberLabel = new LabelElement()
-        ..text = 'Nummer'
-        ..htmlFor = numberInput.id;
 
     commentTextarea.value = action.comment;
     if(commentTextSubscription != null) {
@@ -545,24 +548,27 @@ class DialplanView {
       action.comment = commentTextarea.value;
       enabledSaveButton();
     });
-
-    settingPanel.children.addAll([numberLabel, numberInput]);
   }
 
   void settingsActionExecuteIvr(ExecuteIvr action) {
-    settingPanel.children.clear();
+    clearSettingsPanel();
+    String html = '''
+    <ul class="dialplan-settingsList">
+      <li>
+          <label for="dialplan-setting-ivrname">Ivr menu</label>
+          <input id="dialplan-setting-ivrname" type="text" value="${action.ivrname != null ? action.ivrname : ''}"/>
+      </li>
+    </ul>
+    ''';
+    DocumentFragment fragment = new DocumentFragment.html(html);
+    settingPanel.children.addAll(fragment.children);
 
-    InputElement ivrnameInput = new InputElement();
+    InputElement ivrnameInput = settingPanel.querySelector('#dialplan-setting-ivrname');
     ivrnameInput
-        ..id = 'extension-setting-ivrname'
-        ..value = action.ivrname
         ..onInput.listen((_) {
       action.ivrname = ivrnameInput.value;
       enabledSaveButton();
     });
-    LabelElement ivrnameLabel = new LabelElement()
-        ..text = 'Ivr navn'
-        ..htmlFor = ivrnameInput.id;
 
     commentTextarea.value = action.comment;
     if(commentTextSubscription != null) {
@@ -572,60 +578,70 @@ class DialplanView {
       action.comment = commentTextarea.value;
       enabledSaveButton();
     });
-
-//    ButtonElement save = new ButtonElement()
-//        ..text = 'Gem'
-//        ..onClick.listen((_) {
-//          action.ivrname = ivrnameInput.value;
-//          action.comment = commentTextarea.value;
-//
-//          updateDialplan();
-//        });
-
-    settingPanel.children.addAll([ivrnameLabel, ivrnameInput]);
   }
 
   void settingsActionReceptionists(Receptionists action) {
-    settingPanel.children.clear();
+    clearSettingsPanel();
+    String html = '''
+    <ul class="dialplan-settingsList">
+      <li>
+          <label for="dialplan-setting-sleeptime">Ventetid</label>
+          <input id="dialplan-setting-sleeptime" type="text" value="${action.sleepTime != null ? action.sleepTime : ''}"/>
+      </li>
+      <li>
+          <label for="dialplan-setting-music">Music</label>
+          <input id="dialplan-setting-music" type="text" value="${action.music != null ? action.music : ''}"/>
+      </li>
+      <li>
+          <label for="dialplan-setting-welcome">Velkomst</label>
+          <select id="dialplan-setting-welcome">
+            <option value="">Ingen</option>
+          </select>
+      </li>
+    </ul>
+    ''';
+    DocumentFragment fragment = new DocumentFragment.html(html);
+    settingPanel.children.addAll(fragment.children);
 
-    NumberInputElement sleepTimeInput = new NumberInputElement();
+    NumberInputElement sleepTimeInput = settingPanel.querySelector('#dialplan-setting-sleeptime');
     sleepTimeInput
-        ..id = 'extension-setting-sleepTime'
-        ..value = action.sleepTime.toString()
         ..onInput.listen((_) {
-      enabledSaveButton();
       try {
         int sleepTime = int.parse(sleepTimeInput.value);
         action.sleepTime = sleepTime;
+        enabledSaveButton();
       } catch(_) {}
     });
-    LabelElement numberLabel = new LabelElement()
-        ..text = 'Ventetid'
-        ..htmlFor = sleepTimeInput.id;
 
-    InputElement musicInput = new InputElement();
+    InputElement musicInput = settingPanel.querySelector('#dialplan-setting-sleeptime');
     musicInput
-        ..id = 'extension-setting-music'
-        ..value = action.music
         ..onInput.listen((_) {
       action.music = musicInput.value;
       enabledSaveButton();
     });
-    LabelElement musicLabel = new LabelElement()
-        ..text = 'Ventemusik'
-        ..htmlFor = musicInput.id;
 
-    InputElement welcomeInput = new InputElement();
-    welcomeInput
-        ..id = 'extension-setting-welcomefile'
-        ..value = action.welcomeFile
+    SelectElement welcomeFilePicker = settingPanel.querySelector('#dialplan-setting-welcome');
+    welcomeFilePicker
         ..onInput.listen((_) {
-      action.welcomeFile = welcomeInput.value;
+      action.welcomeFile = welcomeFilePicker.value == '' ? null : welcomeFilePicker.value;
       enabledSaveButton();
     });
-    LabelElement welcomeLabel = new LabelElement()
-        ..text = 'Velkomst lydfil'
-        ..htmlFor = musicInput.id;
+    request.getAudiofileList().then((List<Audiofile> files) {
+      bool found = false;
+      for(Audiofile file in files) {
+        OptionElement option = new OptionElement()
+          ..value = file.filepath
+          ..text = file.shortname;
+        if(action.welcomeFile == file.filepath) {
+          option.selected = true;
+          found = true;
+        }
+        welcomeFilePicker.children.add(option);
+      }
+      if(found == false) {
+        action.welcomeFile = null;
+      }
+    });
 
     commentTextarea.value = action.comment;
     if(commentTextSubscription != null) {
@@ -635,35 +651,27 @@ class DialplanView {
       action.comment = commentTextarea.value;
       enabledSaveButton();
     });
-
-//    ButtonElement save = new ButtonElement()
-//        ..text = 'Gem'
-//        ..onClick.listen((_) {
-//          action.sleepTime = int.parse(sleepTimeInput.value);
-//          action.music = musicInput.value;
-//          action.comment = commentTextarea.value;
-//          action.welcomeFile = welcomeInput.value;
-//
-//          updateDialplan();
-//        });
-
-    settingPanel.children.addAll([numberLabel, sleepTimeInput, musicLabel,
-        musicInput, welcomeLabel, welcomeInput]);
   }
 
   void settingsActionVoicemail(Voicemail action) {
-    settingPanel.children.clear();
-    InputElement emailInput = new InputElement();
+    clearSettingsPanel();
+    String html = '''
+    <ul class="dialplan-settingsList">
+      <li>
+          <label for="dialplan-setting-email">Email</label>
+          <input id="dialplan-setting-email" type="text" value="${action.email != null ? action.email : ''}"/>
+      </li>
+    </ul>
+    ''';
+    DocumentFragment fragment = new DocumentFragment.html(html);
+    settingPanel.children.addAll(fragment.children);
+
+    InputElement emailInput = settingPanel.querySelector('#dialplan-setting-email');
     emailInput
-        ..id = 'extension-setting-email'
-        ..value = action.email
         ..onInput.listen((_) {
         action.email = emailInput.value;
         enabledSaveButton();
     });
-    LabelElement emailLabel = new LabelElement()
-        ..text = 'email'
-        ..htmlFor = emailInput.id;
 
     commentTextarea.value = action.comment;
     if(commentTextSubscription != null) {
@@ -673,16 +681,5 @@ class DialplanView {
       action.comment = commentTextarea.value;
       enabledSaveButton();
     });
-
-//    ButtonElement save = new ButtonElement()
-//        ..text = 'Gem'
-//        ..onClick.listen((_) {
-//          action.email = emailInput.value;
-//          action.comment = commentTextarea.value;
-//
-//          updateDialplan();
-//        });
-
-    settingPanel.children.addAll([emailLabel, emailInput]);
   }
 }
