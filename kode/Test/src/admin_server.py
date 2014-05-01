@@ -30,6 +30,7 @@ class Server500(ServerBadStatus):
 class AdminServer:
     class Protocol:
         contactTypeUrl  = "/contacttypes"
+        dialplanUrl     = "/dialplan"
         receptionUrl    = "/reception"
         contactUrl      = "/contact"
         organizationUrl = "/organization"
@@ -164,6 +165,13 @@ class AdminServer:
 
     def getContactOrganization(self, contactId):
         return self.request(self.Protocol.contactUrl + "/" + str(contactId) + self.Protocol.organizationUrl, "GET")
+
+######################## DIALPLAN
+    def getDialplan(self, receptionId):
+        return self.request(self.Protocol.receptionUrl + "/" + str(receptionId) + self.Protocol.dialplanUrl, "GET")
+
+    def updateDialplan(self, receptionId, params):
+        return self.request(self.Protocol.receptionUrl + "/" + str(receptionId) + self.Protocol.dialplanUrl, "POST", params)
 
 ######################## USER
     def getUser(self, userId):
