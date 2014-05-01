@@ -1,5 +1,7 @@
 library Dialplan;
 
+import 'dialplan/json_serializable.dart';
+
 part 'dialplan/action.dart';
 part 'dialplan/condition.dart';
 part 'dialplan/dialplan.dart';

@@ -1,6 +1,6 @@
 part of Dialplan;
 
-class Dialplan {
+class Dialplan implements JsonSerializable {
   int receptionId;
   String entryNumber;
   List<Extension> Extensions = new List<Extension>();
@@ -23,6 +23,10 @@ class Dialplan {
         plan.receptionId = json['receptionid'];
       }
 
+      if (json.containsKey('entrynumber')) {
+        plan.entryNumber = json['entrynumber'];
+      }
+
       return plan;
     } else {
       return null;
@@ -30,6 +34,6 @@ class Dialplan {
   }
 
   Map toJson() => {
-    'extensions': Extensions.map((Extension e) => e.toJson()).toList()
+    'extensions': Extensions
   };
 }

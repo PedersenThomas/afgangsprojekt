@@ -1,6 +1,6 @@
 part of Dialplan;
 
-class Action {
+class Action implements JsonSerializable {
   Action();
 
   factory Action.fromJson(Map json) {

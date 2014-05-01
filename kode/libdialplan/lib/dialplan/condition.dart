@@ -1,6 +1,6 @@
 part of Dialplan;
 
-class Condition {
+class Condition implements JsonSerializable {
   String comment;
   Condition();
 
@@ -15,9 +15,5 @@ class Condition {
     }
   }
 
-  Map toJson() {
-    Map result = {};
-
-    return result;
-  }
+  Map toJson() => null;
 }

@@ -1,6 +1,6 @@
 part of Dialplan;
 
-class Extension {
+class Extension implements JsonSerializable {
   bool isStart = false;
   bool isCatchAll  = false;
   String comment;
@@ -18,10 +18,8 @@ class Extension {
         ..isStart = json['start']
         ..isCatchAll = json['catchall']
         ..failoverExtension = json['failoverextension']
-        ..conditions.addAll((json['conditions'] as List).map((c) =>
-            new Condition.fromJson(c)))
-        ..actions.addAll((json['actions'] as List).map((c) =>
-            new Action.fromJson(c)));
+        ..conditions.addAll((json['conditions'] as List).map((Map c) => new Condition.fromJson(c)))
+        ..actions.addAll((json['actions'] as List).map((Map c) => new Action.fromJson(c)));
 
     return object;
   }
@@ -31,8 +29,8 @@ class Extension {
       'name': name,
       'start': isStart,
       'catchall': isCatchAll,
-      'conditions': conditions.map((c) => c.toJson()).toList(),
-      'actions': actions.map((c) => c.toJson()).toList()
+      'conditions': conditions,
+      'actions': actions
     };
 
     if (comment != null) {
