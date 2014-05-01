@@ -328,10 +328,16 @@ class DialplanView {
 
   void activateExtension(Extension extension) {
     if (extension != null) {
+      updateSelectedExtensionName(extension);
       selectedExtension = extension;
       settingsExtension(extension);
     }
     renderContent();
+  }
+
+  void updateSelectedExtensionName(Extension extension) {
+    element.querySelector('#dialplan-selected-extensionname')
+      ..text = extension.name;
   }
 
   void renderContent() {
@@ -377,6 +383,7 @@ class DialplanView {
         ..onInput.listen((_) {
         extension.name = nameInput.value;
         renderExtensionList(dialplan);
+        updateSelectedExtensionName(extension);
         enabledSaveButton();
       })
       ..onInvalid.listen((_) {
