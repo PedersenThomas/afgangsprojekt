@@ -3,7 +3,7 @@ library ConditionToXml;
 import 'package:libdialplan/libdialplan.dart' as dialplan;
 import 'package:xml/xml.dart';
 
-import 'generator.dart';
+import '../generator.dart';
 
 XmlElement conditionToXml(dialplan.Condition condition, [String failoverExtension = null, int receptionId]) {
   if(condition is dialplan.Time) {

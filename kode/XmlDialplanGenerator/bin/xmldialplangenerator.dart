@@ -1,18 +1,51 @@
+import 'dart:io';
 import 'dart:convert';
 
+import 'package:args/args.dart';
 import 'package:libdialplan/libdialplan.dart';
 
-import '../lib/generator.dart';
 import '../lib/configuration.dart';
+import '../lib/database.dart';
+import '../lib/generator.dart';
+import '../lib/logger.dart';
+import '../lib/router.dart';
+import '../lib/utilities.dart';
 
-void main() {
-  Configuration config = new Configuration();
-  config.loadFromFile('config.json').then((_) {
-    TestStart();
-  }).catchError((error, stack) {
-    print('Error: "${error}"');
-    print(stack);
-  });
+ArgParser parser = new ArgParser();
+
+void main(List<String> args) {
+  ArgResults parsedArgs = registerAndParseCommandlineArguments(parser, args);
+
+  if(parsedArgs['help']) {
+    print(parser.getUsage());
+    return;
+  }
+
+  Configuration config = new Configuration(parsedArgs);
+  config.parse();
+
+  setupDatabase(config)
+    .then((db) => setupControllers(db, config))
+    .then((_) => makeServer(config.httpport))
+    .then((HttpServer server) {
+      setupRoutes(server, config, logger);
+
+      logger.debug('Server started up!');
+    });
+}
+
+ArgResults registerAndParseCommandlineArguments(ArgParser parser, List<String> arguments) {
+    parser
+      ..addFlag  ('help', abbr: 'h', help: 'Output this help')
+      ..addOption('configfile',      help: 'The JSON configuration file. Defaults to config.json')
+      ..addOption('httpport',        help: 'The port the HTTP server listens on.  Defaults to 8080')
+      ..addOption('dbuser',          help: 'The database user')
+      ..addOption('dbpassword',      help: 'The database password')
+      ..addOption('dbhost',          help: 'The database host. Defaults to localhost')
+      ..addOption('dbport',          help: 'The database port. Defaults to 5432')
+      ..addOption('dbname',          help: 'The database name');
+
+  return parser.parse(arguments);
 }
 
 void TestStart() {

@@ -1,6 +1,9 @@
 name: XmlDialplanGenerator
 description: A sample command-line application
 dependencies:
+  args: any
   libdialplan:
     path: ../libdialplan
+  postgresql: any
+  route: any
   xml: any

@@ -4,39 +4,118 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:args/args.dart';
+
 class Configuration {
+  ArgResults _args;
+
+  String configfile;
   String localContextPath;
-  String publicPath;
+  String publicContextPath;
+  String dbuser;
+  String dbpassword;
+  String dbhost;
+  int    dbport;
+  String dbname;
 
-  Future loadFromFile(String path) {
-    File file = new File(path);
+  int httpport;
 
-    return file.readAsString().then((String text) {
-      Map rawConfig = JSON.decode(text);
-      parseMap(rawConfig);
-    }).catchError((error) {
-      print('Loading configuration from "${path}" got "${error}"');
-    });
+  Configuration(ArgResults args) {
+    _args = args;
   }
 
-  void parseMap(Map configMap) {
-    if(configMap.containsKey('localContextPath')) {
-      localContextPath = configMap['localContextPath'];
+  void parse() {
+    if(_hasArgument('configfile')) {
+      configfile = _args['configfile'];
+      _parseFile();
+    }
+    _parseCLA();
+    _validate();
+  }
+
+  void _parseCLA() {
+    if(_hasArgument('dbhost')) {
+      dbhost = _args['dbhost'];
     }
 
-    if(configMap.containsKey('publicPath')) {
-      publicPath = configMap['publicPath'];
+    if(_hasArgument('dbname')) {
+      dbname = _args['dbname'];
     }
 
-    check();
+    if(_hasArgument('dbpassword')) {
+      dbpassword = _args['dbpassword'];
+    }
+
+    if(_hasArgument('dbport')) {
+      dbport = int.parse(_args['dbport']);
+    }
+
+    if(_hasArgument('dbuser')) {
+      dbuser = _args['dbuser'];
+    }
+
+    if(_hasArgument('httpport')) {
+      httpport = int.parse(_args['httpport']);
+    }
+
+    if(_hasArgument('localcontextpath')) {
+      localContextPath = _args['localcontextpath'];
+    }
+
+    if(_hasArgument('publiccontextpath')) {
+      publicContextPath = _args['publiccontextpath'];
+    }
+  }
+
+  void _parseFile() {
+    if(configfile == null) {
+      return;
+    }
+
+    File file = new File(configfile);
+    String rawContent = file.readAsStringSync();
+
+    Map content = JSON.decode(rawContent);
+
+    if(content.containsKey('dbhost')) {
+      dbhost = content['dbhost'];
+    }
+
+    if(content.containsKey('dbname')) {
+      dbname = content['dbname'];
+    }
+
+    if(content.containsKey('dbpassword')) {
+      dbpassword = content['dbpassword'];
+    }
+
+    if(content.containsKey('dbport')) {
+      dbport = content['dbport'];
+    }
+
+    if(content.containsKey('dbuser')) {
+      dbuser = content['dbuser'];
+    }
+
+    if(content.containsKey('httpport')) {
+      httpport = content['httpport'];
+    }
+
+    if(content.containsKey('localContextPath')) {
+      localContextPath = content['localContextPath'];
+    }
+
+    if(content.containsKey('publicContextPath')) {
+      publicContextPath = content['publicContextPath'];
+    }
   }
 
   /**
    * Checks if the configuration is valid.
    */
-  void check() {
+  void _validate() {
     if(localContextPath == null) {
-      throw new InvalidConfigurationException('localContextPath is null');
+      throw new InvalidConfigurationException("localContextPath isn't specified");
     } else {
       Directory file = new Directory(localContextPath);
       if(!file.existsSync()) {
@@ -44,14 +123,31 @@ class Configuration {
       }
     }
 
-    if(publicPath == null) {
-      throw new InvalidConfigurationException('publicPath is null');
+    if(publicContextPath == null) {
+      throw new InvalidConfigurationException("publicContextPath isn't specified");
     } else {
-      Directory file = new Directory(publicPath);
+      Directory file = new Directory(publicContextPath);
       if(!file.existsSync()) {
-        throw new InvalidConfigurationException('publicPath: "${publicPath}" does not exists');
+        throw new InvalidConfigurationException('publicContextPath: "${publicContextPath}" does not exists');
       }
     }
+  }
+
+  String toString() => '''
+      LocalContextPath: ${localContextPath}
+      publicContextPath: ${publicContextPath}
+      HttpPort: $httpport
+      Database:
+        Host: $dbhost
+        Port: $dbport
+        User: $dbuser
+        Pass: ${dbpassword.codeUnits.map((_) => '*').join()}
+        Name: $dbname      
+      ''';
+
+  bool _hasArgument(String key) {
+    assert(_args != null);
+    return _args.options.contains(key) && _args[key] != null;
   }
 }
 

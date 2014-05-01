@@ -1,11 +1,11 @@
 library generator;
 
 import 'package:libdialplan/libdialplan.dart';
-import 'package:XmlDialplanGenerator/utilities.dart';
 import 'package:xml/xml.dart';
 
-import 'action_to_xml.dart';
-import 'condition_to_xml.dart';
+import 'generator/action_to_xml.dart';
+import 'generator/condition_to_xml.dart';
+import 'utilities.dart';
 
 class GeneratorOutput {
   XmlElement entry;
@@ -27,9 +27,13 @@ GeneratorOutput generateXml(Dialplan dialplan) {
   output.receptionContext = context;
 
   //Make actual Extension.
-  Iterable<XmlElement> extensions = dialplan.Extensions.map((Extension ext) => makeReceptionExtensions(ext, dialplan.receptionId));
+  //The Catch all extension should be last i the chain.
+  Iterable<XmlElement> extensions = dialplan.Extensions.where((Extension ext) => !ext.isCatchAll).map((Extension ext) => makeReceptionExtensions(ext, dialplan.receptionId));
   context.children.addAll(extensions);
 
+  //There should only be one extension as CatchAll, but this is the simplest one.
+  Iterable<XmlElement> catchAllExtension = dialplan.Extensions.where((Extension ext) => ext.isCatchAll).map((Extension ext) => makeReceptionExtensions(ext, dialplan.receptionId));
+  context.children.addAll(catchAllExtension);
   return output;
 }
 
