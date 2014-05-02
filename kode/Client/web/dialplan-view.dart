@@ -9,6 +9,7 @@ import 'lib/logger.dart' as log;
 import 'lib/model.dart';
 import 'lib/request.dart' as request;
 import 'package:libdialplan/libdialplan.dart';
+import 'notification.dart' as notify;
 import 'lib/searchcomponent.dart';
 
 class _ControlLookUp {
@@ -151,10 +152,12 @@ class DialplanView {
 
   Future saveDialplan() {
     if (selectedReceptionId != null && selectedReceptionId > 0) {
-      return request.updateDialplan(selectedReceptionId, JSON.encode(dialplan.toJson()))
-          .then((_) {
+      return request.updateDialplan(selectedReceptionId, JSON.encode(dialplan))
+        .then((_) {
+        notify.info('Dialplan er blevet updateret.');
         disableSaveButton();
       }).catchError((error) {
+        notify.error('Der skete en fejl i forbindelse med updateringen af dialplanen.');
         log.error('Update Dialplan gave ${error}');
       });
     } else {
@@ -258,7 +261,7 @@ class DialplanView {
           });
 
         } else if (action is ExecuteIvr) {
-          image.src = 'image/organization_icon.svg';
+          image.src = 'image/tp/ivr.svg';
           nameTag.text = 'Ivrmenu';
           li.onClick.listen((_) {
             settingsActionExecuteIvr(action);
@@ -327,9 +330,10 @@ class DialplanView {
   }
 
   void activateExtension(Extension extension) {
+    selectedExtension = extension;
+    updateSelectedExtensionName(extension);
+    clearSettingsPanel();
     if (extension != null) {
-      updateSelectedExtensionName(extension);
-      selectedExtension = extension;
       settingsExtension(extension);
     }
     renderContent();
@@ -337,7 +341,7 @@ class DialplanView {
 
   void updateSelectedExtensionName(Extension extension) {
     element.querySelector('#dialplan-selected-extensionname')
-      ..text = extension.name;
+      ..text = extension != null ? extension.name : '';
   }
 
   void renderContent() {

@@ -21,8 +21,7 @@ Future updateReceptionContact(int receptionId, int contactId, String body) {
   return completer.future;
 }
 
-Future<Map> createReceptionContact(int receptionId, int contactId, String data)
-    {
+Future<Map> createReceptionContact(int receptionId, int contactId, String data) {
   final Completer completer = new Completer();
 
   HttpRequest request;

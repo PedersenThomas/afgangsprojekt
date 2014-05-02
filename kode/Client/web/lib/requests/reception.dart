@@ -43,7 +43,7 @@ Future<List<CustomReceptionContact>> getReceptionContactList(int receptionId) {
           completer.complete(rawReceptions.map((r) =>
               new CustomReceptionContact.fromJson(r)).toList());
         } else {
-          throw new Exception('Bad status code. ${request.status}');
+          completer.completeError('Bad status code. ${request.status}');
         }
       })
       ..onError.listen((e) {
@@ -59,24 +59,22 @@ Future<Reception> getReception(int organization, int receptionId) {
   final Completer completer = new Completer();
 
   HttpRequest request;
-  String url =
-      '${config.serverUrl}/organization/$organization/reception/$receptionId?token=${config.token}';
+  String url = '${config.serverUrl}/organization/$organization/reception/$receptionId?token=${config.token}';
 
   request = new HttpRequest()
-      ..open(HttpMethod.GET, url)
-      ..onLoad.listen((_) {
-        if (request.status == 200) {
-          completer.complete(new Reception.fromJson(JSON.decode(
-              request.responseText)));
-        } else {
-          completer.completeError('Bad status code. ${request.status}');
-        }
-      })
-      ..onError.listen((e) {
-        //TODO logging.
-        completer.completeError(e.toString());
-      })
-      ..send();
+    ..open(HttpMethod.GET, url)
+    ..onLoad.listen((_) {
+      if (request.status == 200) {
+        completer.complete(new Reception.fromJson(JSON.decode(request.responseText)));
+      } else {
+        completer.completeError('Bad status code. ${request.status}');
+      }
+    })
+    ..onError.listen((e) {
+      //TODO logging.
+      completer.completeError(e.toString());
+    })
+    ..send();
 
   return completer.future;
 }

@@ -158,8 +158,11 @@ class OrganizationView {
       };
       String newOrganization = JSON.encode(organization);
       updateOrganization(selectedOrganizationId, newOrganization).then((_) {
-        //Show a message that tells the user, that the changes went through.
+        notify.info('Ændringerne blev gemt.');
         refreshList();
+      }).catchError((error) {
+        notify.error('Der skete en fejl i forbindelse med forsøget på at gemme ændringerne til organisationen.');
+        log.error('Tried to update an organizaiton got: $error');
       });
     } else if (createNew) {
       Map organization = {
@@ -169,13 +172,14 @@ class OrganizationView {
       };
       String newOrganization = JSON.encode(organization);
       createOrganization(newOrganization).then((Map response) {
-        //TODO visable clue that a new organization is created.
+        notify.info('Organisationen blev oprettet.');
         int organizationId = response['id'];
         refreshList();
         activateOrganization(organizationId);
         bus.fire(Invalidate.organizationAdded, null);
       }).catchError((error) {
-        log.error('Tried to create a new Organizaitonbut got: $error');
+        notify.error('Der skete en fejl, så organisationen blev ikke oprettet.');
+        log.error('Tried to create an new organizaiton got: $error');
       });
     }
   }
@@ -187,7 +191,8 @@ class OrganizationView {
       this.organizations = organizations;
       renderOrganizationList(organizations);
     }).catchError((error) {
-      log.error('Tried to fetch organization but got error: $error');
+      notify.error('Organisationerne blev ikke hentet da der er sket en fejl.');
+      log.error('Tried to fetch organization list, got error: $error');
     });
   }
 
@@ -221,8 +226,8 @@ class OrganizationView {
       updateReceptionList(selectedOrganizationId);
       updateContactList(selectedOrganizationId);
     }).catchError((error) {
-      log.error(
-          'Tried to activate organization "$organizationId" but gave error: $error');
+      notify.error('Der skete en fejl i forbindelse med at hente alt information for organisationen.');
+      log.error('Tried to activate organization "$organizationId" but gave error: $error');
     });
   }
 
@@ -261,23 +266,22 @@ class OrganizationView {
           ..clear()
           ..addAll(contacts.map(makeContactNode));
     }).catchError((error) {
-      log.error(
-          'Tried to fetch the contactlist from an organization Error: $error');
+      notify.error('Der skete en fejl i forbindelse med at hente kontakterne tilknyttet organisationen.');
+      log.error('Tried to fetch the contactlist from an organization Error: $error');
     });
   }
 
   LIElement makeContactNode(Contact contact) {
-    LIElement li = new LIElement();
-    li
-        ..classes.add('clickable')
-        ..text = '${contact.full_name}'
-        ..onClick.listen((_) {
-          Map event = {
-            'window': 'contact',
-            'contact_id': contact.id
-          };
-          bus.fire(windowChanged, event);
-        });
+    LIElement li = new LIElement()
+      ..classes.add('clickable')
+      ..text = '${contact.full_name}'
+      ..onClick.listen((_) {
+        Map event = {
+          'window': 'contact',
+          'contact_id': contact.id
+        };
+        bus.fire(windowChanged, event);
+      });
     return li;
   }
 }

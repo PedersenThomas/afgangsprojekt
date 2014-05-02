@@ -21,3 +21,5 @@ class HttpMethod {
   static const String PUT = 'PUT';
   static const String DELETE = 'DELETE';
 }
+
+class Forbidden {}

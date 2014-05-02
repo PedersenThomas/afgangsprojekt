@@ -9,6 +9,7 @@ import 'lib/request.dart';
 import 'lib/eventbus.dart';
 import 'lib/view_utilities.dart';
 import 'lib/searchcomponent.dart';
+import 'notification.dart' as notify;
 import 'menu.dart';
 
 class ReceptionView {
@@ -93,14 +94,12 @@ class ReceptionView {
     });
   }
 
-  String organizationToSearchboxString(Organization organization, String
-      searchterm) {
+  String organizationToSearchboxString(Organization organization, String searchterm) {
     return '${organization.full_name}';
   }
 
   bool organizationSearchHandler(Organization organization, String searchTerm) {
-    return organization.full_name.toLowerCase().contains(searchTerm.toLowerCase(
-        ));
+    return organization.full_name.toLowerCase().contains(searchTerm.toLowerCase());
   }
 
   void registrateEventHandlers() {
@@ -211,15 +210,15 @@ class ReceptionView {
           'organizationId': currentOrganizationId,
           'receptionId': selectedReceptionId
         };
+        notify.info('Sletning af receptionen gik godt.');
         bus.fire(Invalidate.receptionRemoved, event);
         selectedReceptionId = 0;
         currentOrganizationId = 0;
         clearContent();
         refreshList();
       }).catchError((error) {
-        log.error(
-            'Failed to delete reception orgId: "${currentOrganizationId}" recId: "${selectedReceptionId}" got "${error}"'
-            );
+        notify.error('Der skete en fejl i forbindelse med sletningen af receptionen.');
+        log.error('Failed to delete reception orgId: "${currentOrganizationId}" recId: "${selectedReceptionId}" got "${error}"');
       });
     }
   }
@@ -238,12 +237,14 @@ class ReceptionView {
       if (SC.currentElement != null) {
         int organizationId = SC.currentElement.id;
         createReception(organizationId, newReception.toJson()).then((Map data) {
+          notify.info('Receptionen blev oprettet.');
           int receptionId = data['id'];
           bus.fire(Invalidate.receptionAdded, organizationId);
           return refreshList().then((_) {
             return activateReception(organizationId, receptionId);
           });
         }).catchError((error) {
+          notify.error('Der skete en fejl, så receptionen blev ikke oprettet.');
           log.error('Tried to create a new reception but got "$error"');
         });
       }
