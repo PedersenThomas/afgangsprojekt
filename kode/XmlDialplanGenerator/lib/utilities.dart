@@ -64,7 +64,7 @@ void InternalServerError(HttpRequest request, {error, stack, String message}) {
     logger.error(stack);
   }
 
-  Map body ={'error': 'Internal Server Error'};
+  Map body = {'error': 'Internal Server Error'};
   if(message != null) {
     body['message'] = message;
   }
