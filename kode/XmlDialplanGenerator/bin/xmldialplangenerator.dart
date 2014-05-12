@@ -23,6 +23,7 @@ void main(List<String> args) {
 
   Configuration config = new Configuration(parsedArgs);
   config.parse();
+  print(config);
 
   setupDatabase(config)
     .then((db) => setupControllers(db, config))
