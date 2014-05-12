@@ -21,10 +21,14 @@ GeneratorOutput generateXml(Dialplan dialplan) {
   //The extension the caller hits.
   output.entry = makeEntryNode(dialplan,[]);
 
+
   XmlElement context = new XmlElement('context')
     ..attributes['name'] = contextName(dialplan.receptionId);
 
-  output.receptionContext = context;
+  //Every included file, must have the root element <include>
+  XmlElement include = new XmlElement('include');
+  output.receptionContext = include
+    ..children.add(context);
 
   //Make actual Extension.
   //The Catch all extension should be last i the chain.
