@@ -36,55 +36,11 @@ class DialplanTests(unittest.TestCase):
                         },
                         "conditions": {
                             "type": "array",
-                            "required": True,
-                            "items": [
-                            { #Time
-                                "type": "object",
-                                "required": True,
-                                "properties": {
-                                    "condition": {
-                                        "type": "string",
-                                        "required": True
-                                    },
-                                    "time-of-day": {
-                                        "type": "string",
-                                        "required": True
-                                    },
-                                    "wday": {
-                                        "type": "string",
-                                        "required": True
-                                    }
-                                }
-                            }]
+                            "required": True
                         },
                         "actions": {
                             "type": "array",
-                            "required": True,
-                            "items": [
-                            { #forward
-                                "type": "object",
-                                "required": True,
-                                "properties": {
-                                    "action": {
-                                        "type": "string",
-                                        "required": True
-                                    },
-                                    "number": {
-                                        "type": "string",
-                                        "required": True
-                                    }
-                                }
-                            },
-                            { #playaudio
-                                "type": "object",
-                                "required": True,
-                                "properties": {
-                                    "action": {
-                                        "type": "string",
-                                        "required": True
-                                    }
-                                }
-                            }]
+                            "required": True
                         }
                     }
                 }
