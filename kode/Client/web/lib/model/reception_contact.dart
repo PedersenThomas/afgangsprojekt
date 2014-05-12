@@ -8,36 +8,109 @@ class ReceptionContact {
   int distributionListId;
   List<Phone> phoneNumbers;
 
-  Map get attributes {
-    return {
-      'department': department,
-      'info': info,
-      'position': position,
-      'relations': relations,
-      'responsibility': responsibility,
-      'backup': priorityListToJson(backup),
-      'emailaddresses': priorityListToJson(emailaddresses),
-      'handling': priorityListToJson(handling),
-      //'telephonenumbers': priorityListToJson(telephonenumbers),
-      'workhours': priorityListToJson(workhours),
-      'tags': tags
-    };
+  Map _attributes;
+
+  Map get attributes => _attributes;
+
+  void set attributes (Map value) {
+    _attributes = value;
   }
 
-  List<String> backup;
-  List<String> emailaddresses;
-  List<String> handling;
-  //List<String> telephonenumbers;
-  List<String> workhours;
-  List<String> tags;
+  List<String> get backup => priorityListFromJson(_attributes, 'backup');
+  void set backup(List<String> list) {
+    if(_attributes == null) {
+      _attributes = {};
+    }
+    _attributes['backup'] = priorityListToJson(list);
+  }
 
-  String department;
-  String info;
-  String position;
-  String relations;
-  String responsibility;
+  List<String> get emailaddresses => priorityListFromJson(_attributes, 'emailaddresses');
+  void set emailaddresses(List<String> list) {
+    if(_attributes == null) {
+      _attributes = {};
+    }
+    _attributes['emailaddresses'] = priorityListToJson(list);
+  }
 
-  ReceptionContact();
+  List<String> get handling => priorityListFromJson(_attributes, 'handling');
+  void set handling(List<String> list) {
+    if(_attributes == null) {
+      _attributes = {};
+    }
+    _attributes['handling'] = priorityListToJson(list);
+  }
+
+  List<String> get workhours => priorityListFromJson(_attributes, 'workhours');
+  void set workhours(List<String> list) {
+    if(_attributes == null) {
+      _attributes = {};
+    }
+    _attributes['workhours'] = priorityListToJson(list);
+  }
+
+  List<String> get tags => _attributes['tags'];
+  void set tags(List<String> list) {
+    if(_attributes == null) {
+      _attributes = {};
+    }
+    _attributes['tags'] = list;
+  }
+
+  String get department => _attributes['department'];
+  void set department(String value) {
+    if(_attributes == null) {
+      _attributes = {};
+    }
+    _attributes['department'] = value;
+  }
+
+  String get info => _attributes['info'];
+  void set info(String value) {
+    if(_attributes == null) {
+      _attributes = {};
+    }
+    _attributes['info'] = value;
+  }
+
+  String get position => _attributes['position'];
+  void set position(String value) {
+    if(_attributes == null) {
+      _attributes = {};
+    }
+    _attributes['position'] = value;
+  }
+
+  String get relations => _attributes['relations'];
+  void set relations(String value) {
+    if(_attributes == null) {
+      _attributes = {};
+    }
+    _attributes['relations'] = value;
+  }
+
+  String get responsibility => _attributes['responsibility'];
+  void set responsibility(String value) {
+    if(_attributes == null) {
+      _attributes = {};
+    }
+    _attributes['responsibility'] = value;
+  }
+
+  ReceptionContact() {
+    attributes = {
+      'department': null,
+      'info': null,
+      'position': null,
+      'relations': null,
+      'responsibility': null,
+      'backup': null,
+      'emailaddresses': null,
+      'handling': null,
+      //'telephonenumbers': priorityListToJson(telephonenumbers),
+      'workhours': null,
+      'tags': null
+    };
+  }
 
   factory ReceptionContact.fromJson(Map json) {
     ReceptionContact object = new ReceptionContact()
@@ -49,21 +122,10 @@ class ReceptionContact {
       ..phoneNumbers = (json['contact_phonenumbers'] as List<Map>).map((Map json) => new Phone.fromJson(json)).toList();
 
     if (json.containsKey('attributes')) {
-      Map attributes = json['attributes'];
-
-      object
-          ..backup = priorityListFromJson(attributes, 'backup')
-          ..emailaddresses = priorityListFromJson(attributes, 'emailaddresses')
-          ..handling = priorityListFromJson(attributes, 'handling')
-//          ..telephonenumbers = priorityListFromJson(attributes, 'telephonenumbers')
-          ..workhours = priorityListFromJson(attributes, 'workhours')
-          ..tags = attributes['tags']
-
-          ..department = stringFromJson(attributes, 'department')
-          ..info = stringFromJson(attributes, 'info')
-          ..position = stringFromJson(attributes, 'position')
-          ..relations = stringFromJson(attributes, 'relations')
-          ..responsibility = stringFromJson(attributes, 'responsibility');
+      Map attr = json['attributes'];
+      for(String key in attr) {
+        object._attributes[key] = attr[key];
+      }
     }
 
     return object;

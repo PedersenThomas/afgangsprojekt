@@ -155,7 +155,7 @@ class ContactView {
           contacts.sort((a, b) => a.receptionName.compareTo(b.receptionName));
           ulReceptionContacts.children
               ..clear()
-              ..addAll(contacts.map((receptioncontact) => receptionContactBox(receptioncontact, receptionContactUpdate)));
+              ..addAll(contacts.map((ReceptionContact_ReducedReception receptioncontact) => receptionContactBox(receptioncontact, receptionContactUpdate)));
 
           //Rightbar
           ulReceptionList.children
@@ -246,6 +246,7 @@ class ContactView {
       if (!saveList.containsKey(contact.receptionId)) {
         saveList[contact.receptionId] = () {
           ReceptionContact RC = new ReceptionContact()
+              ..attributes = contact.attributes //There can be more values than we know of.
               ..contactId = contact.contactId
               ..receptionId = contact.receptionId
               ..contactEnabled = enabled.checked
@@ -357,6 +358,7 @@ class ContactView {
   }
 
   UListElement makePhoneNumbersList(Element container, List<Phone> phonenumbers, {Function onChange}) {
+    print('361 PhoneNumbers: ${phonenumbers}');
     LabelElement label = new LabelElement();
     UListElement ul = new UListElement()..classes.add('content-list');
 
@@ -371,7 +373,20 @@ class ContactView {
           SelectElement kindpicker = new SelectElement()
             ..children.addAll(phonenumberTypes.map((String kind) => new OptionElement(data: kind, value: kind, selected: kind == number.kind)))
             ..onChange.listen((_) => onChange());
-          li.children.add(kindpicker);
+
+          SpanElement descriptionContent = new SpanElement()
+            ..text = number.description
+            ..classes.add('phonenumberdescription');
+          InputElement descriptionEditBox = new InputElement(type: 'text');
+          editableSpan(descriptionContent, descriptionEditBox, onChange);
+
+          SpanElement billTypeContent = new SpanElement()
+            ..text = number.bill_type
+            ..classes.add('phonenumberbilltype');
+          InputElement billTypeEditBox = new InputElement(type: 'text');
+          editableSpan(billTypeContent, billTypeEditBox, onChange);
+
+          li.children.addAll([kindpicker, descriptionContent, descriptionEditBox, billTypeContent, billTypeEditBox]);
           children.add(li);
         }
       }
@@ -387,30 +402,46 @@ class ContactView {
 
       InputElement inputNewItem = new InputElement();
       inputNewItem
-          ..classes.add(addNewLiClass)
-          ..placeholder = 'Tilføj ny...'
-          ..onKeyPress.listen((KeyboardEvent event) {
-            KeyEvent key = new KeyEvent.wrap(event);
-            if (key.keyCode == Keys.ENTER) {
-              String item = inputNewItem.value;
-              inputNewItem.value = '';
+        ..classes.add(addNewLiClass)
+        ..placeholder = 'Tilføj ny...'
+        ..onKeyPress.listen((KeyboardEvent event) {
+          KeyEvent key = new KeyEvent.wrap(event);
+          if (key.keyCode == Keys.ENTER) {
+            String item = inputNewItem.value;
+            inputNewItem.value = '';
 
-              LIElement li = simpleListElement(item);
-              SelectElement kindpicker = new SelectElement()
-                ..children.addAll(phonenumberTypes.map((String kind) => new OptionElement(data: kind, value: kind)))
-                ..onChange.listen((_) => onChange());
-              li.children.add(kindpicker);
-              int index = ul.children.length - 1;
-              sortGroup.install(li);
-              ul.children.insert(index, li);
+            LIElement li = simpleListElement(item);
+            SelectElement kindpicker = new SelectElement()
+              ..children.addAll(phonenumberTypes.map((String kind) => new OptionElement(data: kind, value: kind)))
+              ..onChange.listen((_) => onChange());
 
-              if (onChange != null) {
-                onChange();
-              }
-            } else if (key.keyCode == Keys.ESCAPE) {
-              inputNewItem.value = '';
+            SpanElement descriptionContent = new SpanElement()
+              ..text = 'kontor'
+              ..classes.add('phonenumberdescription');
+            InputElement descriptionEditBox = new InputElement(type: 'text')
+              ..placeholder = 'beskrivelse';
+            editableSpan(descriptionContent, descriptionEditBox, onChange);
+
+            SpanElement billTypeContent = new SpanElement()
+              ..text = 'fastnet'
+              ..classes.add('phonenumberbilltype');
+            InputElement billTypeEditBox = new InputElement(type: 'text')
+              ..placeholder = 'taksttype';
+            editableSpan(billTypeContent, billTypeEditBox, onChange);
+
+            li.children.addAll([kindpicker, descriptionContent, descriptionEditBox, billTypeContent, billTypeEditBox]);
+
+            int index = ul.children.length - 1;
+            sortGroup.install(li);
+            ul.children.insert(index, li);
+
+            if (onChange != null) {
+              onChange();
             }
-          });
+          } else if (key.keyCode == Keys.ESCAPE) {
+            inputNewItem.value = '';
+          }
+        });
 
       children.add(new LIElement()..children.add(inputNewItem));
 
@@ -429,16 +460,22 @@ class ContactView {
 
     for (LIElement li in element.children) {
       if (!li.classes.contains(addNewLiClass)) {
-        SpanElement content = li.children.firstWhere((elem) => elem is SpanElement, orElse: () => null);
+        SpanElement content = li.children.firstWhere((elem) => elem is SpanElement && elem.classes.contains('contactgenericcontent'), orElse: () => null);
         SelectElement kindpicker = li.children.firstWhere((elem) => elem is SelectElement, orElse: () => null);
+        SpanElement description = li.children.firstWhere((elem) => elem is SpanElement && elem.classes.contains('phonenumberdescription'), orElse: () => null);
+        SpanElement billType = li.children.firstWhere((elem) => elem is SpanElement && elem.classes.contains('phonenumberbilltype'), orElse: () => null);
+
         if (content != null && kindpicker != null) {
           phonenumbers.add(new Phone()
             ..id = li.value
             ..kind = kindpicker.options[kindpicker.selectedIndex].value
-            ..value = content.text);
+            ..value = content.text
+            ..description = description.text
+            ..bill_type = billType.text);
         }
       }
     }
+    print('474 Commiting phonenumbers: ${phonenumbers}');
     return phonenumbers;
   }
 

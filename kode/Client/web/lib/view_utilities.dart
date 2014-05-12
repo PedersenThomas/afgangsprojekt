@@ -63,17 +63,27 @@ void fillList(UListElement element, List<String> items, {Function onChange}) {
 LIElement simpleListElement(String item, {Function onChange}) {
   LIElement li = new LIElement();
   ButtonElement deleteButton = new ButtonElement()
-      ..text = 'Slet'
-      ..onClick.listen((_) {
-        li.parent.children.remove(li);
+    ..text = 'Slet'
+    ..onClick.listen((_) {
+      li.parent.children.remove(li);
 
-        if (onChange != null) {
-          onChange();
-        }
-      });
-  SpanElement content = new SpanElement()..text = item;
+      if (onChange != null) {
+        onChange();
+      }
+    });
+
+  SpanElement content = new SpanElement()
+    ..text = item
+    ..classes.add('contactgenericcontent');
   InputElement editBox = new InputElement(type: 'text');
 
+  editableSpan(content, editBox, onChange);
+
+  li.children.addAll([deleteButton, content, editBox]);
+  return li;
+}
+
+void editableSpan(SpanElement content, InputElement editBox, Function onChange) {
   bool activeEdit = false;
   String oldDisplay = content.style.display;
   editBox
@@ -93,8 +103,6 @@ LIElement simpleListElement(String item, {Function onChange}) {
             activeEdit = false;
           }
         });
-  li.children.addAll([deleteButton, content, editBox]);
-
   content.onClick.listen((MouseEvent event) {
     if (!activeEdit) {
       activeEdit = true;
@@ -106,7 +114,6 @@ LIElement simpleListElement(String item, {Function onChange}) {
           ..value = content.text;
     }
   });
-  return li;
 }
 
 List<String> getListValues(UListElement element) {
