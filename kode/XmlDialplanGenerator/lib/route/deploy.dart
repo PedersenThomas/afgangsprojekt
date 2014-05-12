@@ -25,7 +25,7 @@ class DialplanController {
         String localContent = output.receptionContext.toString().replaceAll('\r', '\n');
         localFile.writeAsStringSync(localContent, mode: FileMode.WRITE, flush:true);
 
-        writeAndCloseJson(request, '');
+        writeAndCloseJson(request, '{}');
       } catch(error, stack) {
         InternalServerError(request, error: error, stack: stack);
       }
