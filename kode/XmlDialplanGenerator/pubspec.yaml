@@ -6,4 +6,4 @@ dependencies:
     path: ../libdialplan
   postgresql: any
   route: any
-  xml: any
+  xml: 1.0.0
