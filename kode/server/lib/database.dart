@@ -145,14 +145,14 @@ class Database {
      ******************** Phone ********************
    */
 
-  Future<int> createPhoneNumber(int receptionId, int contactId, String value, String kind) =>
-      _createPhoneNumber(pool, receptionId, contactId, value, kind);
+//  Future<int> createPhoneNumber(int receptionId, int contactId, String value, String kind) =>
+//      _createPhoneNumber(pool, receptionId, contactId, value, kind);
+//
+//  Future<int> deletePhoneNumber(int phonenumberId) =>
+//      _deletePhoneNumber(pool, phonenumberId);
 
-  Future<int> deletePhoneNumber(int phonenumberId) =>
-      _deletePhoneNumber(pool, phonenumberId);
-
-  Future<List<model.Phone>> getPhoneNumbers(int receptionId, int contactId) =>
-      _getPhoneNumbers(pool, receptionId, contactId);
+//  Future<List<model.Phone>> getPhoneNumbers(int receptionId, int contactId) =>
+//      _getPhoneNumbers(pool, receptionId, contactId);
 
   /* ***********************************************
      ********************* User ********************
