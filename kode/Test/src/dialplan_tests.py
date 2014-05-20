@@ -64,9 +64,17 @@ class DialplanTests(unittest.TestCase):
         reception_id = 1
         response = self.adminServer.getDialplan(reception_id)[1]
         jsonBody = json.loads(response)
+        self.failIf('extensions' in jsonBody and len(jsonBody['extensions']) > 0)
+        if 'extensions' in jsonBody and len(jsonBody['extensions']) > 0:
+            self.fail('There is not a test dialplan to update.')
 
+        oldValue = jsonBody['extensions'][0]['name']
         jsonBody['extensions'][0]['name'] = 'TestMania'
         try:
+            self.adminServer.updateDialplan(reception_id, jsonBody)
+
+            jsonBody['extensions'][0]['name'] = oldValue
+            #Change it back again.
             self.adminServer.updateDialplan(reception_id, jsonBody)
         except admin_server.ServerBadStatus as e:
             self.fail('Error: ' + str(e) + ' Data"' + str(jsonBody) + '"')
