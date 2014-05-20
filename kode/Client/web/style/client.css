@@ -22,20 +22,32 @@ html,body {
 nav#navigation {
   left: 0%;
   top: 0%;
-  width: 4%;
+  width: 3%;
   height: 100%;
   float: left;
 }
 
+nav#navigation li {
+  width: 100%;
+  padding: 5px 1px;
+}
+
+nav#navigation img {
+  width: 100%;
+}
+
 #page-main-screen {
   float: left;
-  width: 96%;
+  width: 97%;
   height: 100%;
   overflow: auto;
 }
 
 .hidden {
-  display: none;
+  /*display: none;*/
+  position: absolute;
+  left: -99999px
+
 }
 
 .dnd-placeholder {
