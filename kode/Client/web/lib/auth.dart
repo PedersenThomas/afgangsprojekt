@@ -20,6 +20,6 @@ bool handleToken() {
 void login() {
   String loginUrl = '${config.authBaseUrl}/token/create?returnurl=${window.location}';
   //TODO
-  loginUrl = 'http://127.0.0.1:3030/Client/web/client.html?settoken=feedabbadeadbeef0';
+  loginUrl = '${window.location}?settoken=feedabbadeadbeef0';
   window.location.assign(loginUrl);
 }

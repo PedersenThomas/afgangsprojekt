@@ -16,7 +16,7 @@ class ReceptionView {
   String addNewLiClass = 'addnew';
   String viewName = 'reception';
   DivElement element;
-  InputElement inputFullName, inputProduct, inputGreeting, inputOther,
+  InputElement inputFullName, inputShortGreeting, inputProduct, inputGreeting, inputOther,
       inputCostumerstype, inputReceptionNumber;
   ButtonElement buttonDialplan;
   CheckboxInputElement inputEnabled;
@@ -44,6 +44,7 @@ class ReceptionView {
     inputProduct = element.querySelector('#reception-input-product');
     inputOther = element.querySelector('#reception-input-other');
     inputCostumerstype = element.querySelector('#reception-input-customertype');
+    inputShortGreeting = element.querySelector('#reception-input-shortgreeting');
     inputGreeting = element.querySelector('#reception-input-greeting');
     inputEnabled = element.querySelector('#reception-input-enabled');
     inputReceptionNumber = element.querySelector(
@@ -290,7 +291,7 @@ class ReceptionView {
     return new LIElement()
         ..classes.add('clickable')
         ..value = reception.id //TODO Er den brugt?
-        ..text = '${reception.id} - ${reception.full_name}'
+        ..text = '${reception.full_name}'
         ..onClick.listen((_) {
           activateReception(reception.organization_id, reception.id);
         });

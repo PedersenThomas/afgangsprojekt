@@ -54,13 +54,9 @@ class Menu {
   }
 
   void _highlightItem(String window) {
-    orgButton.src = window == ORGANIZATION_WINDOW ?
-        'image/organization_icon.svg' : 'image/organization_icon_disable.svg';
-    recButton.src = window == RECEPTION_WINDOW ? 'image/reception_icon.svg' :
-        'image/reception_icon_disable.svg';
-    conButton.src = window == CONTACT_WINDOW ? 'image/contact_icon.svg' :
-        'image/contact_icon_disable.svg';
-    dialButton.src = window == DIALPLAN_WINDOW ? 'image/dialplan_icon.svg' :
-        'image/dialplan_icon_disable.svg';
+    orgButton.style.opacity = window == ORGANIZATION_WINDOW ? '1': '0.2';
+    recButton.style.opacity = window == RECEPTION_WINDOW ? '1': '0.2';
+    conButton.style.opacity = window == CONTACT_WINDOW ? '1': '0.2';
+    dialButton.style.opacity = window == DIALPLAN_WINDOW ? '1': '0.2';
   }
 }

@@ -15,10 +15,10 @@
 <body>
   <nav id="navigation">
     <ul>
-      <li><img id="organization-button" alt="Organisation" title="Organisationer" src="image/organization_icon.svg" draggable="false"></li>
-      <li><img id="reception-button" alt="Reception" title="Receptioner" src="image/reception_icon_disable.svg" draggable="false"></li>
-      <li><img id="contact-button" alt="Kontaktpersoner" title="Kontaktpersoner" src="image/contact_icon_disable.svg" draggable="false"></li>
-      <li><img id="dialplan-button" alt="Dialplan" title="Dialplan" src="image/dialplan_icon_disable.svg" draggable="false"></li>
+      <li><img id="organization-button" alt="Organisation" title="Organisationer" src="image/org.svg" draggable="false"></li>
+      <li><img id="reception-button" alt="Reception" title="Receptioner" src="image/rec.svg" draggable="false"></li>
+      <li><img id="contact-button" alt="Kontaktpersoner" title="Kontaktpersoner" src="image/con.svg" draggable="false"></li>
+      <li><img id="dialplan-button" alt="Dialplan" title="Dialplan" src="image/dialplan_icon.svg" draggable="false"></li>
     </ul>
   </nav>
 
@@ -80,7 +80,8 @@
           </tr>
 
           <tr>
-            <td></td>
+            <td><label for="reception-input-shortgreeting">Kort Velkomst</label><input
+              id="reception-input-shortgreeting"></td>
             <td><label for="reception-input-customertype">Kundetype</label><input
               id="reception-input-customertype"></td>
           </tr>
@@ -127,7 +128,7 @@
           </tr>
 
           <tr>
-            <td><label>Adresser</label>
+            <td><label>Åbeningstider</label>
               <ul id="reception-list-openinghours"></ul></td>
             <td><label>CVR</label>
               <ul id="reception-list-registrationnumbers"></ul></td>

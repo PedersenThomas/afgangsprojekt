@@ -206,7 +206,7 @@ class OrganizationView {
     return new LIElement()
         ..classes.add('clickable')
         ..value = organization.id
-        ..text = '${organization.id} - ${organization.full_name}'
+        ..text = '${organization.full_name}'
         ..onClick.listen((_) {
           activateOrganization(organization.id);
         });

@@ -7,6 +7,7 @@ class Phone {
   String description;
   String bill_type; //Landline, mobile, which foreign country
   String tag; //tags
+  bool confidential = false;
 
   Phone();
 
@@ -18,6 +19,7 @@ class Phone {
     object.description = json['description'];
     object.bill_type = json['bill_type'];
     object.tag = json['tag'];
+    object.confidential = json.containsKey('confidential') ? json['confidential'] : false;
 
     return object;
   }
@@ -28,5 +30,6 @@ class Phone {
     'kind': kind,
     'description': description,
     'bill_type': bill_type,
-    'tag': tag};
+    'tag': tag,
+    'confidential': confidential};
 }

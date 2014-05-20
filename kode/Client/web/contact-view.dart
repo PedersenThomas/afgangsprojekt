@@ -38,7 +38,7 @@ class ContactView {
   bool createNew = false;
 
   Map<int, LazyFuture> saveList = new Map<int, LazyFuture>();
-  List<String> phonenumberTypes = ['PSTN', 'TheOtherOne'];
+  List<String> phonenumberTypes = ['PSTN', 'SIP'];
 
   ContactView(DivElement this.element) {
     ulContactList = element.querySelector('#contact-list');
@@ -56,8 +56,7 @@ class ContactView {
     buttonDelete = element.querySelector('#contact-delete');
     buttonJoinReception = element.querySelector('#contact-add');
     searchBox = element.querySelector('#contact-search-box');
-    receptionOuterSelector = element.querySelector('#contact-reception-selector'
-        );
+    receptionOuterSelector = element.querySelector('#contact-reception-selector');
 
     SC = new SearchComponent<Reception>(receptionOuterSelector,
         'contact-reception-searchbox')
@@ -411,6 +410,8 @@ class ContactView {
             inputNewItem.value = '';
 
             LIElement li = simpleListElement(item);
+            //A bit of a hack to get a unique id.
+            li.value = item.hashCode;
             SelectElement kindpicker = new SelectElement()
               ..children.addAll(phonenumberTypes.map((String kind) => new OptionElement(data: kind, value: kind)))
               ..onChange.listen((_) => onChange());
