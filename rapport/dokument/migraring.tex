@@ -1,0 +1,3 @@
+\section{Migraring}
+
+Når det nye system skal bruges er det vigtigt at kunne få det gamle data med over. Til det er der blevet skrevet et lille program. Programmet er skrevet i dart, men fordi at dart ikke har support for at læse Access databaser blev der brugt et andet program ***mdb-tools*CHECK** der gemmer tabellerne som komma seperaret filer. Migraringsprogrammet indlæser filerne til typestærke objekter og mapper det til felter i det nye database skema.

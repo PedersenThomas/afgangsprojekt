@@ -1,0 +1,10 @@
+title Opret Reception Sequence
+
+HttpServer->+Route: Ny HTTP forespørgelse
+Route->+Auth: Er
+Auth-->-Route: Gyldig bruger
+Route->+ReceptionController: Håndter forespørgelse
+ReceptionController->+Database: Opret Reception
+Database-->-ReceptionController: <ny reception id>
+ReceptionController-->-Route:
+Route-->-HttpServer: 

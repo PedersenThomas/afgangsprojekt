@@ -1,0 +1,37 @@
+\section{Kravspecifikation}
+For at finde ud af hvad der skal laves i et projekt, er det et godt udgangs\-punkt at starte med en kravspecifikation.
+
+Kravene har igennem forløbet ændret sig i forbindelse med at kunden kunne se hvad de indebar, eller hvis der blev opdaget nogle tekniske vanskeligheder der gjorde at kravet ville tage for lang tid at opfylde, i forhold til hvad der var af tid i projektet.
+
+\paragraph{Funktionelle krav}
+\begin{enumerate}
+  \item[F 1.] Man skal kunne oprette, ændre og slette organisationer.
+  \item[F 2.] Man skal kunne oprette, ændre og slette receptioner.
+  \item[F 3.] Man skal kunne oprette, ændre og slette kontaktpersoner.
+  \item[F 4.] Man skal kunne tilføje og fjerne en kontaktpersons relation til en reception.
+  \item[F 5.] Man skal kunne ændre i den information en kontaktperson har i relationen til en reception.
+  \item[F 6.] Man skal kunne oprette, ændre og slette telefonnumre.
+  \item[F 7.] Man skal kunne oprette, og rette en dialplan.
+  \item[F 8.] En dialplan skal kunne sendes ud til en Freeswitch server, i XML formatet som Freeswitch bruger.
+  \item Til at logge ind med skal AuthServeren\footnote{En server som Adaheads K/S har laver der bruger Google Oauth2 til at identificere brugerne og intern database til at tjekke for rettigheder} bruges.
+\end{enumerate}
+
+\paragraph{Non-Funktionelle krav}
+\begin{enumerate}
+  \item[NF 1.] Serveren skal kunne køre på enten Linux eller BSD
+  \item[NF 2.] Klienten skal køre i en browser.
+  \item[NF 3.] Det skal være under GPL lisence.
+\end{enumerate}
+
+\paragraph{Dialplan krav}
+Der er følgendekrav til dialplan compileren
+\begin{enumerate}
+  \item[F 9.] Hver reception skal kunne specificere individuel ventemusik.
+  \item[F 10.] Hver eneste komponent i dialplanen, skal kunne indholde en kommentar.
+  \item[F 11.] Man skal kunne viderstille et opkald til et andet nummer.
+  \item[F 12.] Man skal kunne afspille en lydfil.
+  \item[F 13.] Man skal kunne sende opkalder ud til køen hvor receptionister tager opkald fra.
+  \item[F 14.] Man skal kunne sende opkalder til en IVR menu.
+  \item[F 15.] Man skal kunne sende opkalder til telefonsvare.
+  \item[F 16.] Man skal kunne foretage valg på basis af et interval der er sammensat af hvad klokken og ugedagen er.
+\end{enumerate}

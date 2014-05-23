@@ -1,0 +1,66 @@
+\documentclass{report}
+\usepackage[utf8]{inputenc}
+
+\title{Administration af ekstern reception}
+\author{Thomas Pedersen}
+\date{28 Juni 2014}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+%Terminology
+\usepackage[xindy, toc, nonumberlist]{glossaries}
+\makeglossaries
+
+%Renames different keywords to danish.
+\renewcommand{\bibname}{Bibliografi}
+\renewcommand{\figurename}{Figur}
+\renewcommand{\chaptername}{Kapitel}
+\renewcommand*\contentsname{Indholdsfortegnelse}
+
+%Changes the chapter formatting.
+\usepackage{titlesec}
+\titleformat{\chapter}[hang] 
+{\normalfont\huge\bfseries}{\thechapter}{1em}{} 
+
+\input{terminologi}
+
+\begin{document}
+\maketitle
+
+\include{introduktion}
+
+\pagebreak
+\tableofcontents
+
+\include{analyse}
+%\include{krav}
+%\include{usecase}
+\include{design}
+\include{implementation}
+\include{test}
+\include{konklusion}
+
+\printglossary[title=Terminologi,toctitle=Terminologi]
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
+
+%Problemer med hbox overflow
+% brug  \-  det fortæller at den godt må dele der.
+% ~ Er et nonbreak-space. Altså indsæt et space istedet for ~ og fortæl at ordene imellem ikke må opbrydes på forskellige linjer.
+
+
+%Lav et diagram over det fulde system-
+%Termonologi afsnit
+%Forklar mere om hvorfor der er valgt f.eks. MVC
+%Dialplan: Hvad er en Dialplan. Hvorfor bruge statisk XML og ikke Dyanamiske Sockets.
+%Vær opmærksom på at dele det ud i mindre dele.
+%Fortæl hvad JSON_Schema.
+
+%Map Test op til Krav. og skriv om, Hvorfor Test. Blackbox, Itegrating Testing.
+%Use cases. Der burde nok lægges 
+%Tilføj Unit test bog.
+
+

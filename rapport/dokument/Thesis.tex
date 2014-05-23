@@ -1,0 +1,127 @@
+%==================================================================================================
+%   LUKES THESIS TEMPLATE 1.2
+%   -------------------------
+%   This template is based upon the offcial IMM PhD Thesis template, it is enhanced with a number
+%   of new features and a number of errors have fixed. This template is intended to be complied to
+%   PDF using PDFLATEX and is tested using the MiKTeX 2.9 LaTeX distribution.
+%   It is based on the official DTU-IMM Thesis template by Finn Kuno Christensen in 2009.
+%   Small bugfixes by Kasper Laursen in 2012 and 2013.
+%   -------------------------
+%   Last Updated: 2012-09-19
+%   Contact: lthhe@imm.dtu.dk
+%==================================================================================================
+%
+%==================================================================================================
+% DOCUMENT SETUP
+%==================================================================================================
+\documentclass[10pt,oneside]{book}                  %Official DTU-IMM Thesis document setup
+%
+%Set to 'print' for printed version, use 'net' for online version
+\def\thesisversion{print}
+%
+%==================================================================================================
+% PACKAGES
+%==================================================================================================
+\usepackage{LukeThesis}                             %Import Thesis base style
+%input{PhDMacros}                                   %Thesis specific macros
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+%Dokumentet skal være på dansk
+\usepackage[danish]{babel}
+\selectlanguage{danish}
+\renewcommand{\appendixname}{Bilag}
+\renewcommand{\bibname}{Bibliografi}
+\renewcommand{\figurename}{Figur}
+\renewcommand{\chaptername}{Kapitel}
+\renewcommand{\contentsname}{Indholdsfortegnelse} %Don't
+\renewcommand*\contentsname{Indholdsfortegnelse}  %Work
+\addto{\captionsenglish}{\renewcommand*{\contentsname}{Indholdsfortegnelse}}
+\addto{\captionsenglish}{\renewcommand*{\chaptername}{Kapitel}}
+\addto{\captionsenglish}{\renewcommand*{\bibname}{Bibliografi}}
+%
+%==================================================================================================
+% THESIS PROPERTIES (Modifiy these fields with your details)
+%==================================================================================================
+\def\thesisauthor{Thomas Pedersen}                     %Author
+\def\thesistitle{Administration af ekstern reception}               %Title
+\def\thesishandin{30-Maj}                       %Submission date (Day-Month}
+\def\thesisdegree{B.Eng}                              %Degree ('B.Eng', 'B.Sc.', 'M.Sc.' or 'PhD')
+\def\thesisyear{2014}                               %Submission year
+\def\thesisnumber{}                             %DTU-IMM Serial number (do not include year)
+\def\thesisISSN{XXXXXX}                          %ISSN number
+\def\thesiskeywords{Keywords are, comma separated}  %PDF keywords
+\derivethesisprops                                  %Derive dependent properties
+%
+%==================================================================================================
+% SECTION NUMBERING SETUP
+%==================================================================================================
+\setcounter{tocdepth}{2}                            %2 adds sections up to subsections
+\setcounter{secnumdepth}{3}                         %Subsubsections get a number when this is 3
+%
+%==================================================================================================
+% THESIS STRUCTURE  (Modifiy to include more chapters etc)
+%==================================================================================================
+\begin{document}
+%------------------------
+%Pre-frontmatter material
+%------------------------
+\prefrontmatter
+%--------------------
+%Frontmatter material
+%--------------------
+\frontmatter
+\pagenumbering{roman}                               %Set frontmatter numbering style
+%\input{SummaryUK}                                   %English summary of Thesis
+\markboth{}{}                                       %Set headings (left)(right)
+%\input{SummaryDK}                                   %Danish summary of Thesis
+\markboth{}{}                                       %Set headings (left)(right)
+\input{introduktion}                                     %Preface
+\markboth{}{}                                       %Set headings (left)(right)
+\input{anerkendelser}                               %Acknowledgements
+\markboth{}{}                                       %Set headings (left)(right)
+%------------------
+% Table of contents
+%------------------
+%\newpage\mbox{}%\newpage
+\chaptermark{Indholdsfortegnelse}
+\pdfbookmark{Indholdsfortegnelse}{toc}
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\sectionmark{Indholdsfortegnelse}
+\addtolength{\parskip}{-\baselineskip}
+\tableofcontents
+\addtolength{\parskip}{\baselineskip}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+%-------------
+% Main content
+%-------------
+\mainmatter
+%\include{Chapter1}                                  %Chapter 1
+\include{analyse}
+\include{design}
+\include{implementation}
+\include{test}
+\include{konklusion}
+%\include{Chapter2}                                 %Chapter 2
+
+
+\appendix
+\include{Appendix1}                                 %Appendix A
+
+
+%-----------
+% Backmatter
+%-----------
+\backmatter
+
+\include{term}
+
+\chaptermark{Bibliography}
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\sectionmark{Bibliography}
+\addcontentsline{toc}{chapter}{\bibname}        %Force addition of Bibliography to TOC
+\bibliographystyle{plain}                           %Use alpha codes for references
+\bibliography{References}                           %Bibliography file called
+\end{document}
+% % % EOF % % %

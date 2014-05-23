@@ -1,0 +1,7 @@
+\chapter{Test}
+Man kan teste sine programmer på mange forskellige måde, man kan blandt andet lave unit test, integration test og acceptance test. Unit test er test af mindre dele af programmet. Meningen med dem er at de er små og hurtige, så når der arbejdes på en lille krog af programmet, så har man flere test til det, som man kører igen og igen for at sikre sig at når man udvikler det at man ikke ødelægger noget på vejen.
+Integretions test er hvor der tests om hvor vidt at et program overholder deres interface. Så her ser man ikke på de små komponenter et program består af men om det overordnet virker som det skal.
+Acceptance test er når produktet afleveres til kunden og der undersøges om det lever op til deres krav.
+
+I dette projekt er blevet lavet automatiske integrations test til serveren. Testene blev skrevet i Python, da det har nogle gode test biblioteker og fordi så kunne det nemt intregreres med Adaheads nuværende test miljø som netop også kører Python.
+For at tests om der nu leveres data tilbage i det rette format, så bruges der JSON\_Schema til at validere op i mod. JSON\_Schema er skrevet JSON og tjekker om visse nøgler er tilstede, eller om værdierne overholder et regex udtryk eller hvis det er et tal kan man validere at værdien ligger imellem et interval.
