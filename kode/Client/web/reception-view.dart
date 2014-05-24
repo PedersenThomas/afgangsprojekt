@@ -272,7 +272,7 @@ class ReceptionView {
         ..handlings = getListValues(ulHandlings)
         ..openinghours = getListValues(ulOpeninghours)
         ..registrationnumbers = getListValues(ulRegistrationnumbers)
-        //..telephonenumbers = getListValues(ulTelephonenumbers)
+        ..telephonenumbers = getListValues(ulTelephonenumbers)
         ..websites = getListValues(ulWebsites);
   }
 
