@@ -357,13 +357,11 @@ class ContactView {
   }
 
   UListElement makePhoneNumbersList(Element container, List<Phone> phonenumbers, {Function onChange}) {
-    print('361 PhoneNumbers: ${phonenumbers}');
     LabelElement label = new LabelElement();
     UListElement ul = new UListElement()..classes.add('content-list');
 
     label.text = 'Telefonnumre';
 
-    /////
     List<LIElement> children = new List<LIElement>();
       if (phonenumbers != null) {
         for (Phone number in phonenumbers) {
@@ -476,7 +474,6 @@ class ContactView {
         }
       }
     }
-    print('474 Commiting phonenumbers: ${phonenumbers}');
     return phonenumbers;
   }
 
