@@ -21,3 +21,7 @@ Sådan opfører de fleste af controllerne sig.
 \caption{Når man kalder serveren for at oprette en ny reception}
 \label{fig:serversequence}
 \end{figure}
+
+\pagebreak
+\section{Migraring}
+Når det nye system skal bruges er det vigtigt at kunne få det gamle data med over. Til det er der blevet skrevet et lille program. Programmet er skrevet i Dart fordi moddellen og forespørgelserne til database allerede var lavet i dart, hvilket gjorder det hurtigt at låne fra. Det gamle systems database var en Microsoft Access database og fordi at Dart ikke har support for at læse Access databaser blev der brugt et andet program mdb-export der gemmer tabellerne som komma seperaret filer. Migraringsprogrammet indlæser filerne til typestærke objekter og mapper det til felter i det nye database skema for så at gemme det i databasen.

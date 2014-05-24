@@ -1,6 +1,6 @@
 \section{Use case}
 For at få en fornemmelse for, hvor kravene bliver brugt henne og om man har overset noget er det en god ide, at lave use case\citep{LarmanUml}.
-Mange operationer på serveren, er klassiske CRUD (Create, Read, Update, Delete) operationer. Derfor har jeg valgt at undlade nogen usecase, da de ikke variere væsentligt fra nogle af de andre.
+Mange operationer på serveren, er klassiske CRUD (Create, Read, Update, Delete) operationer. Den første use case kan med små ændringer dække over de første 4 krav.
 
 
 \section{Opret reception}
@@ -11,8 +11,8 @@ Følgende senariere kan også finde sted for organizationer og kontaktpersoner i
     \hline
     Formål         & At oprette en ny reception til en organisation                              \\ \hline
     Succestilstand & Receptionen bliver oprettet og gemt i databasen.                            \\ \hline
-    Fejltilstand   & Der bliver ikke oprettet noget receptionen, og bruger 
-                     får en fejl meddelelse. \\ \hline
+    Fejltilstand   & Der bliver ikke oprettet nogen receptionen, og brugeren 
+                     får en fejlmeddelelse. \\ \hline
     Aktør          & Serviceagent                                                                \\ \hline
     \end{tabular}
 \end{table}
@@ -52,6 +52,7 @@ Følgende senariere kan også finde sted for organizationer og kontaktpersoner i
 %    \item Tryk på aktivere, hvilket aktivere reception på serveren igen.
 %\end{enumerate}
 
+\section{Dialplan}
 \begin{table}[h]
     \begin{tabular}{|p{3cm}|p{8.3cm}|}
     \hline
@@ -62,7 +63,6 @@ Følgende senariere kan også finde sted for organizationer og kontaktpersoner i
     \end{tabular}
 \end{table}
 
-\section{Dialplan}
 \begin{enumerate}
     \item Login med tilstrækkelig rettigheder.
   \begin{enumerate}

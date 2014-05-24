@@ -1,6 +1,6 @@
 \chapter{Design}
 Systemet er opdelt i tre dele, klienten, serveren og compileren. Alle af dem er skrevet i Dart\footnote{Dart er et ny sprog fra Google til at afløse Javascript},
-Databasen var bestemt på forhånd til at være en Postgres server og skemaet lige så.
+Databasen var bestemt på forhånd til at være en Postgres server og skemaet lå også klart.
 
 \section{Database}
 \begin{figure}[ht!]
@@ -9,7 +9,7 @@ Databasen var bestemt på forhånd til at være en Postgres server og skemaet li
 \caption{Udsnit af database skemaet. PK er Primary key. FK er Foreign Key. Tekst i fed skrift er obligatoriske felter}
 \label{fig:erbasic}
 \end{figure}
-Datamodellen er lavet så først har man organizationer, som beskeriver hvem der skal sendes regninger ud til og hvordan de ønsker dem, samt at den samle flere receptioner. En reception er den kontekst som der bliver ringet ind til, så i større virksomheder vil der være flere som f.eks. afdelinger eller forskellige butikker rundt omkring i landet og i små virksomheder vil der typisk kun være en reception. En reception indeholder information om blandt andet hvordan de ønsker håndtering af sælgere, hvad deres CVR numre er, og helt lavt praktisk hvad addressen er eller hvad er der åbningstider. En virksomhed er ikke noget uden deres medarbejder, så til det er der kontakter som beskriver personen ved deres navn. Det er først i forbindelse med en reception at en kontaktperson har det meste af sin information, som hvad deres telefonnumre og email er, samt information omkring hvad de har af ansvar og hvem deres backup personer er, og den information gemmes i ReceptionContacts tabllen.
+Datamodellen er lavet så først har man organizationer, som beskeriver hvem der skal sendes regninger ud til og hvordan de ønsker dem, samt at den samler flere receptioner. En reception er den kontekst som der bliver ringet ind til. Så i større virksomheder vil der være flere som f.eks. afdelinger eller forskellige butikker rundt omkring i landet og i små virksomheder vil der typisk kun være en reception. En reception indeholder information om blandt andet hvordan de ønsker håndtering af sælgere, hvad deres CVR numre er og helt lavt praktisk hvad addressen er eller hvad deres åbningstider er. En virksomhed er ikke noget uden deres medarbejder, så til dem er der kontakter som beskriver personen ved deres navn. Det er først i forbindelse med en reception at en kontaktperson har det meste af sin information, som hvad deres telefonnumre og email er, samt information omkring hvad de har af ansvar og hvem deres backup personer er, og den information gemmes i ReceptionContacts tabllen.
 Databasen har en mere flere tabeller end beskrevet her og diagrammet for det fulde database skema kan findes i bilaget.
 
 \section{Server}
