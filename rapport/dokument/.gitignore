@@ -4,6 +4,7 @@
 *.blg
 *.glg
 *.glo
+*.log
 *.out
 *.toc
 *.xdy
