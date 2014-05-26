@@ -1,37 +1,28 @@
 \section{Kravspecifikation}
-For at finde ud af hvad der skal laves i et projekt, er det et godt udgangs\-punkt at starte med en kravspecifikation.
-
-Kravene har igennem forløbet ændret sig i forbindelse med at kunden kunne se hvad de indebar, eller hvis der blev opdaget nogle tekniske vanskeligheder der gjorde at kravet ville tage for lang tid at opfylde, i forhold til hvad der var af tid i projektet.
+Kravene er formuleret i samarbejde med kunden og tager hensyn til tidshorisonten på projektet, den tekniske kompleksitet og kundens behov.
 
 \paragraph{Funktionelle krav}
 \begin{enumerate}
-  \item[F 1.] Man skal kunne oprette, ændre og slette organisationer.
-  \item[F 2.] Man skal kunne oprette, ændre og slette receptioner.
-  \item[F 3.] Man skal kunne oprette, ændre og slette kontaktpersoner.
-  \item[F 4.] Man skal kunne tilføje og fjerne en kontaktpersons relation til en reception.
-  \item[F 5.] Man skal kunne ændre i den information en kontaktperson har i relationen til en reception.
-  \item[F 6.] Man skal kunne oprette, ændre og slette telefonnumre.
-  \item[F 7.] Man skal kunne rette en dialplan.
-  \item[F 8.] En dialplan skal kunne sendes ud til en Freeswitch server, i XML formatet som Freeswitch bruger.
-  \item[F 9.] Til at logge ind med skal AuthServeren\footnote{En server som Adaheads K/S har laver der bruger Google Oauth2 til at identificere brugerne og intern database til at tjekke for rettigheder. Koden kan findes her: \mbox{https://github.com/AdaHeads/DatabaseServers}} bruges.
+  \item[F01.] Brug af interfaces kræver bruger autentificering
+  \item[F02.] Man skal kunne oprette, ændre og slette organisationer
+  \item[F03.] Man skal kunne oprette, ændre og slette receptioner
+  \item[F04.] Man skal kunne oprette, ændre og slette kontaktpersoner
+  \item[F05.] Man skal kunne tilføje og fjerne en kontaktpersons relation til en reception
+  \item[F06.] Man skal kunne ændre en kontaktpersons data relativt til en reception
+  \item[F07.] Man skal kunne oprette og opdatere kaldplaner
+  \item[F08.] Man skal kunne tilknytte en kommentar til alle komponenter i en kaldplan
+  \item[F09.] Man skal kunne viderestille indgående opkald til arbitrære telefonnumre.
+  \item[F10.] Man skal kunne afspille en lydfil for opkalder 
+  \item[F11.] Man skal kunne sende opkald til receptionisterne
+  \item[F12.] Man skal kunne sende opkald til en IVR menu
+  \item[F13.] Man skal kunne sende opkald til telefonsvarer
+  \item[F14.] Man skal kunne dirigere opkald på basis af tid
+  \item[F15.] En kaldplan skal kunne tilknyttes Freeswitch
 \end{enumerate}
 
 \paragraph{Non-Funktionelle krav}
 \begin{enumerate}
-  \item[NF 1.] Serveren skal kunne køre på enten Linux eller BSD
-  \item[NF 2.] Klienten skal køre i en browser.
-  \item[NF 3.] Det skal være under GPL lisenc.
-\end{enumerate}
-
-\paragraph{Dialplan krav}
-Der er følgende krav til dialplan compileren
-\begin{enumerate}
-  \item[F 10.] Hver reception skal kunne specificere individuel ventemusik.
-  \item[F 11.] Hver eneste komponent i dialplanen, skal man kunne skrive en kommentar til.
-  \item[F 12.] Man skal kunne viderstille et opkald til et andet nummer.
-  \item[F 13.] Man skal kunne afspille en lydfil.
-  \item[F 14.] Man skal kunne sende opkalder ud til køen hvor receptionister tager opkald fra.
-  \item[F 15.] Man skal kunne sende opkalder til en IVR menu.
-  \item[F 16.] Man skal kunne sende opkalder til telefonsvare.
-  \item[F 17.] Man skal kunne foretage valg på basis af et interval der er sammensat af hvad klokken og ugedagen er.
+  \item[NF1.] Al server software skal være kompatibelt med Linux og/eller *BSD
+  \item[NF2.] Klienten skal køre i en browser
+  \item[NF3.] Koden skal være GPL licenseret
 \end{enumerate}

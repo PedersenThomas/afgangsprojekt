@@ -1,19 +1,31 @@
 \chapter{Analyse}
 
 %Baggrund. Referere til et Link på nettet hvor praktik rapporten ligger.
-Projektet er lavet i samarbejde med Adaheads K/S og Responsum K/S. \linebreak
-Responsum K/S er et firma der har receptionister klar til at tage opkald for andre firmaer. Til at hjælpe dem med at få informationen omkring det pågældende firma der ringes til, har de et ældre system der ikke længere opdateres af firmaet bag det og koden til det er ikke tilgængelig for dem. Det betyder at de fejl og mangler de har fundet ikke bliver udbedret. Derfor besluttede Responsum K/S at starte Adaheads K/S til at løse deres problem ved at lave et nyt system, men denne gang er koden underlagt en GPL licens og de er derved sikre på at ingen kan løbe med koden.
+Responsum K/S er en virksomhed der besvarer andre virksomheders opkald, som en ekstern reception. For at kunne dette gør de brug af telefonanlæg, databaser og PC baserede klienter. Deres nuværende system er udviklet tilbage i 90'erne og består for en stor del af komponenter der ikke længere udvikles på, og derfor efterhånden slæber rundt på en del fejl og mangler. Som følge heraf gik Adaheads K/S igang med at udvikle et fremtidssikret open source system baseret på GPL licensen for at sikre, at koden altid er tilgængelig for systemets brugere.
 
+Responsum K/S har behov for at kunne lave kaldplaner til at modtage og dirigere opkald til henholdsvis receptionister eller automatiske systemer som IVR menuer og telefonsvarer. Der skal knyttes information til alle indgående opkald, sådan at receptionister og systemer kan håndtere dem korrekt. For at kunne oprette og vedligholde kaldplaner og virksomhedsinformation skal der være administrative værktøjer til rådighed.
+
+\pagebreak
+
+\section{Oversigt}
+AdaHeads' produkt består af følgende systemer:
 \begin{figure}[ht!]
 \centering
 \includegraphics[scale=0.5]{images/adaheads_system.png}
 \caption{En oversigt over Adaheads system.}
 \label{fig:adaheadssystem}
 \end{figure}
-Det nye system består af flere dele. En del er programmet Callflow der kommuniker med Freeswitch og holder styr på hvilke kald der er i anlægget og sender forespørgelser til Freeswitch om f.eks. at koble to opkald sammen. Det program som receptionister sidder med er lavet som en web side, der sørger for at holde sig opdateret på opkald via den før nævnte server. For at hente information ud omkring medarbejder, organisationer osv. fra databasen er der lavet små programmer til det også, så receptionisternes klient kan få hentet information.
-
-\section{Problemformulering}
-Responsum K/S har de det kalder serviceagenter, som er medarbejdere til at løbende tjekke informationen igennem og holde den opdateret. For at kunne få informationen ind i det nye system skal der være en hjemmeside hvor det kan indtastes. Foruden så skal man også kunne konfigurarer en receptions dialplan. Koden for alle dele af projektet skal være open source og serveren skal kunne køre på Linux eller BSD.
+\begin{enumerate}
+	\item{Freeswitch PBX til håndtering af opkald} 
+	\item{Kaldplan-compiler til generering af Freeswitch XML kaldplaner}
+	\item{Administrativ browser baseret klient til interaktion med REST interfaces}
+	\item{Relationel database}
+	\item{REST intefaces, fordelt på flere HTTP servere}
+	\item{CallFlow kald dirigenten håndterer kaldrelateret kommunikation mellem Freeswitch og resten af systemet}
+	\item{Browser baseret klient til receptionister}
+\end{enumerate}
+Komponenterne markeret med rød er designet og konstrueret i dette projekt
+%Linjen skal være på samme side som figuren.
 
 \input{krav}
 \input{usecase}
