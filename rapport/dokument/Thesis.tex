@@ -25,6 +25,7 @@
 \usepackage{LukeThesis}                             %Import Thesis base style
 %input{PhDMacros}                                   %Thesis specific macros
 
+\usepackage[titletoc]{appendix} %Skriver "Bilag" i indholdsfortegnelsen
 \usepackage{natbib}
 \usepackage{graphicx}
 
@@ -107,9 +108,10 @@
 
 
 
-\appendix
+%\appendix
+\begin{appendices}
 \include{Appendix1}                                 %Appendix A
-
+\end{appendices}
 
 %-----------
 % Backmatter

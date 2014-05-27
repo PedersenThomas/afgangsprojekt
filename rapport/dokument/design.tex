@@ -1,5 +1,6 @@
 \chapter{Design}
-Systemet er opdelt i tre dele, klienten, serveren og compileren. Alle af dem er skrevet i Dart. Databasen var bestemt på forhånd til at være en Postgres server og skemaet lå også klart.
+Systemet er opdelt i tre dele, klienten, serveren og compileren der alle er skrevet i Dart. Databasen var specificeret på forhånd til at være Postgres og skemaet var også defineret.
+
 
 \section{Systemoversigt}
 Det samlet system består af flere maskiner. Den første har Freeswitch og står dermed for at snakke sammen med andre telefonanlæg ude i verden, samt de telefoner som receptionisterne bruger. På den samme maskine er compileren der har adgang til databasen, til når dialplans, IVR menuer eller andre dele af den skal konfigureres. Det næste led i kæden af maskiner er der hvor Adaheads K/S CallFlow-Control program kører, der opdager nye opkald og sørger for at fortælle klienten om det foruden en masse andre ting også. Det er også her webserveren til det administrative kommer til at køre, selv om det ikke er nødvendigt at de er på samme maskine. Til sidst er der klienten der blot skal have en moderne browser for så at kunne kommunikere med webserveren.
@@ -7,7 +8,7 @@ Det samlet system består af flere maskiner. Den første har Freeswitch og står
 \begin{figure}[ht!]
 \centering
 \includegraphics[scale=0.8]{images/systemdiagram.png}
-\caption{Diagram over systemet.}
+\caption{Diagram over projektets komponenter}
 \label{fig:systemdiagram}
 \end{figure}
 
@@ -24,13 +25,12 @@ En virksomhed er ikke noget uden deres medarbejder, så til dem er der kontakter
 Databasen har en flere tabeller end beskrevet her og diagrammet for det fulde database skema kan findes i bilaget.
 
 \section{Server}
-Serveren er bygget op efter MVC arkitekturen, da det passer godt til hvordan en websevrer kan sættes sammen og er godt til at holde de forskellige dele adskildt. Derved har den en rækker controller som står for at håndtere forespørgelserne. De fleste af dem, omhandler at hente data ud fra databasen og sende dem ud til brugere. En sådan controller går altså til databasen, får tilbage dataen i typer fra modellen som bliver transformeret om af et view, så dataen kan blive sendt ud til klienten.
-Controllerne er i højgrad opdelt efter hvordan datamodellen på databasen er bygget op. 
+Serveren er modelleret op efter MVC arkitekturen, da det passer godt til hvordan en websevrer kan sættes sammen og er godt til at holde de forskellige dele adskildt. Derved har den en række controllere som står for at håndtere forespørgelserne. Serveren er bygget op efter REST principperne, som der kommes mere ind på senere i kapitlet. 
 
 \pagebreak
 \section{Brugerfladen}
-Brugerfladen er blevet skitseret i samarbejde med Adaheads K/S, så den falder ind sammen med resten af systemet.
-Den er bygget op, så i venstre side har man en menu hvor man kan vælge imellem organisationer, receptioner, kontakterpersoner og dialplan. Alle 4 vinduer er bygget op omkring 3 søjler for at holde det konsistent.
+Brugerfladen er blevet skitseret i samarbejde med AdaHeads K/S og Responsum K/S.
+Den er bygget op, så i venstre side har man en menu hvor man kan vælge imellem organisation-, reception-, kontakterperson- og kaldplans-vinduet. Alle 4 vinduer er bygget op omkring 3 søjler for at holde det ensartet.
 
 \subsection{Organisationer}
 \begin{figure}[ht!]
@@ -67,14 +67,14 @@ Til højre er der en søjle med alle kontaktpersoner der har en forbindelse til 
 \end{figure}
 I vinduet for kontaktpersoner er der lige som i de forrige to, opret knap, søgefelt og i vinduet her er det en så en liste over kontaktpersoner. I toppen af søjlen i midten er der information omkring en kontaktperson, hvor der er mulighed for at tilknytte en kontakt til en reception. Har en kontaktperson en tilknytning til en reception, så optræder der en boks for hver reception med alt information tilknyttet til den relation. I højre side er der to lister henholdvis hvilke organisationer og receptioner som kontakten optræder i.
 
-\subsection{Dialplan}
+\subsection{Kaldplan}
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=\textwidth]{images/screen_dialplan.png}
-\caption{Dialplan redigering}
+\caption{Kaldplans redigering}
 \label{fig:screendialplan}
 \end{figure}
-Til at lave dialplans er der også lavet et vindue til det. Det er også bygget op med af tre søjler. I den første søjle kan man i toppen vælge en reception, og når man har lavet ændringer så kan man trykke på gem knappen lige uden, som sender dialplan tilbage til serveren hvor den bliver gemt. Under den kasse kan man vælge imellem de forskellige handlinger og betingelser der skal ske i en extension. Når man så trykker på en af dem bliver den indsat i dialplanen og vist i midten, hvor man kan se forløbet af opkaldet og trykker man så på dem der, kan man få vist dens indstillinger, der kommer frem ude i den højre søjle, hvor det også er muligt at se en liste over extensions for den givende dialplan, samt at skrive kommentar, som der kræves fra krav F10.
+Til at lave kaldplaner er der lavet et vindue til det. Det er også bygget op med af tre søjler. I den første søjle kan man i toppen vælge en reception, og når man har lavet ændringer så kan man trykke på gem knappen lige uden, som sender kaldplaner tilbage til serveren hvor den bliver gemt. Under den kasse kan man vælge imellem de forskellige handlinger og betingelser der skal ske i en extension. Når man så trykker på en af dem bliver den indsat i kaldplanen og vist i midten, hvor man kan se forløbet af opkaldet og trykker man så på dem der, kan man få vist dens indstillinger, der kommer frem ude i den højre søjle, hvor det også er muligt at se en liste over extensions for den givende kaldplan, samt at skrive kommentar, som der kræves fra krav F08.
 
 %\begin{figure}[ht!]
 %\centering
@@ -95,7 +95,7 @@ Til at lave dialplans er der også lavet et vindue til det. Det er også bygget 
 %
 %Dette er til arkitekturen...
 
-\section{Dialplans}
+\section{Kaldplans compiler}
 Freeswitch er bygget op af en kerne der i sig selv ikke kan bruges som PBX, men med de moduler som følger med kan den bruges til at forbinde IP telefoner eller andre PBX'er, transkode lyd, afspille IVR menuer altså hvad man kræver af de traditionelle PBX og hvis det ikke er nok kan man altid skrive sit eget modul.
 
 Når der kommer et opkald ind i telefonanlægget, skal Freeswitch vide hvordan det skal håndtere opkaldet. I en PBX kalder man det en dialplan.  
@@ -126,19 +126,6 @@ Actions og anti-actions er det samme, det eneste der skiller dem ad, er i hvilke
 Serveren er lavet efter principperne i REST.
 REST (\textbf{RE}presentational \textbf{S}tate \textbf{T}ransfer) er en web arkitektur der blev opfundet af Roy Fielding i hans ph.d.-afhandling. I den beskriver han at denne arkitektur bygger oven på HTTP og at serveren som klienten snakker med skal være tilstandsløs. Det har en række fordele. Når transportlaget ikke skal holde nogen tilstand, så kan det spare på de fysiske ressourcer og på den måde opnå højere skalerbarhed. Det betyder også at man kan sende forspørgelser parralellet og at der kan kører flere instanser af serveren, og klienten behøver ikke vide hvilken en der snakker med.
 REST er bygget op så man benytter sig at HTTPs method header variable. Så ønsker man f.eks. at fjerne et element så spørges der efter den pågældende ressource med method sat til DELETE.
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
