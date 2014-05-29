@@ -1,33 +1,7 @@
 \chapter{Analyse}
 
-%Baggrund. Referere til et Link på nettet hvor praktik rapporten ligger.
-Responsum K/S er en virksomhed der besvarer andre virksomheders opkald, som en ekstern reception. For at kunne dette gør de brug af telefonanlæg, databaser og PC baserede klienter. Deres nuværende system er udviklet tilbage i 90'erne og består for en stor del af komponenter der ikke længere udvikles på, og derfor efterhånden slæber rundt på en del fejl og mangler. Som følge heraf gik Adaheads K/S igang med at udvikle et fremtidssikret open source system baseret på GPL licensen for at sikre, at koden altid er tilgængelig for systemets brugere.
-
-Responsum K/S har behov for at kunne lave kaldplaner til at modtage og dirigere opkald til henholdsvis receptionister eller automatiske systemer som IVR menuer og telefonsvarer. Der skal knyttes information til alle indgående opkald, sådan at receptionister og systemer kan håndtere dem korrekt. For at kunne oprette og vedligholde kaldplaner og virksomhedsinformation skal der være administrative værktøjer til rådighed.
-
-\pagebreak
-
-\section{Oversigt}
-AdaHeads' produkt består af følgende systemer:
-\begin{figure}[ht!]
-\centering
-\includegraphics[scale=0.5]{images/adaheads_system.png}
-\caption{En oversigt over Adaheads system.}
-\label{fig:adaheadssystem}
-\end{figure}
-\begin{enumerate}
-	\item{Freeswitch PBX til håndtering af opkald} 
-	\item{Kaldplan-compiler til generering af Freeswitch XML kaldplaner}
-	\item{Administrativ browser baseret klient til interaktion med REST interfaces}
-	\item{Relationel database}
-	\item{REST intefaces, fordelt på flere HTTP servere}
-	\item{CallFlow kald dirigenten håndterer kaldrelateret kommunikation mellem Freeswitch og resten af systemet}
-	\item{Browser baseret klient til receptionister}
-\end{enumerate}
-Komponenterne markeret med rød er designet og konstrueret i dette projekt
-%Linjen skal være på samme side som figuren.
-
-\pagebreak
+%Skriv noget brød tekst her, der fortæller hvad der kommer.
+I dette kapitel vil der blive lavet kravspecifikation og use case for at få formaliseret opgaven.
 
 \input{krav}
 \input{usecase}

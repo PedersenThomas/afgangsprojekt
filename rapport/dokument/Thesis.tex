@@ -28,6 +28,7 @@
 \usepackage[titletoc]{appendix} %Skriver "Bilag" i indholdsfortegnelsen
 \usepackage{natbib}
 \usepackage{graphicx}
+\usepackage{csquotes}
 
 %Dokumentet skal være på dansk
 \usepackage[danish]{babel}
@@ -75,12 +76,14 @@
 \frontmatter
 \pagenumbering{roman}                               %Set frontmatter numbering style
 %\input{SummaryUK}                                   %English summary of Thesis
-\markboth{}{}                                       %Set headings (left)(right)
+%\markboth{}{}                                       %Set headings (left)(right)
 %\input{SummaryDK}                                   %Danish summary of Thesis
 \markboth{}{}                                       %Set headings (left)(right)
 \input{introduktion}                                     %Preface
 \markboth{}{}                                       %Set headings (left)(right)
 \input{anerkendelser}                               %Acknowledgements
+\markboth{}{}                                       %Set headings (left)(right)
+\include{term}
 \markboth{}{}                                       %Set headings (left)(right)
 %------------------
 % Table of contents
@@ -97,16 +100,13 @@
 %-------------
 % Main content
 %-------------
-\mainmatter
-%\include{Chapter1}                                  %Chapter 1
+\mainmatter                                 
+\include{baggrund}
 \include{analyse}
 \include{design}
 \include{implementation}
 \include{test}
 \include{konklusion}
-%\include{Chapter2}                                 %Chapter 2
-
-
 
 %\appendix
 \begin{appendices}
@@ -119,7 +119,6 @@
 \backmatter
 
 
-\include{term}
 \chaptermark{Bibliography}
 \renewcommand{\sectionmark}[1]{\markright{#1}}
 \sectionmark{Bibliography}

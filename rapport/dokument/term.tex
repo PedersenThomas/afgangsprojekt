@@ -1,19 +1,27 @@
-\chapter{Terminologi}
+\chapter*{Terminologi}
 
-\paragraph{Dart} er et ny sprog fra Google til at afløse Javascript. Dart er lavet til at køre hurtigere end Javascript ved blandt andet at indføre klasser, da det betyder at et object ikke kan ændre signatur når først programmet køre.
+%\paragraph{GPL}
 
-\paragraph{Dialplan} er den opskrift der fortæller hvordan et opkald skal håndteres i en PBX
-
-\paragraph{Freeswitch} er en PBX på lige fod med Asterisk.
-
-\paragraph{MVC} (Model View Controller) er en arkitektur der først har modellen, altså typer til at opbevare data så det giver mening i forhold til domænet. Der efter er der view som via det data der kommer fra modellen, at lave en repræsentation af dataen som sendes ud. TIl sidste Controller der forbinder det hele, og som har alt bussiness logikken.
-
-\paragraph{PBX} (\textbf{P}rivate \textbf{B}ranch E\textbf{x}change) er et andet udtryk for telefonanlæg. Altså det system der tager sig af at håndter opkald
-
-\paragraph{Receptionist} er en medarbejder som tager opkald og sørger for at omstille eller tage imod en besked fra opkalder
-
-\paragraph{REST} er en tilstandsløs arkitektur der opererer over HTTP.
-
-\paragraph{Regex} (\textbf{Reg}ular \textbf{Ex}pression) eller på dansk kendt som Regulære Udtryk. Er et sprog der kan sammenligne tekster og finde matches eller erstatte dele af teksten
-
-\paragraph{Serviceagent} er en der sørger for at holde data omkring firmaerne opdateret, så receptionisterne har den rigtige information
+\begin{description}
+	\item[Dart] er et sprog fra Google til at afløse Javascript, der udkom i version 1.0 i november 2013. Dart er lavet til at køre hurtigere end Javascript ved blandt andet at indføre klasser, da det betyder at et object ikke kan ændre signatur når først programmet køre\citep{walrath2012dart}.
+	
+	\item[Extension] er en gruppering af betingelser og handling i en kaldplan. Se kapitel~\ref{sec:moddialplanxml}
+	
+	\item[Freeswitch] er en soft-PBX, altså en PBX skrevet i software.
+	
+	\item[Kaldplan] er den opskrift der fortæller hvordan et opkald skal dirigeres i en PBX og videre.
+	
+	\item[GPL] er en lisence der sikre at brugeren er fri til at bruge, læse, kopiere og ændre programmet.	
+	
+	\item[MVC] (Model View Controller) er en arkitektur der først har modellen, altså typer til at opbevare data så det giver mening i forhold til domænet. Der efter er der view som via det data der kommer fra modellen, at lave en repræsentation af dataen som sendes ud. TIl sidste Controller der forbinder det hele, og som har alt bussiness logikken.
+	
+	\item[PBX] (\textbf{P}rivate \textbf{B}ranch E\textbf{x}change) er et alment udbredt udtryk for lokale telefonanlæg. Altså det system der tager sig af at håndter opkald.
+	
+	\item[Receptionist] er en medarbejder som tager opkald og sørger for at omstille eller tage imod en besked fra opkalder.
+	
+	\item[REST] er en tilstandsløs arkitektur der opererer over HTTP. Se kapitel~\ref{sec:rest}
+	
+	\item[Regular Expression] eller på dansk kendt som Regulære Udtryk. Er et sprog der kan sammenligne tekster og finde matches eller erstatte dele af teksten.
+	
+	\item[Serviceagent] er en der sørger for at holde data omkring firmaerne opdateret, så receptionisterne har den rigtige information.
+\end{description} 
