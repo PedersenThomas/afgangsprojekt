@@ -1,5 +1,5 @@
 \chapter{Design}
-Systemet er opdelt i tre dele, klienten, serveren og compileren der alle er skrevet i Dart. Databasen var specificeret på forhånd til at være PostgreSQL og skemaet var også defineret. PostgreSQL er en relationel database der har understøttelse for bla. JSON.
+Systemet er opdelt i tre dele, klienten, serveren og compileren der alle er skrevet i Dart. Databasen var specificeret på forhånd til at være PostgreSQL og skemaet var også defineret. PostgreSQL er en relationel database der har understøttelse for bl.a. JSON.
 JSON (Javascript Object Notation) er tekst baseret objekter der gør det muligt nemt at gemme hierarkier og lister, hvilket AdaHeads K/S har udnyttet for at kunne være mere fleksibel over for ændringer i stedet for at skulle redesigne database skemaet hver gang.
 
 
@@ -108,7 +108,7 @@ Den er bygget op, så i venstre side har man en menu hvor man kan vælge imellem
 \end{enumerate}
 
 \pagebreak
-\section{Kaldplan compiler}
+\section{Kaldplan-compiler}
 Freeswitch er bygget op af en kerne der i sig selv ikke kan bruges som PBX, men med de moduler som følger med kan den bruges til at forbinde IP telefoner eller andre PBX'er, transkode lyd, afspille IVR menuer altså hvad man kræver af de traditionelle PBX og hvis det ikke er nok kan man altid skrive sit eget modul.
 
 Når der kommer et opkald ind i telefonanlægget, skal Freeswitch vide hvordan det skal håndtere opkaldet.
@@ -117,8 +117,8 @@ I Freeswitch kan man skrive sin kaldplan i en række af programmeringssprog, men
 Adaheads K/S valgte at bruge mod\_dialplan\_xml og derved skrive deres kaldplan i XML. Det giver den fordel at mod\_dialplan\_xml er et gennemprøvet modul og når der skal laves ændringer til en kaldplan så kan man ændre i filerne og bede Freeswitch om at genindlæs dens kaldplaner, hvilket ikke giver nogen nede tid og så er det også en mere stabil løsning. Den mere dynamiske tilgang med en socket er mere fleksibelt, men den statisk udgave ser ud til at kunne det Adaheads kræver af det.
 
 AdaHeads K/S valgte at bruge mod\_dialplan\_xml og dermed skrive deres kaldplaner i XML. Det giver dem en række fordele i forhold til at bruge Freeswitch's outbound socket. 
-Først og fremmest skal der ikke udvikles og vedligeholdes noget nyt program til at kommunikere over deres outbound socket. 
-Det næste er at når en dialplan skal ændres kan man blot ændre i XML filerne og bede Freeswitch om at genindlæse dem, hvor derimod at hvis man havde et program skulle man sætte redundante instanser ind, så man kan tillade sig at tage det ned for at starte den updateret udgave. 
+Først og fremmest skal der ikke udvikles og vedligeholdes et noget nyt program til at kommunikere over deres outbound socket. 
+Det næste er at når en dialplan skal ændres kan man blot ændre i XML filerne og bede Freeswitch om at genindlæse dem, hvor derimod at hvis man havde et program skulle man sætte redundante instanser ind, så man kan tillade sig at lukke programmet for at starte den updateret udgave. 
 For det tredje så de kriterier som et opkald dirigeres efter vides mange dage på forhånd, så de dynamiske muligheder fra en socket har ikke vist sig nødvendige endnu.
 
 \pagebreak
